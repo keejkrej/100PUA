@@ -1,4 +1,5 @@
 ---
+import '../styles/layout.css';
 ---
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-void" style="view-transition-name:root">
@@ -8,14 +9,13 @@
   <meta name="color-scheme" content="dark">
   <meta name="astro-view-transitions-enabled" content="true">
   <meta name="astro-view-transitions-fallback" content="animate">
-  <script type="module" src="/theo_files/client-router.js"></script>
+  <script src="../scripts/client-router.js"></script>
   <link rel="icon" href="https://t3.gg/favicon.svg">
   <meta name="description" content="theo (aka t3, t3dotgg) is a youtuber/ceo/dev. built t3 chat, ping.gg, t3 stack and more.">
   <meta name="theme-color" content="#050505">
   <title>theo</title>
-  <link rel="stylesheet" href="/theo_files/layout.css">
-  <script defer data-domain="astro.t3.gg" src="/theo_files/script.js"></script>
-  <script type="module" src="/theo_files/page.js"></script>
+  <script src="../scripts/script.js" defer data-domain="astro.t3.gg"></script>
+  <script src="../scripts/page.js"></script>
 </head>
 <body class="min-h-full bg-void font-mono text-text selection:bg-accent/20">
   <slot />
