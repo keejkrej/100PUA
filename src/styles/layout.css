@@ -387,10 +387,6 @@
       #e8dcff
     );
   }
-  .animated-bg {
-    background-image: url(/assets/animated-bg.svg);
-    background-size: cover;
-  }
 }
 @layer components;
 @layer utilities {
