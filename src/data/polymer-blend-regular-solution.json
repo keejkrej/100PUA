@@ -1,0 +1,68 @@
+{
+  "slug": "polymer-blend-regular-solution",
+  "topicTitle": "Polymer blends — regular solution theory to gelation",
+  "courseLine": "Curated readings · thermodynamics, diffusion, viscosity, gelation",
+  "promptCount": 12,
+  "prompts": [
+    {
+      "id": "fht-foundations",
+      "title": "Foundations: derive Flory–Huggins from lattice + regular solution ideas",
+      "query": "I am studying polymer blends and polymer solutions. Teach me Flory–Huggins theory from first principles and explicitly connect it to regular solution theory assumptions. Include entropy vs enthalpy terms, meaning of χ, and limitations for real blends.\n\nUse these resources first: \n- Flory–Huggins overview: https://en.wikipedia.org/wiki/Flory%E2%80%93Huggins_solution_theory\n- ACS perspective on polymer solution/blend phase behavior: https://pubs.acs.org/doi/10.1021/acs.macromol.6b02619"
+    },
+    {
+      "id": "phase-behavior",
+      "title": "Phase behavior: binodal/spinodal and critical conditions",
+      "query": "Help me compute and interpret binodal and spinodal curves for polymer blends using Flory–Huggins free energy. Walk through critical point conditions and give a practical workflow to estimate miscibility windows versus temperature and composition."
+    },
+    {
+      "id": "chi-parameter",
+      "title": "χ parameter: physical interpretation and temperature dependence",
+      "query": "Explain the Flory–Huggins interaction parameter χ in polymer blends: molecular meaning, why χ often depends on temperature/composition, and how to estimate χ from experiments (e.g., scattering or cloud-point data)."
+    },
+    {
+      "id": "book-map",
+      "title": "Book-guided study map (Hiemenz & Lodge)",
+      "query": "Create a chapter-by-chapter study plan for polymer solutions and blends based on Hiemenz & Lodge, Polymer Chemistry. Emphasize regular solution theory, thermodynamics of polymer solutions, intrinsic viscosity, and diffusion."
+    },
+    {
+      "id": "intrinsic-viscosity",
+      "title": "Intrinsic viscosity and Mark–Houwink",
+      "query": "Teach intrinsic viscosity in polymer solutions from measurement to interpretation. Include [η], reduced/inherent viscosity plots, extrapolation to zero concentration, and the Mark–Houwink relation [η] = K M^a with physical meaning of K and a."
+    },
+    {
+      "id": "diffusion-models",
+      "title": "Diffusion in polymer solutions: Fickian, free-volume, and coupling",
+      "query": "Compare major models for diffusion in polymer solutions and blends (Fickian diffusion, concentration-dependent diffusivity, free-volume ideas, and thermodynamic factor corrections). Give equations, assumptions, and when each model fails."
+    },
+    {
+      "id": "gelation-basics",
+      "title": "Gelation theory: percolation, Flory-Stockmayer, and rheology signatures",
+      "query": "Explain gelation in polymer systems with both chemical-crosslinking and physical-gel viewpoints. Include Flory-Stockmayer logic, gel point criteria, and how gelation appears in rheology (G', G'', tanδ)."
+    },
+    {
+      "id": "blend-miscibility-experiments",
+      "title": "Experimental toolbox for blend miscibility",
+      "query": "Give me an experimental decision tree to assess polymer blend miscibility and phase separation: DSC/Tg shifts, optical microscopy, SAXS/SANS, DMA, rheology, and cloud-point methods."
+    },
+    {
+      "id": "numerical-workflow",
+      "title": "Numerical workflow: from ΔGmix to phase diagram",
+      "query": "Provide pseudocode (Python style) for generating a polymer blend phase diagram from a Flory–Huggins free-energy model, including derivative checks for spinodal lines and common-tangent construction for binodal lines."
+    },
+    {
+      "id": "case-study",
+      "title": "Case study template for a real polymer pair",
+      "query": "Create a reusable case-study template to analyze one real polymer blend pair (e.g., PS/PMMA or other classic system): data needed, parameter estimation, phase behavior prediction, diffusion behavior, and processing implications."
+    },
+    {
+      "id": "advanced-corrections",
+      "title": "Beyond classical FH: why corrections are needed",
+      "query": "Summarize major corrections/extensions beyond classical Flory–Huggins for polymer solutions/blends (equation-of-state, free-volume, compressibility, specific interactions, lattice-cluster ideas) and when each becomes necessary."
+    },
+    {
+      "id": "exam-qa",
+      "title": "Oral-exam style Q&A pack",
+      "query": "Generate 25 oral-exam style questions and model answers on polymer solutions and blends covering: regular solution theory, Flory–Huggins thermodynamics, intrinsic viscosity, diffusion, and gelation. Progress from basic to advanced."
+    }
+  ]
+}
