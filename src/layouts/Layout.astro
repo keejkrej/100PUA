@@ -66,22 +66,44 @@ const pageDescription =
     <script is:inline>
       (function () {
         var STORAGE = '100pua-theme';
+        function readThemePreference() {
+          try {
+            var stored = localStorage.getItem(STORAGE);
+            if (stored === 'light' || stored === 'dark') return stored;
+          } catch (_) {}
+          return typeof matchMedia !== 'undefined' &&
+            matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
         function syncMeta() {
-          var t = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+          var theme =
+            document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
           var meta = document.getElementById('theme-color-meta');
           if (meta) {
-            meta.setAttribute('content', t === 'light' ? '#fafafa' : '#050505');
+            meta.setAttribute('content', theme === 'light' ? '#fafafa' : '#050505');
           }
           var btn = document.getElementById('theme-toggle');
           if (btn) {
-            btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+            btn.setAttribute(
+              'aria-label',
+              theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
+            );
           }
         }
+        /** View transitions swap in SSR HTML with data-theme=dark — restore saved choice. */
+        function reconcileThemeFromStorage() {
+          document.documentElement.setAttribute('data-theme', readThemePreference());
+          syncMeta();
+        }
         document.addEventListener('click', function (e) {
-          var t = e.target;
-          if (!t || !t.closest) return;
-          if (!t.closest('#theme-toggle')) return;
-          var cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+          var tgt = e.target;
+          if (!tgt || !tgt.closest) return;
+          if (!tgt.closest('#theme-toggle')) return;
+          var cur =
+            document.documentElement.getAttribute('data-theme') === 'light'
+              ? 'light'
+              : 'dark';
           var next = cur === 'light' ? 'dark' : 'light';
           document.documentElement.setAttribute('data-theme', next);
           try {
@@ -89,8 +111,9 @@ const pageDescription =
           } catch (_) {}
           syncMeta();
         });
-        document.addEventListener('DOMContentLoaded', syncMeta);
-        document.addEventListener('astro:page-load', syncMeta);
+        document.addEventListener('DOMContentLoaded', reconcileThemeFromStorage);
+        document.addEventListener('astro:after-swap', reconcileThemeFromStorage);
+        document.addEventListener('astro:page-load', reconcileThemeFromStorage);
       })();
     </script>
   </body>

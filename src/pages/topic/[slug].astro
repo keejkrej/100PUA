@@ -47,6 +47,17 @@ const pageTitle = `${topic.topicTitle} · prompts`;
           <p class="text-muted mt-2 text-[11px] tracking-wide">{topic.promptCount} prompts · opened rows show in accent color</p>
         </header>
 
+        <p class="animate-fade-in-up mb-6 opacity-0 text-left" style="animation-delay: 0.055s;">
+          <button
+            type="button"
+            id="prompt-progress-reset"
+            class="text-muted cursor-pointer text-[11px] tracking-wide underline decoration-transparent underline-offset-2 transition-colors hover:text-accent hover:decoration-accent/60"
+            aria-label="Clear saved opens for every topic"
+          >
+            reset
+          </button>
+        </p>
+
         <nav class="flex flex-col gap-0" data-topic-slug={slug}>
           {topic.prompts.map((p, i) => (
             <a
@@ -120,8 +131,23 @@ const pageTitle = `${topic.topicTitle} · prompts`;
           if (id && doneFor[id]) styleOpenedPrompt(a, true);
         });
       }
+      function clearProgressCookieAndUnmarkRows() {
+        try {
+          document.cookie = '100pua_prompt_clicked=;path=/;max-age=0;samesite=lax';
+        } catch (_) {}
+        var nav = document.querySelector('nav[data-topic-slug]');
+        if (!nav) return;
+        nav.querySelectorAll('a[data-prompt-id]').forEach(function (a) {
+          styleOpenedPrompt(a, false);
+        });
+      }
       function onBodyClick(e) {
-        var a = e.target && /** @type {Element} */ e.target.closest('a[data-prompt-id]');
+        var tgt = e.target;
+        if (tgt && tgt.closest && tgt.closest('#prompt-progress-reset')) {
+          clearProgressCookieAndUnmarkRows();
+          return;
+        }
+        var a = tgt && /** @type {Element} */ tgt.closest('a[data-prompt-id]');
         if (!a) return;
         var nav = a.closest('nav[data-topic-slug]');
         if (!nav) return;
