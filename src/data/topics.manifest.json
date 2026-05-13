@@ -16,5 +16,11 @@
     "topicTitle": "Stanford CS336 — Language Modeling from Scratch",
     "courseLine": "Spring 2025 · Stanford Online",
     "promptCount": 17
+  },
+  {
+    "slug": "protein-design-rosetta-bootcamp",
+    "topicTitle": "Machine Learning for Protein Design",
+    "courseLine": "A Rosetta Bootcamp · YouTube playlist",
+    "promptCount": 13
   }
 ]
