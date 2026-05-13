@@ -22,5 +22,11 @@
     "topicTitle": "Machine Learning for Protein Design",
     "courseLine": "A Rosetta Bootcamp · YouTube playlist",
     "promptCount": 13
+  },
+  {
+    "slug": "polymer-blend-regular-solution",
+    "topicTitle": "Polymer blends — regular solution theory to gelation",
+    "courseLine": "Curated readings · thermodynamics, diffusion, viscosity, gelation",
+    "promptCount": 12
   }
 ]

@@ -7,12 +7,14 @@ import nonequilibriumDoc from '../../data/nonequilibrium-lmu-ss2025.json';
 import selfOrganizationDoc from '../../data/self-organization-lmu-ws2025-2026.json';
 import stanfordCs336Doc from '../../data/stanford-cs336-language-modeling-spring2025.json';
 import proteinDesignDoc from '../../data/protein-design-rosetta-bootcamp.json';
+import polymerBlendDoc from '../../data/polymer-blend-regular-solution.json';
 
 const topicBySlug: Record<string, typeof nonequilibriumDoc> = {
   'nonequilibrium-lmu-ss2025': nonequilibriumDoc,
   'self-organization-lmu-ws2025-2026': selfOrganizationDoc,
   'stanford-cs336-language-modeling-spring2025': stanfordCs336Doc,
   'protein-design-rosetta-bootcamp': proteinDesignDoc,
+  'polymer-blend-regular-solution': polymerBlendDoc,
 };
 
 export function getStaticPaths() {
