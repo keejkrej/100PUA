@@ -1,22 +1,97 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import '../styles/layout.css';
+import '../styles/global.css';
+
+const props = Astro.props;
+const pageTitle =
+  typeof props.pageTitle === 'string' ? props.pageTitle : '100 prompts to understand anything';
+const pageDescription =
+  typeof props.pageDescription === 'string'
+    ? props.pageDescription
+    : 'Structured prompts across topics — open ChatGPT with one click.';
 ---
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-void" style="view-transition-name:root">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width">
-  <meta name="color-scheme" content="dark">
-  <ClientRouter fallback="animate" />
-  <link rel="icon" href="https://t3.gg/favicon.svg">
-  <meta name="description" content="theo (aka t3, t3dotgg) is a youtuber/ceo/dev. built t3 chat, ping.gg, t3 stack and more.">
-  <meta name="theme-color" content="#050505">
-  <title>theo</title>
-  <!-- Optional Analytics -->
-  <script defer data-domain="astro.t3.gg" src="https://plausible.io/js/script.js"></script>
-</head>
-<body class="min-h-full bg-void font-mono text-text selection:bg-accent/20">
-  <slot />
-</body>
+<html lang="en" class="h-full bg-void" data-theme="dark" style="view-transition-name:root">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="color-scheme" content="dark light">
+    <script is:inline>
+      (function () {
+        try {
+          var k = '100pua-theme';
+          var stored = localStorage.getItem(k);
+          var t =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : typeof matchMedia !== 'undefined' &&
+                  matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (_) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+    <ClientRouter fallback="animate" />
+    <link rel="icon" href="/favicon.svg">
+    <meta name="description" content={pageDescription}>
+    <meta name="theme-color" id="theme-color-meta" content="#050505">
+    <title>{pageTitle}</title>
+  </head>
+  <body class="min-h-full bg-void font-mono text-text selection:bg-accent/20">
+    <button
+      type="button"
+      id="theme-toggle"
+      class="theme-toggle fixed top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-[100] flex size-10 items-center justify-center rounded-lg border border-muted/40 bg-surface/90 text-muted shadow-sm backdrop-blur-sm transition-colors hover:border-accent/50 hover:text-accent"
+      aria-label="Switch to light mode"
+    >
+      <span class="theme-toggle-icon theme-toggle-icon--dark" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fill-rule="evenodd"
+            d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+      </span>
+      <span class="theme-toggle-icon theme-toggle-icon--light" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+        </svg>
+      </span>
+    </button>
+    <slot />
+    <script is:inline>
+      (function () {
+        var STORAGE = '100pua-theme';
+        function syncMeta() {
+          var t = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+          var meta = document.getElementById('theme-color-meta');
+          if (meta) {
+            meta.setAttribute('content', t === 'light' ? '#fafafa' : '#050505');
+          }
+          var btn = document.getElementById('theme-toggle');
+          if (btn) {
+            btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+          }
+        }
+        document.addEventListener('click', function (e) {
+          var t = e.target;
+          if (!t || !t.closest) return;
+          if (!t.closest('#theme-toggle')) return;
+          var cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+          var next = cur === 'light' ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', next);
+          try {
+            localStorage.setItem(STORAGE, next);
+          } catch (_) {}
+          syncMeta();
+        });
+        document.addEventListener('DOMContentLoaded', syncMeta);
+        document.addEventListener('astro:page-load', syncMeta);
+      })();
+    </script>
+  </body>
 </html>

@@ -1,0 +1,386 @@
+{
+  "slug": "self-organization-lmu-ws2025-2026",
+  "topicTitle": "Self-Organization and Pattern Formation",
+  "courseLine": "LMU Munich · Winter Semester 2025/26 · PhysicsOfLifeLMU playlist",
+  "promptCount": 54,
+  "prompts": [
+    {
+      "id": "apMmakW_090",
+      "title": "1. Self-Organization: From Bird Flocks to Living Cell",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n1. Self-Organization: From Bird Flocks to Living Cell",
+      "videoUrl": "https://www.youtube.com/watch?v=apMmakW_090",
+      "durationTimestamp": "1:05:32"
+    },
+    {
+      "id": "8ho6reZMHpI",
+      "title": "2. Dynamical Systems: Phase Space, Stability, Ginzburg-Landau, Evolutionary Game Theory",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n2. Dynamical Systems: Phase Space, Stability, Ginzburg-Landau, Evolutionary Game Theory",
+      "videoUrl": "https://www.youtube.com/watch?v=8ho6reZMHpI",
+      "durationTimestamp": "49:34"
+    },
+    {
+      "id": "WwdeAR7pf8o",
+      "title": "3. Dynamical Systems: Fixed Points, Saddle-Node & Pitchfork Bifurcations",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n3. Dynamical Systems: Fixed Points, Saddle-Node & Pitchfork Bifurcations",
+      "videoUrl": "https://www.youtube.com/watch?v=WwdeAR7pf8o",
+      "durationTimestamp": "41:32"
+    },
+    {
+      "id": "H3NzND75Wkw",
+      "title": "4. Dynamical Systems: Cusp Bifurcation, Hysteresis, Infection Model & Transcritical Bifurcation",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n4. Dynamical Systems: Cusp Bifurcation, Hysteresis, Infection Model & Transcritical Bifurcation",
+      "videoUrl": "https://www.youtube.com/watch?v=H3NzND75Wkw",
+      "durationTimestamp": "46:13"
+    },
+    {
+      "id": "6b0MYsmi7yE",
+      "title": "5. Dynamical Systems: Mass Conserving 2D, Turing Patterns, Stability Analysis, Jacobian Matrix",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n5. Dynamical Systems: Mass Conserving 2D, Turing Patterns, Stability Analysis, Jacobian Matrix",
+      "videoUrl": "https://www.youtube.com/watch?v=6b0MYsmi7yE",
+      "durationTimestamp": "41:42"
+    },
+    {
+      "id": "54Gt0-dz9Lw",
+      "title": "6. Dynamical Systems: 2D Non-Conservative Systems & Oscillators",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n6. Dynamical Systems: 2D Non-Conservative Systems & Oscillators",
+      "videoUrl": "https://www.youtube.com/watch?v=54Gt0-dz9Lw",
+      "durationTimestamp": "1:21:45"
+    },
+    {
+      "id": "Nnw61kYHD7k",
+      "title": "7. Dynamical Systems: Poincaré-Bendixson Theorem, RhoGTPase Oscillator & Rock-Paper-Scissors",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n7. Dynamical Systems: Poincaré-Bendixson Theorem, RhoGTPase Oscillator & Rock-Paper-Scissors",
+      "videoUrl": "https://www.youtube.com/watch?v=Nnw61kYHD7k",
+      "durationTimestamp": "40:05"
+    },
+    {
+      "id": "syM5Csifw2s",
+      "title": "8. Dynamical Systems: Replicator Dynamics & Spatial Extension, Lyapunov Function, Diffusion Equation",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n8. Dynamical Systems: Replicator Dynamics & Spatial Extension, Lyapunov Function, Diffusion Equation",
+      "videoUrl": "https://www.youtube.com/watch?v=syM5Csifw2s",
+      "durationTimestamp": "43:55"
+    },
+    {
+      "id": "g6yAz_RUkVk",
+      "title": "9. Relaxational Dynamics: Ginzburg-Landau Model, Model A, Interface Dynamics & Surface Tension",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n9. Relaxational Dynamics: Ginzburg-Landau Model, Model A, Interface Dynamics & Surface Tension",
+      "videoUrl": "https://www.youtube.com/watch?v=g6yAz_RUkVk",
+      "durationTimestamp": "44:03"
+    },
+    {
+      "id": "ckQYVwwaK3Y",
+      "title": "10. Relaxational Dynamics: Interface Dynamics & Curvature-Driven Flow",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n10. Relaxational Dynamics: Interface Dynamics & Curvature-Driven Flow",
+      "videoUrl": "https://www.youtube.com/watch?v=ckQYVwwaK3Y",
+      "durationTimestamp": "50:46"
+    },
+    {
+      "id": "G1Id6LT4YVQ",
+      "title": "11. Thermodynamics and Phase Separation in Liquid Mixtures, Maxwell Construction, Phase Diagrams",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n11. Thermodynamics and Phase Separation in Liquid Mixtures, Maxwell Construction, Phase Diagrams",
+      "videoUrl": "https://www.youtube.com/watch?v=G1Id6LT4YVQ",
+      "durationTimestamp": "49:39"
+    },
+    {
+      "id": "LpmaAVW2W8g",
+      "title": "12. Dynamics of Liquid Mixtures, Osmotic Pressure, Cahn-Hilliard Equation",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n12. Dynamics of Liquid Mixtures, Osmotic Pressure, Cahn-Hilliard Equation",
+      "videoUrl": "https://www.youtube.com/watch?v=LpmaAVW2W8g",
+      "durationTimestamp": "46:30"
+    },
+    {
+      "id": "iUIP1oCub4E",
+      "title": "13. The Lattice Gas Model & Mean-Field Theory, Mixing Entropy, Flory-Huggins Theory",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n13. The Lattice Gas Model & Mean-Field Theory, Mixing Entropy, Flory-Huggins Theory",
+      "videoUrl": "https://www.youtube.com/watch?v=iUIP1oCub4E",
+      "durationTimestamp": "44:08"
+    },
+    {
+      "id": "jtOX97RBRvE",
+      "title": "14. Cahn-Hilliard Equation & Phase Separation Dynamics, Dispersion Relation, Fastest Growing Mode",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n14. Cahn-Hilliard Equation & Phase Separation Dynamics, Dispersion Relation, Fastest Growing Mode",
+      "videoUrl": "https://www.youtube.com/watch?v=jtOX97RBRvE",
+      "durationTimestamp": "38:16"
+    },
+    {
+      "id": "yE4jD8Gpw30",
+      "title": "15. Nucleation Theory & Interface Dynamics, Gibbs-Thomson, Growth and Shrinkage of a Single Droplet",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n15. Nucleation Theory & Interface Dynamics, Gibbs-Thomson, Growth and Shrinkage of a Single Droplet",
+      "videoUrl": "https://www.youtube.com/watch?v=yE4jD8Gpw30",
+      "durationTimestamp": "49:47"
+    },
+    {
+      "id": "w-9fNMR_4Ps",
+      "title": "16. Ostwald Ripening & Coarsening Dynamics, Lifshitz-Slyozov-Wagner (LSW) Theory, T^(1/3) Scaling",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n16. Ostwald Ripening & Coarsening Dynamics, Lifshitz-Slyozov-Wagner (LSW) Theory, T^(1/3) Scaling",
+      "videoUrl": "https://www.youtube.com/watch?v=w-9fNMR_4Ps",
+      "durationTimestamp": "44:11"
+    },
+    {
+      "id": "kOQIKX5V5y0",
+      "title": "17. Chemotaxis & Active Motion of Bacteria, Run-and-Tumble Model, Drift-Diffusion Equation",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n17. Chemotaxis & Active Motion of Bacteria, Run-and-Tumble Model, Drift-Diffusion Equation",
+      "videoUrl": "https://www.youtube.com/watch?v=kOQIKX5V5y0",
+      "durationTimestamp": "49:13"
+    },
+    {
+      "id": "bF0Rzulfg7o",
+      "title": "18. Keller-Segel Model, Chemotactic Instability, Effective Free Energy, Finite-Time Blowup",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n18. Keller-Segel Model, Chemotactic Instability, Effective Free Energy, Finite-Time Blowup",
+      "videoUrl": "https://www.youtube.com/watch?v=bF0Rzulfg7o",
+      "durationTimestamp": "42:14"
+    },
+    {
+      "id": "XttygEX1ifo",
+      "title": "19. Scaler Active Matter, Motility-Induced Phase Separation, Effective Free Energy, Active Model B",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n19. Scaler Active Matter, Motility-Induced Phase Separation, Effective Free Energy, Active Model B",
+      "videoUrl": "https://www.youtube.com/watch?v=XttygEX1ifo",
+      "durationTimestamp": "45:38"
+    },
+    {
+      "id": "753MvEO_tKo",
+      "title": "20. Active Brownian Particles, Active Model B+, Bubbling Phase, Non-Equilibrium Chemical Potential",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n20. Active Brownian Particles, Active Model B+, Bubbling Phase, Non-Equilibrium Chemical Potential",
+      "videoUrl": "https://www.youtube.com/watch?v=753MvEO_tKo",
+      "durationTimestamp": "18:57"
+    },
+    {
+      "id": "owhJMSFyhKE",
+      "title": "21. Turing Patterns, The Swift-Hohenberg Equation, Amplitude Equation, Weakly Nonlinear Theory",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n21. Turing Patterns, The Swift-Hohenberg Equation, Amplitude Equation, Weakly Nonlinear Theory",
+      "videoUrl": "https://www.youtube.com/watch?v=owhJMSFyhKE",
+      "durationTimestamp": "1:18:24"
+    },
+    {
+      "id": "-0v8zPyJraI",
+      "title": "22. From Perturbation to Amplitude Equation, NWS Equation, Multiple Scale Analysis",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n22. From Perturbation to Amplitude Equation, NWS Equation, Multiple Scale Analysis",
+      "videoUrl": "https://www.youtube.com/watch?v=-0v8zPyJraI",
+      "durationTimestamp": "36:35"
+    },
+    {
+      "id": "SOrQscg7yo8",
+      "title": "23. Newell-Whitehead-Segel Equation, Symmetry Derivation of NWS, Secondary Instabilities",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n23. Newell-Whitehead-Segel Equation, Symmetry Derivation of NWS, Secondary Instabilities",
+      "videoUrl": "https://www.youtube.com/watch?v=SOrQscg7yo8",
+      "durationTimestamp": "42:52"
+    },
+    {
+      "id": "WG-bcCJ6d1Q",
+      "title": "24. Eckhaus & Zigzag Instabilities, Phase Winding Solution, Stripe Pattern Stability",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n24. Eckhaus & Zigzag Instabilities, Phase Winding Solution, Stripe Pattern Stability",
+      "videoUrl": "https://www.youtube.com/watch?v=WG-bcCJ6d1Q",
+      "durationTimestamp": "40:41"
+    },
+    {
+      "id": "xBAX8YG-eZk",
+      "title": "25. The Complex Ginzburg-Landau Equation",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n25. The Complex Ginzburg-Landau Equation",
+      "videoUrl": "https://www.youtube.com/watch?v=xBAX8YG-eZk",
+      "durationTimestamp": "48:17"
+    },
+    {
+      "id": "m0eH3DwjIws",
+      "title": "26. Stability of the Complex Ginzburg-Landau Equation",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n26. Stability of the Complex Ginzburg-Landau Equation",
+      "videoUrl": "https://www.youtube.com/watch?v=m0eH3DwjIws",
+      "durationTimestamp": "39:48"
+    },
+    {
+      "id": "SM0FBlVgnVM",
+      "title": "27. Phase Diagram of Complex Ginzburg-Landau Equation, Absolute/Convective Instability",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n27. Phase Diagram of Complex Ginzburg-Landau Equation, Absolute/Convective Instability",
+      "videoUrl": "https://www.youtube.com/watch?v=SM0FBlVgnVM",
+      "durationTimestamp": "24:42"
+    },
+    {
+      "id": "Lq575wbgj4c",
+      "title": "28. Application of CGLE, May-Leonard Model, Slow manifold reduction, Evolutionary Games",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n28. Application of CGLE, May-Leonard Model, Slow manifold reduction, Evolutionary Games",
+      "videoUrl": "https://www.youtube.com/watch?v=Lq575wbgj4c",
+      "durationTimestamp": "1:06:23"
+    },
+    {
+      "id": "Pat1hjqqhfE",
+      "title": "29. Reaction-Diffusion Waves, Front Spreading Velocity, Wavelength & Frequency Selection",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n29. Reaction-Diffusion Waves, Front Spreading Velocity, Wavelength & Frequency Selection",
+      "videoUrl": "https://www.youtube.com/watch?v=Pat1hjqqhfE",
+      "durationTimestamp": "41:22"
+    },
+    {
+      "id": "ywd7jVIubOo",
+      "title": "30. The Kuramoto Model & Synchronization Transition",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n30. The Kuramoto Model & Synchronization Transition",
+      "videoUrl": "https://www.youtube.com/watch?v=ywd7jVIubOo",
+      "durationTimestamp": "49:38"
+    },
+    {
+      "id": "R5o-olg8sNA",
+      "title": "31. Mass-Conserving Reaction-Diffusion Systems, E. coli Min Oscillations, ATP-Driven Non-equilibrium",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n31. Mass-Conserving Reaction-Diffusion Systems, E. coli Min Oscillations, ATP-Driven Non-equilibrium",
+      "videoUrl": "https://www.youtube.com/watch?v=R5o-olg8sNA",
+      "durationTimestamp": "49:32"
+    },
+    {
+      "id": "A1n5feuKECU",
+      "title": "32. Mass-Redistribution Instability, Adiabatic Elimination, Local Equilibrium & Moving Equilibria",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n32. Mass-Redistribution Instability, Adiabatic Elimination, Local Equilibrium & Moving Equilibria",
+      "videoUrl": "https://www.youtube.com/watch?v=A1n5feuKECU",
+      "durationTimestamp": "40:24"
+    },
+    {
+      "id": "G13qZThAN_k",
+      "title": "33. Geometric Construction of Stationary Patterns",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n33. Geometric Construction of Stationary Patterns",
+      "videoUrl": "https://www.youtube.com/watch?v=G13qZThAN_k",
+      "durationTimestamp": "46:32"
+    },
+    {
+      "id": "mgPCCdvXy8U",
+      "title": "34. Steady-State Phase Diagram & Bulk Gradient Effects",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n34. Steady-State Phase Diagram & Bulk Gradient Effects",
+      "videoUrl": "https://www.youtube.com/watch?v=mgPCCdvXy8U",
+      "durationTimestamp": "32:00"
+    },
+    {
+      "id": "RJYFn4uqtVU",
+      "title": "35. Bulk-Boundary Coupling & Nucleotide Exchange",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n35. Bulk-Boundary Coupling & Nucleotide Exchange",
+      "videoUrl": "https://www.youtube.com/watch?v=RJYFn4uqtVU",
+      "durationTimestamp": "47:13"
+    },
+    {
+      "id": "LHyAPJB9WBw",
+      "title": "36. Stationary Solutions & Emergent Saturation Effect",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n36. Stationary Solutions & Emergent Saturation Effect",
+      "videoUrl": "https://www.youtube.com/watch?v=LHyAPJB9WBw",
+      "durationTimestamp": "32:43"
+    },
+    {
+      "id": "gWPz8GWzL1s",
+      "title": "37. Linear Stability Analysis in Box Geometry",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n37. Linear Stability Analysis in Box Geometry",
+      "videoUrl": "https://www.youtube.com/watch?v=gWPz8GWzL1s",
+      "durationTimestamp": "38:26"
+    },
+    {
+      "id": "IRfIwsuEJ5Y",
+      "title": "38. Modeling the E. coli Min System: The Skeleton Model",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n38. Modeling the E. coli Min System: The Skeleton Model",
+      "videoUrl": "https://www.youtube.com/watch?v=IRfIwsuEJ5Y",
+      "durationTimestamp": "43:53"
+    },
+    {
+      "id": "d5zHe_l-u0Y",
+      "title": "39. Linear Stability Analysis for Min Skeleton Model",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n39. Linear Stability Analysis for Min Skeleton Model",
+      "videoUrl": "https://www.youtube.com/watch?v=d5zHe_l-u0Y",
+      "durationTimestamp": "51:07"
+    },
+    {
+      "id": "GuvPyNTxIDU",
+      "title": "40. The Min Switch Model & Robustness",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n40. The Min Switch Model & Robustness",
+      "videoUrl": "https://www.youtube.com/watch?v=GuvPyNTxIDU",
+      "durationTimestamp": "25:43"
+    },
+    {
+      "id": "v4EfiHVqb6w",
+      "title": "41. Model A/B/C, Solidification Dynamics & Phase Field Model",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n41. Model A/B/C, Solidification Dynamics & Phase Field Model",
+      "videoUrl": "https://www.youtube.com/watch?v=v4EfiHVqb6w",
+      "durationTimestamp": "46:38"
+    },
+    {
+      "id": "t8ma3nWgLdI",
+      "title": "42. Coarsening Dynamics in Mass-Conserving Systems",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n42. Coarsening Dynamics in Mass-Conserving Systems",
+      "videoUrl": "https://www.youtube.com/watch?v=t8ma3nWgLdI",
+      "durationTimestamp": "41:09"
+    },
+    {
+      "id": "yP-26YzRbDc",
+      "title": "43. Universal Growth Laws & Logarithmic Coarsening",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n43. Universal Growth Laws & Logarithmic Coarsening",
+      "videoUrl": "https://www.youtube.com/watch?v=yP-26YzRbDc",
+      "durationTimestamp": "46:39"
+    },
+    {
+      "id": "66Kz9CcjAU8",
+      "title": "44. Scaling Analysis of the Coarsening Law",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n44. Scaling Analysis of the Coarsening Law",
+      "videoUrl": "https://www.youtube.com/watch?v=66Kz9CcjAU8",
+      "durationTimestamp": "45:26"
+    },
+    {
+      "id": "FyRsh1Sn7uc",
+      "title": "45. From Peaks to Mesas: Interaction via Exponential Tails, Asymptotic Analysis of Pattern Evolution",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n45. From Peaks to Mesas: Interaction via Exponential Tails, Asymptotic Analysis of Pattern Evolution",
+      "videoUrl": "https://www.youtube.com/watch?v=FyRsh1Sn7uc",
+      "durationTimestamp": "51:48"
+    },
+    {
+      "id": "-Xcu7V1OnZM",
+      "title": "46. Arrested Coarsening via Weakly Broken Mass Conservation",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n46. Arrested Coarsening via Weakly Broken Mass Conservation",
+      "videoUrl": "https://www.youtube.com/watch?v=-Xcu7V1OnZM",
+      "durationTimestamp": "40:03"
+    },
+    {
+      "id": "JMWdwLs2hp8",
+      "title": "47. Linear Stability Analysis of Weakly Broken Mass Conservation",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n47. Linear Stability Analysis of Weakly Broken Mass Conservation",
+      "videoUrl": "https://www.youtube.com/watch?v=JMWdwLs2hp8",
+      "durationTimestamp": "41:36"
+    },
+    {
+      "id": "YkOy2x1bxlU",
+      "title": "48. The Mechanism of Mesa Splitting: Source-Driven Lateral Instability",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n48. The Mechanism of Mesa Splitting: Source-Driven Lateral Instability",
+      "videoUrl": "https://www.youtube.com/watch?v=YkOy2x1bxlU",
+      "durationTimestamp": "48:29"
+    },
+    {
+      "id": "JafNcQP_r9A",
+      "title": "49. Interrupted Coarsening of Mesas & The Gibbs-Thomson Relation",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n49. Interrupted Coarsening of Mesas & The Gibbs-Thomson Relation",
+      "videoUrl": "https://www.youtube.com/watch?v=JafNcQP_r9A",
+      "durationTimestamp": "55:44"
+    },
+    {
+      "id": "OWPaUaizE9I",
+      "title": "50. A Geometric Analysis of Surface Tension in Multicomponent Reaction-Diffusion Systems",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n50. A Geometric Analysis of Surface Tension in Multicomponent Reaction-Diffusion Systems",
+      "videoUrl": "https://www.youtube.com/watch?v=OWPaUaizE9I",
+      "durationTimestamp": "39:03"
+    },
+    {
+      "id": "huBb0fFzSgQ",
+      "title": "51. The Gibbs Thomson Relation in Reaction Diffusion Systems From Surface Tension to Geometric Drift",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n51. The Gibbs Thomson Relation in Reaction Diffusion Systems From Surface Tension to Geometric Drift",
+      "videoUrl": "https://www.youtube.com/watch?v=huBb0fFzSgQ",
+      "durationTimestamp": "1:03:21"
+    },
+    {
+      "id": "eli-yFBO7as",
+      "title": "52. Effective Interfacial Tension in Single-species, Two-component McRD Systems",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n52. Effective Interfacial Tension in Single-species, Two-component McRD Systems",
+      "videoUrl": "https://www.youtube.com/watch?v=eli-yFBO7as",
+      "durationTimestamp": "40:04"
+    },
+    {
+      "id": "kVLkR8gWgZE",
+      "title": "53. Deriving the Non-Equilibrium Gibbs-Thomson Relation in Multicomponent McRD Systems",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n53. Deriving the Non-Equilibrium Gibbs-Thomson Relation in Multicomponent McRD Systems",
+      "videoUrl": "https://www.youtube.com/watch?v=kVLkR8gWgZE",
+      "durationTimestamp": "45:23"
+    },
+    {
+      "id": "YEihM9empg0",
+      "title": "54. Turing Foams and Non-Equilibrium Surface Tension",
+      "query": "Help me understand this topic from a lecture (self-organization / pattern formation):\n\n54. Turing Foams and Non-Equilibrium Surface Tension",
+      "videoUrl": "https://www.youtube.com/watch?v=YEihM9empg0",
+      "durationTimestamp": "1:23:05"
+    }
+  ]
+}

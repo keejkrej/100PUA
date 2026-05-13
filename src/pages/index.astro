@@ -1,90 +1,43 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import topics from '../data/topics.manifest.json';
+
+const pageTitle = '100 prompts to understand anything';
 ---
 
-<Layout>
+<Layout pageTitle={pageTitle}>
   <main class="flex flex-col text-text">
     <div class="relative flex min-h-screen flex-col items-center justify-center px-6">
       <!-- Subtle ambient glow -->
       <div class="pointer-events-none absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.03]" style="background: radial-gradient(circle, #22d3ee 0%, transparent 70%);"></div>
-      
-      <div class="relative z-10 w-full max-w-xs">
-        <!-- Header -->
+
+      <div class="relative z-10 w-full max-w-3xl">
         <header class="animate-fade-in-up mb-16 opacity-0" style="animation-delay: 0s;">
-          <h1 class="text-text text-xl tracking-tight">theo</h1>
-          <p class="text-muted mt-1 text-sm">builds things</p>
+          <h1 class="text-text text-xl tracking-tight">100 prompts to understand anything</h1>
+          <p class="text-muted mt-1 text-sm">Choose a topic, then fire each lecture title at ChatGPT as a prompt.</p>
         </header>
-        
-        <!-- Links -->
+
         <nav class="flex flex-col gap-0">
-          <a href="https://t3.chat/" target="_blank" rel="noopener noreferrer" class="group animate-fade-in-up relative flex items-center justify-between py-3 opacity-0" style="animation-delay: 0.05s;">
-            <span class="text-subtle group-hover:text-text transition-colors duration-200"> t3.chat </span>
-            <span class="text-muted opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
-                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
-              </svg>
-            </span>
-            <span class="bg-accent/40 absolute bottom-2 left-0 h-px w-0 transition-all duration-300 ease-out group-hover:w-full"></span>
-          </a>
-          <a href="https://t3.codes/" target="_blank" rel="noopener noreferrer" class="group animate-fade-in-up relative flex items-center justify-between py-3 opacity-0" style="animation-delay: 0.1s;">
-            <span class="text-subtle group-hover:text-text transition-colors duration-200"> t3.code </span>
-            <span class="text-muted opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
-                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
-              </svg>
-            </span>
-            <span class="bg-accent/40 absolute bottom-2 left-0 h-px w-0 transition-all duration-300 ease-out group-hover:w-full"></span>
-          </a>
-          <a href="https://youtube.com/@t3dotgg" target="_blank" rel="noopener noreferrer" class="group animate-fade-in-up relative flex items-center justify-between py-3 opacity-0" style="animation-delay: 0.15s;">
-            <span class="text-subtle group-hover:text-text transition-colors duration-200"> youtube </span>
-            <span class="text-muted opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
-                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
-              </svg>
-            </span>
-            <span class="bg-accent/40 absolute bottom-2 left-0 h-px w-0 transition-all duration-300 ease-out group-hover:w-full"></span>
-          </a>
-          <a href="https://create.t3.gg/" target="_blank" rel="noopener noreferrer" class="group animate-fade-in-up relative flex items-center justify-between py-3 opacity-0" style="animation-delay: 0.2s;">
-            <span class="text-subtle group-hover:text-text transition-colors duration-200"> create-t3-app </span>
-            <span class="text-muted opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
-                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
-              </svg>
-            </span>
-            <span class="bg-accent/40 absolute bottom-2 left-0 h-px w-0 transition-all duration-300 ease-out group-hover:w-full"></span>
-          </a>
-          <a href="https://t3.gg/blog" class="group animate-fade-in-up relative flex items-center justify-between py-3 opacity-0" style="animation-delay: 0.25s;">
-            <span class="text-subtle group-hover:text-text transition-colors duration-200"> blog </span>
-            <span class="text-muted opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-              </svg>
-            </span>
-            <span class="bg-accent/40 absolute bottom-2 left-0 h-px w-0 transition-all duration-300 ease-out group-hover:w-full"></span>
-          </a>
-          <a href="https://t3.gg/sponsors" class="group animate-fade-in-up relative flex items-center justify-between py-3 opacity-0" style="animation-delay: 0.3s;">
-            <span class="text-subtle group-hover:text-text transition-colors duration-200"> sponsors </span>
-            <span class="text-muted opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-              </svg>
-            </span>
-            <span class="bg-accent/40 absolute bottom-2 left-0 h-px w-0 transition-all duration-300 ease-out group-hover:w-full"></span>
-          </a>
+          {topics.map((t, idx) => (
+            <a
+              href={`/topic/${t.slug}`}
+              class="group animate-fade-in-up relative flex items-center justify-between py-3 opacity-0"
+              style={`animation-delay: ${0.05 + idx * 0.05}s;`}
+              transition:name={`topic-${t.slug}`}
+            >
+              <span class="flex min-w-0 flex-1 flex-col text-left">
+                <span class="text-subtle group-hover:text-text transition-colors duration-200">{t.topicTitle}</span>
+                <span class="text-muted mt-1 text-[11px] tracking-wide">{t.courseLine}</span>
+              </span>
+              <span class="text-muted ml-4 shrink-0 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+              </span>
+              <span class="bg-accent/40 absolute bottom-2 left-0 h-px w-0 transition-all duration-300 ease-out group-hover:w-full"></span>
+            </a>
+          ))}
         </nav>
-        
-        <!-- Footer -->
-        <footer class="mt-16 flex items-center gap-x-5 border-t border-white/5 pt-6 text-sm tracking-wider opacity-0 animate-fade-in-up" style="animation-delay: 0.35s;">
-          <a href="https://github.com/t3dotgg" target="_blank" rel="noopener noreferrer" class="text-muted transition-colors duration-200 hover:text-text"> gh </a>
-          <a href="https://twitter.com/theo" target="_blank" rel="noopener noreferrer" class="text-muted transition-colors duration-200 hover:text-text"> x </a>
-          <a href="https://youtube.com/@t3dotgg" target="_blank" rel="noopener noreferrer" class="text-muted transition-colors duration-200 hover:text-text"> yt </a>
-          <a href="https://twitch.tv/theo" target="_blank" rel="noopener noreferrer" class="text-muted transition-colors duration-200 hover:text-text"> twitch </a>
-          <a href="https://discord.gg/xHdCpcPHRE" target="_blank" rel="noopener noreferrer" class="text-muted transition-colors duration-200 hover:text-text"> discord </a>
-        </footer>
       </div>
     </div>
   </main>
