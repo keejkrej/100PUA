@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import SuggestFAB from '../../components/SuggestFAB.astro';
 import { buildChatQuery } from '../../lib/chat-query';
 import manifest from '../../data/topics.manifest.json';
 import nonequilibriumDoc from '../../data/nonequilibrium-lmu-ss2025.json';
@@ -47,7 +48,11 @@ const pageTitle = `${topic.topicTitle} · prompts`;
           <p class="text-muted mt-2 text-[11px] tracking-wide">{topic.promptCount} prompts · opened rows show in accent color</p>
         </header>
 
-        <p class="animate-fade-in-up mb-6 opacity-0 text-left" style="animation-delay: 0.055s;">
+        <div
+          class="animate-fade-in-up mb-6 flex items-center justify-between gap-4 opacity-0"
+          style="animation-delay: 0.055s;"
+        >
+          <SuggestFAB mode="prompt" topicSlug={slug} topicTitle={topic.topicTitle} />
           <button
             type="button"
             id="prompt-progress-reset"
@@ -56,7 +61,7 @@ const pageTitle = `${topic.topicTitle} · prompts`;
           >
             reset
           </button>
-        </p>
+        </div>
 
         <nav class="flex flex-col gap-0" data-topic-slug={slug}>
           {topic.prompts.map((p, i) => (

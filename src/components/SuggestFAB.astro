@@ -1,0 +1,371 @@
+---
+interface Props {
+  /** New topic playlist vs new row under current topic */
+  mode: 'topic' | 'prompt';
+  topicSlug?: string;
+  topicTitle?: string;
+}
+
+const { mode, topicSlug = '', topicTitle = '' } = Astro.props;
+
+const githubRepo =
+  typeof import.meta.env.PUBLIC_GITHUB_REPO === 'string' && import.meta.env.PUBLIC_GITHUB_REPO.trim()
+    ? import.meta.env.PUBLIC_GITHUB_REPO.trim()
+    : 'keejkrej/100PUA';
+
+const suggestApiBase =
+  typeof import.meta.env.PUBLIC_SUGGEST_API_URL === 'string' &&
+  import.meta.env.PUBLIC_SUGGEST_API_URL.trim()
+    ? import.meta.env.PUBLIC_SUGGEST_API_URL.trim().replace(/\/+$/, '')
+    : '';
+
+const useSuggestApi = suggestApiBase.length > 0;
+
+const heading =
+  mode === 'topic'
+    ? 'Suggest a topic'
+    : `Suggest a prompt · ${topicTitle.slice(0, 48)}${topicTitle.length > 48 ? '…' : ''}`;
+---
+
+<button
+  type="button"
+  id="suggest-open"
+  class="text-muted cursor-pointer text-[11px] tracking-wide underline decoration-transparent underline-offset-2 transition-colors hover:text-accent hover:decoration-accent/60"
+  aria-haspopup="dialog"
+  aria-controls="suggest-dialog"
+  aria-label={
+    mode === 'topic'
+      ? useSuggestApi
+        ? 'Suggest a new topic'
+        : 'Suggest a new topic via GitHub'
+      : useSuggestApi
+        ? 'Suggest a new prompt'
+        : 'Suggest a new prompt via GitHub'
+  }
+>
+  add
+</button>
+
+<dialog
+  id="suggest-dialog"
+  class="fixed left-1/2 top-1/2 z-[100] w-[min(100%,28rem)] max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-muted/40 bg-surface p-6 text-text shadow-xl backdrop:bg-black/50 open:flex open:flex-col"
+>
+  <form id="suggest-form" class="flex flex-col gap-4">
+    <div class="flex items-start justify-between gap-3">
+      <h2 class="text-sm font-medium leading-snug tracking-tight text-text">{heading}</h2>
+      <button
+        type="button"
+        id="suggest-close"
+        class="text-muted -mr-1 -mt-1 shrink-0 rounded px-2 py-1 text-lg leading-none transition-colors hover:text-text"
+        aria-label="Close"
+      >
+        ×
+      </button>
+    </div>
+    <p class="text-[11px] leading-relaxed text-muted" id="suggest-disclaimer">
+      {
+        useSuggestApi ? (
+          <>
+            Your suggestion is turned into an issue automatically. Nothing is saved on this device
+            except what you submit.
+          </>
+        ) : (
+          <>
+            This opens GitHub’s new-issue page with your text filled in. You must be signed in
+            there to create the issue; nothing is posted from this site directly.
+          </>
+        )
+      }
+    </p>
+    <p id="suggest-feedback" role="status" class="hidden text-[11px] leading-relaxed"></p>
+
+    <div id="suggest-fields" class="flex flex-col gap-4">
+      {
+        mode === 'topic' ? (
+          <>
+            <div class="flex flex-col gap-1.5">
+              <label for="suggest-topic-title" class="text-[11px] text-muted">
+                Title (short)
+              </label>
+              <input
+                id="suggest-topic-title"
+                name="title"
+                required
+                maxlength="120"
+                autocomplete="off"
+                class="rounded-lg border border-muted/40 bg-void px-3 py-2 text-sm text-text outline-none ring-accent/30 transition-shadow focus:border-accent/50 focus:ring-2"
+                placeholder="e.g. MIT 8.04 Quantum Physics playlist"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="suggest-topic-body" class="text-[11px] text-muted">
+                Notes (links, why it fits, CSV source…)
+              </label>
+              <textarea
+                id="suggest-topic-body"
+                name="body"
+                rows="5"
+                maxlength="4000"
+                class="resize-y rounded-lg border border-muted/40 bg-void px-3 py-2 text-sm text-text outline-none ring-accent/30 transition-shadow focus:border-accent/50 focus:ring-2"
+                placeholder="Optional details"
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div class="flex flex-col gap-1.5">
+              <label for="suggest-prompt-title" class="text-[11px] text-muted">
+                Suggested title (optional)
+              </label>
+              <input
+                id="suggest-prompt-title"
+                name="pretitle"
+                maxlength="200"
+                autocomplete="off"
+                class="rounded-lg border border-muted/40 bg-void px-3 py-2 text-sm text-text outline-none ring-accent/30 transition-shadow focus:border-accent/50 focus:ring-2"
+                placeholder="Lecture line or short label"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="suggest-prompt-body" class="text-[11px] text-muted">
+                Prompt text or source (YouTube URL, chapter, etc.)
+              </label>
+              <textarea
+                id="suggest-prompt-body"
+                name="body"
+                required
+                rows="5"
+                maxlength="4000"
+                class="resize-y rounded-lg border border-muted/40 bg-void px-3 py-2 text-sm text-text outline-none ring-accent/30 transition-shadow focus:border-accent/50 focus:ring-2"
+                placeholder="What should the new row say or link to?"
+              />
+            </div>
+          </>
+        )
+      }
+
+      <button
+        type="submit"
+        id="suggest-submit"
+        class="rounded-lg border border-accent/40 bg-accent/10 py-2.5 text-sm text-accent transition-colors hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {useSuggestApi ? 'Submit suggestion' : 'Open GitHub draft'}
+      </button>
+    </div>
+  </form>
+</dialog>
+
+<script is:inline define:vars={{ githubRepo, mode, topicSlug, topicTitle, suggestApiBase, useSuggestApi }}>
+  (function suggestFab() {
+    var openBtn = document.getElementById('suggest-open');
+    var dlg = document.getElementById('suggest-dialog');
+    var closeBtn = document.getElementById('suggest-close');
+    var form = document.getElementById('suggest-form');
+    if (!openBtn || !dlg || !closeBtn || !form) return;
+    if (dlg.dataset.bound === '1') return;
+    dlg.dataset.bound = '1';
+
+    var URL_MAX = 7800;
+    var feedback = document.getElementById('suggest-feedback');
+    var fieldsWrap = document.getElementById('suggest-fields');
+    var disclaim = document.getElementById('suggest-disclaimer');
+    var submitBtn = document.getElementById('suggest-submit');
+
+    function showFeedback(ok, html) {
+      if (!feedback) return;
+      feedback.classList.remove('hidden', 'text-accent', 'text-muted');
+      feedback.classList.add(ok ? 'text-muted' : 'text-accent');
+      feedback.innerHTML = html || '';
+      if (!(html || '').trim()) {
+        feedback.classList.add('hidden');
+        feedback.innerHTML = '';
+      }
+    }
+
+    function resetDialogUI() {
+      showFeedback(true, '');
+      if (feedback) feedback.classList.add('hidden');
+      if (fieldsWrap) fieldsWrap.classList.remove('hidden');
+      if (disclaim) disclaim.classList.remove('hidden');
+      form.reset();
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent =
+          typeof useSuggestApi !== 'undefined' && useSuggestApi
+            ? 'Submit suggestion'
+            : 'Open GitHub draft';
+      }
+    }
+
+    function escapeAttrHref(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    }
+
+    function buildGithubDraftUrl(title, body) {
+      var t = title;
+      var b = body;
+      var u =
+        'https://github.com/' +
+        githubRepo +
+        '/issues/new?title=' +
+        encodeURIComponent(t) +
+        '&body=' +
+        encodeURIComponent(b);
+      while (u.length > URL_MAX && b.length > 80) {
+        b = b.slice(0, b.length - 120) + '\n\n_(trimmed for URL length — add more on GitHub if needed)_';
+        u =
+          'https://github.com/' +
+          githubRepo +
+          '/issues/new?title=' +
+          encodeURIComponent(t) +
+          '&body=' +
+          encodeURIComponent(b);
+      }
+      return u;
+    }
+
+    openBtn.addEventListener('click', function () {
+      resetDialogUI();
+      dlg.showModal();
+    });
+    closeBtn.addEventListener('click', function () {
+      dlg.close();
+    });
+    dlg.addEventListener('click', function (e) {
+      if (e.target === dlg) dlg.close();
+    });
+
+    dlg.addEventListener('close', function () {
+      resetDialogUI();
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!submitBtn) return;
+
+      var footerDraft =
+        '\n\n---\n_Sent via [100 prompts site](https://github.com/' +
+        githubRepo +
+        '). Not created until you submit on GitHub._';
+
+      function topicValues() {
+        var titEl = document.getElementById('suggest-topic-title');
+        var bodEl = document.getElementById('suggest-topic-body');
+        return {
+          tit: titEl && titEl.value ? titEl.value.trim() : '',
+          bod: bodEl && bodEl.value ? bodEl.value.trim() : '',
+        };
+      }
+
+      function promptValues() {
+        var preEl = document.getElementById('suggest-prompt-title');
+        var pbEl = document.getElementById('suggest-prompt-body');
+        return {
+          pre: preEl && preEl.value ? preEl.value.trim() : '',
+          pb: pbEl && pbEl.value ? pbEl.value.trim() : '',
+        };
+      }
+
+      if (useSuggestApi && suggestApiBase) {
+        /** @type {{ mode: string } & Record<string, unknown>} */
+        var apiPayload;
+        if (mode === 'topic') {
+          var tv = topicValues();
+          if (!tv.tit) return;
+          apiPayload = { mode: 'topic', title: tv.tit, notes: tv.bod };
+        } else {
+          var pv = promptValues();
+          if (!pv.pb) return;
+          apiPayload = {
+            mode: 'prompt',
+            topicTitle: topicTitle,
+            topicSlug: topicSlug,
+            pretitle: pv.pre,
+            promptBody: pv.pb,
+          };
+        }
+
+        submitBtn.disabled = true;
+        showFeedback(true, '');
+
+        fetch(suggestApiBase + '/suggestions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(apiPayload),
+        })
+          .then(function (r) {
+            return r.text().then(function (t) {
+              /** @type {unknown} */
+              var parsed = null;
+              try {
+                parsed = JSON.parse(t);
+              } catch {
+                parsed = {};
+              }
+              return { ok: r.ok, status: r.status, json: parsed };
+            });
+          })
+          .then(function (resp) {
+            var j = /** @type {{ issueUrl?: string; error?: string }} */ (resp.json || {});
+            if (resp.ok && j.issueUrl) {
+              showFeedback(
+                true,
+                'Created. <a class="underline decoration-accent/50 hover:text-accent" href="' +
+                  escapeAttrHref(j.issueUrl) +
+                  '" target="_blank" rel="noopener noreferrer">View issue</a>'
+              );
+              if (fieldsWrap) fieldsWrap.classList.add('hidden');
+              if (disclaim) disclaim.classList.add('hidden');
+            } else {
+              var msg =
+                j.error === 'rate_limit'
+                  ? 'Too many attempts — try again later.'
+                  : j.error === 'invalid_payload'
+                    ? 'Invalid input.'
+                    : j.error === 'origin_not_allowed'
+                      ? 'Origin blocked by server config.'
+                      : resp.status >= 503
+                        ? 'Service unavailable.'
+                        : 'Could not create issue.';
+              showFeedback(false, msg);
+              submitBtn.disabled = false;
+            }
+          })
+          .catch(function () {
+            showFeedback(false, 'Could not reach server.');
+            submitBtn.disabled = false;
+          });
+        return;
+      }
+
+      var title;
+      var body;
+      if (mode === 'topic') {
+        var tv2 = topicValues();
+        if (!tv2.tit) return;
+        title = 'Suggestion: new topic · ' + tv2.tit.slice(0, 100);
+        body =
+          '### Proposed topic\n' +
+          tv2.tit +
+          '\n\n### Notes\n' +
+          (tv2.bod || '_none_') +
+          footerDraft;
+      } else {
+        var pv2 = promptValues();
+        if (!pv2.pb) return;
+        title = 'Suggestion: new prompt · ' + (pv2.pre || topicTitle).slice(0, 80);
+        body =
+          '### Topic\n' +
+          topicTitle +
+          '\n**Slug:** `' +
+          topicSlug +
+          '`\n\n### Suggested row / prompt\n' +
+          (pv2.pre ? '**Title:** ' + pv2.pre + '\n\n' : '') +
+          pv2.pb +
+          footerDraft;
+      }
+      window.open(buildGithubDraftUrl(title, body), '_blank', 'noopener,noreferrer');
+      dlg.close();
+    });
+  })();
+</script>

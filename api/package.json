@@ -1,0 +1,16 @@
+{
+  "name": "100pua-suggest-api",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.9",
+    "hono": "^4.11.10"
+  }
+}
