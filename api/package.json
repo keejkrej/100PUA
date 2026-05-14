@@ -6,9 +6,10 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "build": "node scripts/build-prompt-index.mjs",
-    "start": "node server.mjs",
-    "dev": "node server.mjs"
+    "build": "tsc && node dist/scripts/build-prompt-index.js",
+    "start": "node dist/server.js",
+    "dev": "tsx watch server.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.141",
@@ -16,5 +17,10 @@
     "dotenv": "^16.5.0",
     "hono": "^4.11.10",
     "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.17",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
   }
 }

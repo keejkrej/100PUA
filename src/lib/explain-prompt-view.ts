@@ -121,17 +121,32 @@ function mountError(display: string) {
   }
 }
 
+let activeExplainKey: string | null = null;
+let activeExplainAbort: AbortController | null = null;
+
 export function initExplainPromptView(root: HTMLElement) {
+  if (root.dataset.explainInit === '1') return;
   const suggestApiBase = root.dataset.explainApi?.trim();
   const slug = root.dataset.explainSlug?.trim();
   const promptId = root.dataset.explainPromptId?.trim();
 
   if (!suggestApiBase || !slug || !promptId) return;
 
+  root.dataset.explainInit = '1';
+
+  const key = `${slug}:${promptId}`;
+  if (activeExplainKey !== key && activeExplainAbort) {
+    activeExplainAbort.abort();
+  }
+  activeExplainKey = key;
+  const controller = new AbortController();
+  activeExplainAbort = controller;
+
   fetch(`${suggestApiBase}/explain-prompt`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ slug, promptId }),
+    signal: controller.signal,
   })
     .then((r) =>
       r.text().then((t) => {
@@ -145,6 +160,7 @@ export function initExplainPromptView(root: HTMLElement) {
       }),
     )
     .then((resp) => {
+      if (activeExplainKey !== key) return;
       const j = resp.json;
       if (resp.ok && typeof j.answer === 'string') mountAnswer(j.answer);
       else {
@@ -157,5 +173,39 @@ export function initExplainPromptView(root: HTMLElement) {
         mountError(msg);
       }
     })
-    .catch(() => mountError('Network error.'));
+    .catch((e: unknown) => {
+      if (e instanceof DOMException && e.name === 'AbortError') return;
+      if (activeExplainKey !== key) return;
+      mountError('Network error.');
+    })
+    .finally(() => {
+      if (activeExplainAbort === controller) activeExplainAbort = null;
+    });
+}
+
+let explainWireInstalled = false;
+
+/**
+ * View Transitions swap pages without a full reload; module scripts can run before
+ * the new DOM is present. Re-run after each navigation via `astro:page-load`, like
+ * the topic list progress script.
+ */
+export function wireExplainPromptView() {
+  function boot() {
+    const root = document.querySelector<HTMLElement>('section[data-explain-api]');
+    if (!root) return;
+    initExplainPromptView(root);
+  }
+
+  if (!explainWireInstalled) {
+    explainWireInstalled = true;
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
+    }
+    document.addEventListener('astro:page-load', boot);
+  } else {
+    boot();
+  }
 }

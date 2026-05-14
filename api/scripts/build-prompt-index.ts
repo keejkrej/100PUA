@@ -2,18 +2,34 @@
  * Writes api/data/prompt-index.json from ../src/data (repo root relative to api/).
  * Run from api/: `npm run build` (Render build includes this).
  */
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const apiRoot = path.join(__dirname, '..');
+const __dirnamePath = path.dirname(fileURLToPath(import.meta.url));
+/** `dist/scripts` when compiled, `scripts` when run via tsx from source. */
+const apiRoot =
+  path.basename(path.dirname(__dirnamePath)) === 'dist'
+    ? path.resolve(__dirnamePath, '..', '..')
+    : path.resolve(__dirnamePath, '..');
 const repoRoot = path.join(apiRoot, '..');
 const manifestPath = path.join(repoRoot, 'src', 'data', 'topics.manifest.json');
 const outDir = path.join(apiRoot, 'data');
 const outPath = path.join(outDir, 'prompt-index.json');
 
-function buildChatQuery(prompt) {
+type ManifestRow = { slug?: string };
+type TopicPrompt = {
+  id?: string;
+  title?: string;
+  videoUrl?: string;
+  query?: string;
+};
+type TopicFile = {
+  topicTitle?: string;
+  prompts?: TopicPrompt[];
+};
+
+function buildChatQuery(prompt: TopicPrompt): string {
   const url = (prompt.videoUrl ?? '').trim();
   const base = (prompt.query ?? '').trimEnd();
   if (!url) return base;
@@ -21,15 +37,18 @@ function buildChatQuery(prompt) {
   return `${base}\n\nYouTube lecture (use this URL when looking up captions or transcript): ${url}`;
 }
 
-function main() {
+function main(): void {
   const raw = fs.readFileSync(manifestPath, 'utf8');
-  const manifest = JSON.parse(raw);
-  if (!Array.isArray(manifest)) throw new Error('topics.manifest.json must be an array');
+  const manifest: unknown = JSON.parse(raw);
+  if (!Array.isArray(manifest))
+    throw new Error('topics.manifest.json must be an array');
 
-  /** @type {Record<string, Record<string, { topicTitle: string; title: string; chatQuery: string }>>} */
-  const index = {};
+  const index: Record<
+    string,
+    Record<string, { topicTitle: string; title: string; chatQuery: string }>
+  > = {};
 
-  for (const row of manifest) {
+  for (const row of manifest as ManifestRow[]) {
     const slug = row?.slug;
     if (typeof slug !== 'string' || !slug) continue;
     const topicPath = path.join(repoRoot, 'src', 'data', `${slug}.json`);
@@ -37,7 +56,9 @@ function main() {
       console.warn('[build-prompt-index] skip missing topic file:', topicPath);
       continue;
     }
-    const topic = JSON.parse(fs.readFileSync(topicPath, 'utf8'));
+    const topic = JSON.parse(
+      fs.readFileSync(topicPath, 'utf8'),
+    ) as TopicFile;
     const prompts = topic?.prompts;
     if (!Array.isArray(prompts)) continue;
     index[slug] = {};

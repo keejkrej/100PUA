@@ -146,10 +146,9 @@ const explainEnabled = suggestApiBase.length > 0;
   {
     explainEnabled ? (
       <script>
-        import { initExplainPromptView } from '../../../../lib/explain-prompt-view';
+        import { wireExplainPromptView } from '../../../../lib/explain-prompt-view';
 
-        const root = document.querySelector('[data-explain-api]');
-        if (root instanceof HTMLElement) initExplainPromptView(root);
+        wireExplainPromptView();
       </script>
     ) : null
   }

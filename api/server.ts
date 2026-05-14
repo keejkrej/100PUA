@@ -33,12 +33,12 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { query } from '@anthropic-ai/claude-agent-sdk';
+import { query, type Query } from '@anthropic-ai/claude-agent-sdk';
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
-import { createExplainCache, explainCacheActive } from './explain-cache.mjs';
+import { createExplainCache, explainCacheActive } from './explain-cache.js';
 
 const PORT = Number(process.env.PORT) || 8787;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
@@ -47,23 +47,34 @@ const ALLOWED_ORIGINS_RAW = (process.env.ALLOWED_ORIGINS ?? '*').trim();
 const RATE_LIMIT = Number.isFinite(Number(process.env.SUGGEST_RATE_LIMIT))
   ? Math.max(5, Number(process.env.SUGGEST_RATE_LIMIT))
   : 20;
-const RATE_WINDOW_MS = Number.isFinite(Number(process.env.SUGGEST_RATE_WINDOW_MS))
+const RATE_WINDOW_MS = Number.isFinite(
+  Number(process.env.SUGGEST_RATE_WINDOW_MS),
+)
   ? Math.max(60_000, Number(process.env.SUGGEST_RATE_WINDOW_MS))
   : 15 * 60 * 1000;
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirnamePath = path.dirname(fileURLToPath(import.meta.url));
+/** Dist lives in `./dist`; repo data/cache stay alongside the api package root. */
+const API_ROOT =
+  path.basename(__dirnamePath) === 'dist'
+    ? path.resolve(__dirnamePath, '..')
+    : __dirnamePath;
 
 const EXPLAIN_RATE_LIMIT = Number.isFinite(Number(process.env.EXPLAIN_RATE_LIMIT))
   ? Math.max(3, Number(process.env.EXPLAIN_RATE_LIMIT))
   : 12;
-const EXPLAIN_RATE_WINDOW_MS = Number.isFinite(Number(process.env.EXPLAIN_RATE_WINDOW_MS))
+const EXPLAIN_RATE_WINDOW_MS = Number.isFinite(
+  Number(process.env.EXPLAIN_RATE_WINDOW_MS),
+)
   ? Math.max(60_000, Number(process.env.EXPLAIN_RATE_WINDOW_MS))
   : 15 * 60 * 1000;
 
-const explainRateBuckets = new Map();
+const explainRateBuckets = new Map<string, number[]>();
 
 const MAX_EXPLAIN_JSON_BYTES = 16_384;
-const CLAUDE_TIMEOUT_MS = Number.isFinite(Number(process.env.CLAUDE_EXPLAIN_TIMEOUT_MS))
+const CLAUDE_TIMEOUT_MS = Number.isFinite(
+  Number(process.env.CLAUDE_EXPLAIN_TIMEOUT_MS),
+)
   ? Math.max(45_000, Number(process.env.CLAUDE_EXPLAIN_TIMEOUT_MS))
   : 240_000;
 
@@ -75,11 +86,13 @@ const LEN = {
   promptBody: 4000,
   topicTitleCtx: 500,
   topicSlug: 200,
-};
+} as const;
 
-const rateBuckets = new Map();
+const rateBuckets = new Map<string, number[]>();
 
-function parseRepo(slug) {
+function parseRepo(
+  slug: string,
+): { owner: string; repo: string } | null {
   const parts = slug.split('/').filter(Boolean);
   if (parts.length !== 2 || slug.includes('..')) return null;
   const [owner, repo] = parts;
@@ -91,7 +104,7 @@ function parseRepo(slug) {
   return { owner, repo };
 }
 
-function clientIp(xForwardedFor) {
+function clientIp(xForwardedFor: string | undefined): string {
   if (typeof xForwardedFor === 'string' && xForwardedFor.length > 0) {
     const first = xForwardedFor.split(',')[0];
     return first ? first.trim() : 'unknown';
@@ -99,9 +112,9 @@ function clientIp(xForwardedFor) {
   return 'unknown';
 }
 
-function allowRate(ip) {
+function allowRate(ip: string): boolean {
   const now = Date.now();
-  const prev = rateBuckets.get(ip) || [];
+  const prev = rateBuckets.get(ip) ?? [];
   const next = prev.filter((t) => now - t < RATE_WINDOW_MS);
   if (next.length >= RATE_LIMIT) return false;
   next.push(now);
@@ -109,9 +122,9 @@ function allowRate(ip) {
   return true;
 }
 
-function allowExplainRate(ip) {
+function allowExplainRate(ip: string): boolean {
   const now = Date.now();
-  const prev = explainRateBuckets.get(ip) || [];
+  const prev = explainRateBuckets.get(ip) ?? [];
   const next = prev.filter((t) => now - t < EXPLAIN_RATE_WINDOW_MS);
   if (next.length >= EXPLAIN_RATE_LIMIT) return false;
   next.push(now);
@@ -119,43 +132,51 @@ function allowExplainRate(ip) {
   return true;
 }
 
-const CORS_WILDCARD = ALLOWED_ORIGINS_RAW === '*' || ALLOWED_ORIGINS_RAW === '';
+const CORS_WILDCARD =
+  ALLOWED_ORIGINS_RAW === '*' || ALLOWED_ORIGINS_RAW === '';
 const CORS_ALLOWED_LIST = CORS_WILDCARD
   ? []
   : ALLOWED_ORIGINS_RAW.split(',').map((s) => s.trim()).filter(Boolean);
 
-/** @returns {boolean} */
-function originAllowed(originHeader) {
+function originAllowed(originHeader: string | undefined): boolean {
   if (CORS_WILDCARD) return true;
   const o = originHeader || '';
   if (!o) return true;
   return CORS_ALLOWED_LIST.includes(o);
 }
 
-/** @returns {boolean} */
-function hasClaudeCredential() {
+function hasClaudeCredential(): boolean {
   const o = (process.env.CLAUDE_CODE_OAUTH_TOKEN ?? '').trim();
   const k = (process.env.ANTHROPIC_API_KEY ?? '').trim();
   return Boolean(o || k);
 }
 
-function loadPromptIndex() {
+type PromptRow = {
+  topicTitle?: string;
+  title?: string;
+  chatQuery?: string;
+};
+
+type PromptIndex = Record<string, Record<string, PromptRow>>;
+
+function loadPromptIndex(): PromptIndex | null {
   try {
-    const fp = path.join(__dirname, 'data', 'prompt-index.json');
+    const fp = path.join(API_ROOT, 'data', 'prompt-index.json');
     const raw = fs.readFileSync(fp, 'utf8');
-    /** @type {unknown} */
-    const j = JSON.parse(raw);
+    const j: unknown = JSON.parse(raw);
     if (!j || typeof j !== 'object' || Array.isArray(j)) return null;
-    /** @type {Record<string, Record<string, { topicTitle?: string; title?: string; chatQuery?: string }>>} */
-    return /** @type {any} */ (j);
+    return j as PromptIndex;
   } catch {
-    console.warn('[explain-prompt] missing data/prompt-index.json — run `npm run build` in ./api');
+    console.warn(
+      '[explain-prompt] missing data/prompt-index.json — run `npm run build` in ./api',
+    );
     return null;
   }
 }
 
-/** @returns {AbortController} */
-function mergeAbortControllers(...signals) {
+function mergeAbortControllers(
+  ...signals: (AbortSignal | null | undefined)[]
+): AbortController {
   const ctrl = new AbortController();
   for (const s of signals) {
     if (!s) continue;
@@ -168,16 +189,18 @@ function mergeAbortControllers(...signals) {
   return ctrl;
 }
 
-/**
- * @param {string} fullPromptText
- * @param {AbortController} abortController
- */
-async function runClaudeExplanation(fullPromptText, abortController) {
+type ClaudeRunOk = { ok: true; text: string };
+type ClaudeRunErr = { ok: false; error: string };
+type ClaudeRunResult = ClaudeRunOk | ClaudeRunErr;
+
+async function runClaudeExplanation(
+  fullPromptText: string,
+  abortController: AbortController,
+): Promise<ClaudeRunResult> {
   const sessionHome = await fsp.mkdtemp(path.join(os.tmpdir(), '100pua-cc-'));
-  /** @type {import('@anthropic-ai/claude-agent-sdk').Query | null} */
-  let q_iter = null;
+  let qIter: Query | null = null;
   try {
-    q_iter = query({
+    qIter = query({
       prompt: fullPromptText,
       options: {
         cwd: sessionHome,
@@ -197,12 +220,10 @@ async function runClaudeExplanation(fullPromptText, abortController) {
       },
     });
 
-    /** @type {string | undefined} */
-    let finalText;
-    /** @type {string[]} */
-    const errLines = [];
+    let finalText: string | undefined;
+    const errLines: string[] = [];
     try {
-      for await (const msg of q_iter) {
+      for await (const msg of qIter) {
         if (msg.type === 'result') {
           if (msg.subtype === 'success') {
             if (typeof msg.result === 'string' && msg.result.trim())
@@ -213,7 +234,7 @@ async function runClaudeExplanation(fullPromptText, abortController) {
         }
       }
     } finally {
-      if (q_iter) q_iter.close();
+      if (qIter) qIter.close();
     }
 
     if (finalText) return { ok: true, text: finalText };
@@ -222,8 +243,11 @@ async function runClaudeExplanation(fullPromptText, abortController) {
       error:
         errLines.length > 0 ? errLines.join('; ') : 'agent_finished_without_result',
     };
-  } catch (e) {
-    const name = e && typeof e === 'object' && 'name' in e ? String(/** @type {Error} */ (e).name) : '';
+  } catch (e: unknown) {
+    const name =
+      e && typeof e === 'object' && 'name' in e
+        ? String((e as Error).name)
+        : '';
     if (name === 'AbortError')
       return { ok: false, error: 'timeout_or_aborted' };
     console.error('[explain-prompt]', e);
@@ -238,8 +262,11 @@ async function runClaudeExplanation(fullPromptText, abortController) {
 
 const PROMPT_INDEX = loadPromptIndex();
 
-/** @returns {{ title: string, body: string } | null} */
-function validateAndBuild(payload) {
+type SuggestionPayload = Record<string, unknown>;
+
+function validateAndBuild(
+  payload: SuggestionPayload,
+): { title: string; body: string } | null {
   const mode = payload?.mode;
   const footerRepo = `https://github.com/${GITHUB_REPO_RAW}`;
   const footer = `\n\n---\n_Sent via [100 prompts site](${footerRepo}). Issue created automatically._`;
@@ -259,10 +286,16 @@ function validateAndBuild(payload) {
       typeof payload.topicTitle === 'string' ? payload.topicTitle.trim() : '';
     const topicSlug =
       typeof payload.topicSlug === 'string' ? payload.topicSlug.trim() : '';
-    const pre = typeof payload.pretitle === 'string' ? payload.pretitle.trim() : '';
-    const pb = typeof payload.promptBody === 'string' ? payload.promptBody.trim() : '';
+    const pre =
+      typeof payload.pretitle === 'string' ? payload.pretitle.trim() : '';
+    const pb =
+      typeof payload.promptBody === 'string' ? payload.promptBody.trim() : '';
     if (!topicTitle || topicTitle.length > LEN.topicTitleCtx) return null;
-    if (!topicSlug || topicSlug.length > LEN.topicSlug || topicSlug.includes('..'))
+    if (
+      !topicSlug ||
+      topicSlug.length > LEN.topicSlug ||
+      topicSlug.includes('..')
+    )
       return null;
     if (pre.length > LEN.pretitle) return null;
     if (!pb || pb.length > LEN.promptBody) return null;
@@ -277,8 +310,12 @@ function validateAndBuild(payload) {
   return null;
 }
 
-async function githubCreateIssue({ owner, repo }, issueTitle, issueBody) {
-  const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues`;
+async function githubCreateIssue(
+  parsed: { owner: string; repo: string },
+  issueTitle: string,
+  issueBody: string,
+): Promise<{ html_url?: string; number?: number }> {
+  const url = `https://api.github.com/repos/${encodeURIComponent(parsed.owner)}/${encodeURIComponent(parsed.repo)}/issues`;
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -291,32 +328,31 @@ async function githubCreateIssue({ owner, repo }, issueTitle, issueBody) {
     body: JSON.stringify({ title: issueTitle, body: issueBody }),
   });
   const text = await res.text();
-  /** @type {unknown} */
-  let data = null;
+  let data: unknown = null;
   try {
     data = JSON.parse(text);
   } catch {
-    /**/
+    /* */
   }
   if (!res.ok) {
     const msg =
-      data && typeof data === 'object' && 'message' in data
-        ? String(/** @type {{ message?: string }} */ (data).message)
+      data && typeof data === 'object' && data !== null && 'message' in data
+        ? String((data as { message?: string }).message)
         : res.statusText;
-    const err = new Error(`GitHub API ${res.status}: ${msg}`);
-    /** @type {typeof err & { detail?: string }} */
-    const e = err;
-    e.detail = msg;
-    throw e;
+    const err = new Error(`GitHub API ${res.status}: ${msg}`) as Error & {
+      detail?: string;
+    };
+    err.detail = msg;
+    throw err;
   }
-  return /** @type {{ html_url?: string; number?: number }} */ (
-    typeof data === 'object' && data !== null ? data : {}
-  );
+  return typeof data === 'object' && data !== null
+    ? (data as { html_url?: string; number?: number })
+    : {};
 }
 
 const githubRepoParsed = parseRepo(GITHUB_REPO_RAW);
 
-const explainCache = createExplainCache(__dirname);
+const explainCache = createExplainCache(API_ROOT);
 
 const app = new Hono();
 
@@ -331,7 +367,7 @@ app.use(
     allowMethods: ['GET', 'POST', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
     exposeHeaders: ['X-Explain-Cache'],
-  })
+  }),
 );
 
 app.get('/health', (c) => c.json({ ok: true }));
@@ -349,7 +385,7 @@ app.post('/explain-prompt', async (c) => {
         message:
           'Set CLAUDE_CODE_OAUTH_TOKEN (from `claude setup-token`) or ANTHROPIC_API_KEY on the API service.',
       },
-      503
+      503,
     );
   }
 
@@ -357,14 +393,15 @@ app.post('/explain-prompt', async (c) => {
     return c.json(
       {
         error: 'misconfigured_server',
-        message: 'Run `npm run build` in the api service (prompt-index.json).',
+        message:
+          'Run `npm run build` in the api service (prompt-index.json).',
       },
-      503
+      503,
     );
   }
 
   const rawBody = await c.req.text();
-  let payload = null;
+  let payload: unknown = null;
   try {
     if (rawBody.length > MAX_EXPLAIN_JSON_BYTES) {
       return c.json({ error: 'payload_too_large' }, 413);
@@ -374,9 +411,10 @@ app.post('/explain-prompt', async (c) => {
     return c.json({ error: 'invalid_json' }, 400);
   }
 
-  const slug = typeof payload?.slug === 'string' ? payload.slug.trim() : '';
+  const p = payload as { slug?: unknown; promptId?: unknown } | null;
+  const slug = typeof p?.slug === 'string' ? p.slug.trim() : '';
   const promptId =
-    typeof payload?.promptId === 'string' ? payload.promptId.trim() : '';
+    typeof p?.promptId === 'string' ? p.promptId.trim() : '';
 
   if (!slug || slug.length > LEN.topicSlug || slug.includes('..'))
     return c.json({ error: 'invalid_payload' }, 400);
@@ -388,10 +426,7 @@ app.post('/explain-prompt', async (c) => {
   )
     return c.json({ error: 'invalid_payload' }, 400);
 
-  if (
-    !/^[-\w]+$/.test(slug) ||
-    !/^[-_\w]+$/.test(promptId)
-  ) {
+  if (!/^[-\w]+$/.test(slug) || !/^[-_\w]+$/.test(promptId)) {
     return c.json({ error: 'invalid_payload' }, 400);
   }
 
@@ -411,7 +446,7 @@ app.post('/explain-prompt', async (c) => {
     return c.json(
       { answer: cachedHit.answer, cached: true },
       200,
-      { 'X-Explain-Cache': 'hit' }
+      { 'X-Explain-Cache': 'hit' },
     );
   }
 
@@ -436,30 +471,39 @@ app.post('/explain-prompt', async (c) => {
     `--- Student-facing study prompt ---\n\n${chatQuery.trim()}`;
 
   const clientSig = c.req.raw.signal;
-  const merged = mergeAbortControllers(AbortSignal.timeout(CLAUDE_TIMEOUT_MS), clientSig);
+  const merged = mergeAbortControllers(
+    AbortSignal.timeout(CLAUDE_TIMEOUT_MS),
+    clientSig,
+  );
   const abortController = merged;
 
   try {
     const out = await runClaudeExplanation(fullPromptText, abortController);
-    if (out.ok && out.text) {
-      await explainCache.set(slug, promptId, contentKey, out.text);
-      const xCache = explainCacheActive() ? 'miss' : 'disabled';
-      return c.json(
-        { answer: out.text, cached: false },
-        200,
-        { 'X-Explain-Cache': xCache }
-      );
+    if (!out.ok) {
+      const clientMsg =
+        out.error === 'timeout_or_aborted'
+          ? 'Timed out waiting for Claude — try again.'
+          : typeof out.error === 'string'
+            ? out.error
+            : 'generation_failed';
+      return c.json({ error: 'explain_failed', message: clientMsg }, 502);
     }
-    const clientMsg =
-      out.error === 'timeout_or_aborted'
-        ? 'Timed out waiting for Claude — try again.'
-        : typeof out.error === 'string'
-          ? out.error
-          : 'generation_failed';
-    return c.json({ error: 'explain_failed', message: clientMsg }, 502);
+    await explainCache.set(slug, promptId, contentKey, out.text);
+    const xCache = explainCacheActive() ? 'miss' : 'disabled';
+    return c.json(
+      { answer: out.text, cached: false },
+      200,
+      { 'X-Explain-Cache': xCache },
+    );
   } catch (e) {
-    console.error('[explain-prompt]', /** @type {Error} */ (e).message);
-    return c.json({ error: 'explain_failed', message: 'unexpected_server_error' }, 502);
+    console.error(
+      '[explain-prompt]',
+      e instanceof Error ? e.message : String(e),
+    );
+    return c.json(
+      { error: 'explain_failed', message: 'unexpected_server_error' },
+      502,
+    );
   }
 });
 
@@ -485,7 +529,7 @@ app.post('/suggestions', async (c) => {
 
   const rawBody = await c.req.text();
 
-  let payload = null;
+  let payload: unknown = null;
   try {
     if (rawBody.length > MAX_JSON_BYTES) {
       return c.json({ error: 'payload_too_large' }, 413);
@@ -495,13 +539,20 @@ app.post('/suggestions', async (c) => {
     return c.json({ error: 'invalid_json' }, 400);
   }
 
-  const built = payload && validateAndBuild(payload);
+  const built =
+    payload && typeof payload === 'object' && !Array.isArray(payload)
+      ? validateAndBuild(payload as SuggestionPayload)
+      : null;
   if (!built) {
     return c.json({ error: 'invalid_payload' }, 400);
   }
 
   try {
-    const issue = await githubCreateIssue(githubRepoParsed, built.title, built.body);
+    const issue = await githubCreateIssue(
+      githubRepoParsed,
+      built.title,
+      built.body,
+    );
     const htmlUrl =
       typeof issue.html_url === 'string' ? issue.html_url : undefined;
     const number =
@@ -520,13 +571,16 @@ app.post('/suggestions', async (c) => {
             ? number
             : undefined,
       },
-      201
+      201,
     );
   } catch (e) {
-    console.error('[suggestions]', /** @type {Error} */ (e).message);
+    console.error(
+      '[suggestions]',
+      e instanceof Error ? e.message : String(e),
+    );
     return c.json(
       { error: 'github_error', message: 'creating_issue_failed' },
-      502
+      502,
     );
   }
 });
@@ -543,5 +597,5 @@ serve(
   },
   (info) => {
     console.log(`suggestions (hono) listening on ${info.port}`);
-  }
+  },
 );

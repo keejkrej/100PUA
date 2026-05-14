@@ -13,55 +13,66 @@ import path from 'node:path';
 
 const SCHEMA = 'v2';
 
-/** @returns {string} */
-export function explainCacheDirectory(apiRoot) {
+export function explainCacheDirectory(apiRoot: string): string {
   const custom = (process.env.EXPLAIN_CACHE_DIR ?? '').trim();
   return custom.length > 0 ? custom : path.join(apiRoot, 'cache', 'explain');
 }
 
-function cacheDisabled() {
+function cacheDisabled(): boolean {
   const v = (process.env.EXPLAIN_CACHE_DISABLED ?? '').trim().toLowerCase();
   return v === '1' || v === 'true' || v === 'yes';
 }
 
-/** @returns {number} TTL in ms */
-export function explainCacheTtlMs() {
+/** TTL in ms */
+export function explainCacheTtlMs(): number {
   const raw = (process.env.EXPLAIN_CACHE_DAYS ?? '').trim();
   // Render/dashboard often saves an env var as "" — Number("") is 0 and would kill caching.
   const n = Number(raw === '' ? '7' : raw);
   const days =
-    Number.isFinite(n) && n >= 0
-      ? n <= 365
-        ? n
-        : 365
-      : 7;
+    Number.isFinite(n) && n >= 0 ? (n <= 365 ? n : 365) : 7;
   if (days <= 0) return 0;
   return days * 24 * 60 * 60 * 1000;
 }
 
-/** @returns {boolean} true when disk get/set are active (not disabled, TTL > 0) */
-export function explainCacheActive() {
+/** True when disk get/set are active (not disabled, TTL > 0) */
+export function explainCacheActive(): boolean {
   return !cacheDisabled() && explainCacheTtlMs() > 0;
 }
 
-/**
- * Include model key so CACHE stays correct when CLAUDE_MODEL env changes.
- * @returns {string}
- */
-function modelCacheKeyPart() {
+/** Include model key so CACHE stays correct when CLAUDE_MODEL env changes. */
+function modelCacheKeyPart(): string {
   return (process.env.CLAUDE_MODEL ?? '').trim();
 }
 
-function explainCacheDebug() {
+function explainCacheDebug(): boolean {
   return (process.env.EXPLAIN_CACHE_DEBUG ?? '').trim() === '1';
 }
 
-/**
- * @param {string} apiRoot
- */
-export function createExplainCache(apiRoot) {
-  /** @returns {{ path: string }} */
-  function pathsFor(slug, promptId, contentKey) {
+type CacheEntryJson = {
+  answer?: unknown;
+  cachedAt?: unknown;
+  promptHash?: unknown;
+};
+
+export type ExplainDiskCache = {
+  prime: () => Promise<void>;
+  get: (
+    slug: string,
+    promptId: string,
+    contentKey: string,
+  ) => Promise<{ answer: string } | null>;
+  set: (
+    slug: string,
+    promptId: string,
+    contentKey: string,
+    answer: string,
+  ) => Promise<void>;
+};
+
+export function createExplainCache(apiRoot: string): ExplainDiskCache {
+  function pathsFor(slug: string, promptId: string, contentKey: string): {
+    path: string;
+  } {
     const h = crypto
       .createHash('sha256')
       .update(
@@ -73,25 +84,26 @@ export function createExplainCache(apiRoot) {
     return { path: path.join(dir, `${h}.json`) };
   }
 
-  async function ensureDir(dir) {
+  async function ensureDir(dir: string): Promise<void> {
     await fsp.mkdir(dir, { recursive: true }).catch(() => {});
   }
 
-  async function prune(dir, ttl) {
+  async function prune(dir: string, ttl: number): Promise<void> {
     if (ttl <= 0) return;
-    const entries = await fsp.readdir(dir, { withFileTypes: true }).catch(() => []);
+    const entries =
+      await fsp.readdir(dir, { withFileTypes: true }).catch(() => []);
     const now = Date.now();
     for (const e of entries) {
       if (!e.isFile() || !e.name.endsWith('.json')) continue;
       const fp = path.join(dir, e.name);
       try {
         const raw = await fsp.readFile(fp, 'utf8');
-        const obj = JSON.parse(raw);
+        const obj = JSON.parse(raw) as CacheEntryJson;
         const t =
           typeof obj.cachedAt === 'number'
             ? obj.cachedAt
             : typeof obj.cachedAt === 'string'
-              ? Number.parseInt(obj.cachedAt, 10)
+              ? Number.parseInt(String(obj.cachedAt), 10)
               : NaN;
         if (Number.isFinite(t) && now - t >= ttl)
           await fsp.unlink(fp).catch(() => {});
@@ -102,11 +114,7 @@ export function createExplainCache(apiRoot) {
   }
 
   return {
-    /**
-     * Ensures dir exists and deletes expired entries once (startup).
-     * @returns {Promise<void>}
-     */
-    async prime() {
+    async prime(): Promise<void> {
       if (cacheDisabled()) return;
       const ttl = explainCacheTtlMs();
       if (ttl <= 0) return;
@@ -123,13 +131,14 @@ export function createExplainCache(apiRoot) {
       }
     },
 
-    /**
-     * @param {string} contentKey — hash of canonical prompt body so edits to prompts invalidate cache
-     * @returns {Promise<{ answer: string } | null>}
-     */
-    async get(slug, promptId, contentKey) {
+    async get(
+      slug: string,
+      promptId: string,
+      contentKey: string,
+    ): Promise<{ answer: string } | null> {
       if (cacheDisabled()) {
-        if (explainCacheDebug()) console.log('[explain-cache] get skip (disabled)');
+        if (explainCacheDebug())
+          console.log('[explain-cache] get skip (disabled)');
         return null;
       }
       const ttl = explainCacheTtlMs();
@@ -141,16 +150,14 @@ export function createExplainCache(apiRoot) {
       const { path: fp } = pathsFor(slug, promptId, contentKey);
       try {
         const raw = await fsp.readFile(fp, 'utf8');
-        /** @type {{ answer?: unknown; cachedAt?: unknown; promptHash?: unknown }} */
-        const j = JSON.parse(raw);
+        const j = JSON.parse(raw) as CacheEntryJson;
         if (typeof j.promptHash === 'string' && j.promptHash !== contentKey) {
           if (explainCacheDebug())
             console.log('[explain-cache] reject stale promptHash', fp);
           await fsp.unlink(fp).catch(() => {});
           return null;
         }
-        if (typeof j.answer !== 'string' || !j.answer.trim())
-          return null;
+        if (typeof j.answer !== 'string' || !j.answer.trim()) return null;
         const t =
           typeof j.cachedAt === 'number'
             ? j.cachedAt
@@ -158,27 +165,27 @@ export function createExplainCache(apiRoot) {
               ? Number.parseInt(String(j.cachedAt), 10)
               : NaN;
         if (!Number.isFinite(t) || Date.now() - t >= ttl) {
-          if (explainCacheDebug()) console.log('[explain-cache] miss expired', fp);
+          if (explainCacheDebug())
+            console.log('[explain-cache] miss expired', fp);
           await fsp.unlink(fp).catch(() => {});
           return null;
         }
         if (explainCacheDebug()) console.log('[explain-cache] HIT', fp);
         return { answer: j.answer };
-      } catch (e) {
-        const err = /** @type {{ code?: string }} */ (e);
+      } catch (e: unknown) {
+        const err = e as { code?: string };
         if (err?.code !== 'ENOENT' && explainCacheDebug())
           console.log('[explain-cache] read error', fp, e);
         return null;
       }
     },
 
-    /**
-     * @param {string} slug
-     * @param {string} promptId
-     * @param {string} contentKey
-     * @param {string} answer
-     */
-    async set(slug, promptId, contentKey, answer) {
+    async set(
+      slug: string,
+      promptId: string,
+      contentKey: string,
+      answer: string,
+    ): Promise<void> {
       if (cacheDisabled()) return;
       const ttl = explainCacheTtlMs();
       if (ttl <= 0) return;
