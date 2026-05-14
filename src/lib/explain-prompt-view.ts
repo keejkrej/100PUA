@@ -39,10 +39,8 @@ function renderDisplayMathDollars(html: string): string {
 }
 
 /**
- * Normalize common model LaTeX into KaTeX auto-render delimiters ($$, $).
- *
- * Square-bracket wrappers like `[S = k_B \\log \\Omega]` (must include `=`) are not TeX math;
- * `\[` `\(` are often eaten by Markdown (backslash escapes) before KaTeX runs.
+ * Normalize common model LaTeX into KaTeX-friendly delimiters (`$$`, `$`).
+ * `\[` `\(` are often eaten by Markdown (backslash escapes) before math runs.
  */
 function normalizeMarkdownMath(markdown: string): string {
   let md = markdown;
@@ -55,16 +53,6 @@ function normalizeMarkdownMath(markdown: string): string {
   md = md.replace(/\\\(([\s\S]*?)\\\)/g, (_, inner) => {
     const t = inner.trim();
     return t ? `$${t}$` : '';
-  });
-
-  md = md.replace(/\[[^\]\n]+\]/g, (match, offset, whole) => {
-    if (whole[offset + match.length] === '(') return match;
-    const inner = match.slice(1, -1).trim();
-    if (inner.length === 0 || !/\\[a-zA-Z]/.test(inner)) return match;
-    // Avoid stealing inner groups like `[\sigma(k_0)]` from `\Re[\sigma(k_0)]`.
-    // The heuristic targets standalone bracket blocks such as `[S = k_B \log \Omega]`.
-    if (!inner.includes('=')) return match;
-    return `\n\n$$\n${inner}\n$$\n\n`;
   });
 
   return md;
