@@ -11,7 +11,51 @@ import crypto from 'node:crypto';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 
-const SCHEMA = 'v4';
+import {
+  DEFAULT_CLAUDE_MODEL,
+  DEFAULT_CURSOR_MODEL,
+  DEFAULT_CODEX_APPROVAL_POLICY,
+  DEFAULT_CODEX_MODEL,
+  DEFAULT_CODEX_SANDBOX_MODE,
+  DEFAULT_CODEX_WEB_SEARCH_MODE,
+} from './explain-defaults.js';
+import { codexExplainAuthCacheSegment } from './codex-explain-auth.js';
+
+const SCHEMA = 'v9';
+
+export type ExplainProviderKind = 'claude' | 'cursor' | 'codex';
+
+/** Active provider when the API client omits `provider` in the JSON body. */
+export function explainProviderFromEnv(): ExplainProviderKind {
+  const raw = (process.env.EXPLAIN_AI_PROVIDER ?? 'codex').trim().toLowerCase();
+  if (raw === 'cursor') return 'cursor';
+  if (raw === 'codex') return 'codex';
+  return 'claude';
+}
+
+/** Cache path segment derived from backend + relevant model / option env vars. */
+export function buildExplainVariantCacheKey(
+  provider: ExplainProviderKind,
+): string {
+  switch (provider) {
+    case 'cursor':
+      return `cursor:${(process.env.CURSOR_MODEL ?? '').trim() || DEFAULT_CURSOR_MODEL}`;
+    case 'codex':
+      return [
+        'codex',
+        codexExplainAuthCacheSegment(),
+        (process.env.CODEX_MODEL ?? '').trim() || DEFAULT_CODEX_MODEL,
+        (process.env.CODEX_WEB_SEARCH_MODE ?? '').trim() ||
+          DEFAULT_CODEX_WEB_SEARCH_MODE,
+        (process.env.CODEX_SANDBOX_MODE ?? '').trim() ||
+          DEFAULT_CODEX_SANDBOX_MODE,
+        (process.env.CODEX_APPROVAL_POLICY ?? '').trim() ||
+          DEFAULT_CODEX_APPROVAL_POLICY,
+      ].join(':');
+    default:
+      return `claude:${(process.env.CLAUDE_MODEL ?? '').trim() || DEFAULT_CLAUDE_MODEL}`;
+  }
+}
 
 export function explainCacheDirectory(apiRoot: string): string {
   const custom = (process.env.EXPLAIN_CACHE_DIR ?? '').trim();
@@ -39,11 +83,6 @@ export function explainCacheActive(): boolean {
   return !cacheDisabled() && explainCacheTtlMs() > 0;
 }
 
-/** Include model key so CACHE stays correct when CLAUDE_MODEL env changes. */
-function modelCacheKeyPart(): string {
-  return (process.env.CLAUDE_MODEL ?? '').trim();
-}
-
 function explainCacheDebug(): boolean {
   return (process.env.EXPLAIN_CACHE_DEBUG ?? '').trim() === '1';
 }
@@ -60,23 +99,30 @@ export type ExplainDiskCache = {
     slug: string,
     promptId: string,
     contentKey: string,
+    variantKey: string,
   ) => Promise<{ answer: string } | null>;
   set: (
     slug: string,
     promptId: string,
     contentKey: string,
+    variantKey: string,
     answer: string,
   ) => Promise<void>;
 };
 
 export function createExplainCache(apiRoot: string): ExplainDiskCache {
-  function pathsFor(slug: string, promptId: string, contentKey: string): {
+  function pathsFor(
+    slug: string,
+    promptId: string,
+    contentKey: string,
+    variantKey: string,
+  ): {
     path: string;
   } {
     const h = crypto
       .createHash('sha256')
       .update(
-        `${SCHEMA}:${slug}:${promptId}:${modelCacheKeyPart()}:${contentKey}`,
+        `${SCHEMA}:${slug}:${promptId}:${variantKey}:${contentKey}`,
         'utf8',
       )
       .digest('hex');
@@ -135,6 +181,7 @@ export function createExplainCache(apiRoot: string): ExplainDiskCache {
       slug: string,
       promptId: string,
       contentKey: string,
+      variantKey: string,
     ): Promise<{ answer: string } | null> {
       if (cacheDisabled()) {
         if (explainCacheDebug())
@@ -147,7 +194,7 @@ export function createExplainCache(apiRoot: string): ExplainDiskCache {
           console.log('[explain-cache] get skip (EXPLAIN_CACHE_DAYS is 0 or invalid)');
         return null;
       }
-      const { path: fp } = pathsFor(slug, promptId, contentKey);
+      const { path: fp } = pathsFor(slug, promptId, contentKey, variantKey);
       try {
         const raw = await fsp.readFile(fp, 'utf8');
         const j = JSON.parse(raw) as CacheEntryJson;
@@ -184,12 +231,13 @@ export function createExplainCache(apiRoot: string): ExplainDiskCache {
       slug: string,
       promptId: string,
       contentKey: string,
+      variantKey: string,
       answer: string,
     ): Promise<void> {
       if (cacheDisabled()) return;
       const ttl = explainCacheTtlMs();
       if (ttl <= 0) return;
-      const { path: fp } = pathsFor(slug, promptId, contentKey);
+      const { path: fp } = pathsFor(slug, promptId, contentKey, variantKey);
       const dir = path.dirname(fp);
       await ensureDir(dir);
       const body = Buffer.from(
@@ -198,7 +246,7 @@ export function createExplainCache(apiRoot: string): ExplainDiskCache {
           slug,
           promptId,
           promptHash: contentKey,
-          modelKey: modelCacheKeyPart(),
+          variantKey,
           cachedAt: Date.now(),
           answer,
         }),

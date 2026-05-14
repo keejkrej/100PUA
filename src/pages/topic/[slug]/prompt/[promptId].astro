@@ -36,6 +36,15 @@ const suggestApiBase =
     : '';
 
 const explainEnabled = suggestApiBase.length > 0;
+
+const explainDefaultProviderRaw =
+  typeof import.meta.env.PUBLIC_EXPLAIN_DEFAULT_PROVIDER === 'string'
+    ? import.meta.env.PUBLIC_EXPLAIN_DEFAULT_PROVIDER.trim().toLowerCase()
+    : '';
+const explainDefaultProvider =
+  explainDefaultProviderRaw === 'cursor' || explainDefaultProviderRaw === 'claude'
+    ? explainDefaultProviderRaw
+    : 'codex';
 ---
 
 <Layout pageTitle={pageTitle} pageDescription={topic.topicTitle}>
@@ -83,6 +92,7 @@ const explainEnabled = suggestApiBase.length > 0;
           data-explain-api={explainEnabled ? suggestApiBase : undefined}
           data-explain-slug={explainEnabled ? slug : undefined}
           data-explain-prompt-id={explainEnabled ? promptId : undefined}
+          data-explain-default-provider={explainEnabled ? explainDefaultProvider : undefined}
         >
           {
             explainEnabled ? (
@@ -90,36 +100,79 @@ const explainEnabled = suggestApiBase.length > 0;
                 <p class="text-muted mb-5 text-[11px] tracking-wide" id="explain-status">
                   Generating answer…
                 </p>
-                <div
-                  id="explain-toolbar"
-                  class="mb-4 hidden justify-start"
-                  aria-hidden="true"
-                >
-                  <div
-                    class="border-muted/40 bg-void/50 inline-flex items-center rounded-lg border p-0.5 shadow-sm"
+                <div class="mb-4 flex w-full min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
+                  <section
+                    id="explain-provider-toolbar"
+                    class="flex min-w-0 justify-start"
                     role="radiogroup"
-                    aria-label="Answer format"
+                    aria-label="Answer model"
                   >
-                    <button
-                      type="button"
-                      id="explain-toggle-rendered"
-                      class="explain-toggle explain-toggle--on rounded-md px-3 py-1 text-[11px] tracking-wide transition-colors outline-none"
-                      role="radio"
-                      aria-checked="true"
-                      tabindex="0"
+                    <div
+                      class="border-muted/40 bg-void/50 inline-flex max-w-full shrink-0 flex-wrap items-center rounded-lg border p-0.5 shadow-sm"
                     >
-                      Rendered
-                    </button>
-                    <button
-                      type="button"
-                      id="explain-toggle-raw"
-                      class="explain-toggle explain-toggle--off rounded-md px-3 py-1 text-[11px] tracking-wide transition-colors outline-none"
-                      role="radio"
-                      aria-checked="false"
-                      tabindex="-1"
+                      <button
+                        type="button"
+                        id="explain-provider-cursor"
+                        class="explain-toggle explain-toggle--off rounded-md px-2.5 py-1 text-[11px] tracking-wide transition-colors outline-none"
+                        role="radio"
+                        aria-checked="false"
+                        tabindex="-1"
+                      >
+                        Cursor
+                      </button>
+                      <button
+                        type="button"
+                        id="explain-provider-codex"
+                        class="explain-toggle explain-toggle--off rounded-md px-2.5 py-1 text-[11px] tracking-wide transition-colors outline-none"
+                        role="radio"
+                        aria-checked="false"
+                        tabindex="-1"
+                      >
+                        Codex
+                      </button>
+                      <button
+                        type="button"
+                        id="explain-provider-claude"
+                        class="explain-toggle explain-toggle--off rounded-md px-2.5 py-1 text-[11px] tracking-wide transition-colors outline-none"
+                        role="radio"
+                        aria-checked="false"
+                        tabindex="-1"
+                      >
+                        Claude
+                      </button>
+                    </div>
+                  </section>
+                  <div
+                    id="explain-toolbar"
+                    class="ml-auto hidden shrink-0 items-center"
+                    aria-hidden="true"
+                  >
+                    <div
+                      class="border-muted/40 bg-void/50 inline-flex items-center rounded-lg border p-0.5 shadow-sm"
+                      role="radiogroup"
+                      aria-label="Answer format"
                     >
-                      Raw
-                    </button>
+                      <button
+                        type="button"
+                        id="explain-toggle-rendered"
+                        class="explain-toggle explain-toggle--on rounded-md px-3 py-1 text-[11px] tracking-wide transition-colors outline-none"
+                        role="radio"
+                        aria-checked="true"
+                        tabindex="0"
+                      >
+                        Rendered
+                      </button>
+                      <button
+                        type="button"
+                        id="explain-toggle-raw"
+                        class="explain-toggle explain-toggle--off rounded-md px-3 py-1 text-[11px] tracking-wide transition-colors outline-none"
+                        role="radio"
+                        aria-checked="false"
+                        tabindex="-1"
+                      >
+                        Raw
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div id="explain-answer-slot" class="min-h-[6rem]">
@@ -134,7 +187,7 @@ const explainEnabled = suggestApiBase.length > 0;
             ) : (
               <p class="text-muted text-sm leading-relaxed">
                 Set <code class="text-accent/90">PUBLIC_SUGGEST_API_URL</code> on the static site so this
-                page can call the Claude endpoint on your API service (`/explain-prompt`).
+                page can call the explain endpoint on your API service (`/explain-prompt`).
               </p>
             )
           }

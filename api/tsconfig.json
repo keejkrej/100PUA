@@ -12,6 +12,12 @@
     "types": ["node"],
     "verbatimModuleSyntax": false
   },
-  "include": ["server.ts", "explain-cache.ts", "scripts/**/*.ts"],
+  "include": [
+    "server.ts",
+    "explain-cache.ts",
+    "explain-defaults.ts",
+    "codex-explain-auth.ts",
+    "scripts/**/*.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }
