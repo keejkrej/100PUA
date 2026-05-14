@@ -2,9 +2,11 @@
  * Disk cache for POST /explain-prompt responses (JSON per entry).
  *
  * Default: `./cache/explain` under the API folder (gitignored).
- * Hosted platforms with ephemeral filesystems typically set EXPLAIN_CACHE_DIR to a Persistent Disk
- * mount (e.g. `/var/data/explain-cache`).
+ * Hosted platforms often set EXPLAIN_CACHE_DIR to a Persistent Disk mount
+ * (e.g. `/var/data/explain-cache`).
  */
+import 'dotenv/config';
+
 import crypto from 'node:crypto';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
@@ -24,7 +26,9 @@ function cacheDisabled() {
 
 /** @returns {number} TTL in ms */
 export function explainCacheTtlMs() {
-  const n = Number(process.env.EXPLAIN_CACHE_DAYS ?? '7');
+  const raw = (process.env.EXPLAIN_CACHE_DAYS ?? '').trim();
+  // Render/dashboard often saves an env var as "" — Number("") is 0 and would kill caching.
+  const n = Number(raw === '' ? '7' : raw);
   const days =
     Number.isFinite(n) && n >= 0
       ? n <= 365
@@ -35,6 +39,11 @@ export function explainCacheTtlMs() {
   return days * 24 * 60 * 60 * 1000;
 }
 
+/** @returns {boolean} true when disk get/set are active (not disabled, TTL > 0) */
+export function explainCacheActive() {
+  return !cacheDisabled() && explainCacheTtlMs() > 0;
+}
+
 /**
  * Include model key so CACHE stays correct when CLAUDE_MODEL env changes.
  * @returns {string}
@@ -43,13 +52,14 @@ function modelCacheKeyPart() {
   return (process.env.CLAUDE_MODEL ?? '').trim();
 }
 
+function explainCacheDebug() {
+  return (process.env.EXPLAIN_CACHE_DEBUG ?? '').trim() === '1';
+}
+
 /**
  * @param {string} apiRoot
  */
 export function createExplainCache(apiRoot) {
-  const ttlMsLive = explainCacheTtlMs();
-  const disabled = cacheDisabled();
-
   /** @returns {{ path: string }} */
   function pathsFor(slug, promptId, contentKey) {
     const h = crypto
@@ -97,11 +107,20 @@ export function createExplainCache(apiRoot) {
      * @returns {Promise<void>}
      */
     async prime() {
-      if (disabled) return;
-      if (ttlMsLive <= 0) return;
+      if (cacheDisabled()) return;
+      const ttl = explainCacheTtlMs();
+      if (ttl <= 0) return;
       const dir = explainCacheDirectory(apiRoot);
       await ensureDir(dir);
-      await prune(dir, ttlMsLive);
+      await prune(dir, ttl);
+      if (explainCacheDebug()) {
+        console.log(
+          '[explain-cache] primed',
+          dir,
+          'ttl_days',
+          ttl / (24 * 60 * 60 * 1000),
+        );
+      }
     },
 
     /**
@@ -109,12 +128,27 @@ export function createExplainCache(apiRoot) {
      * @returns {Promise<{ answer: string } | null>}
      */
     async get(slug, promptId, contentKey) {
-      if (disabled || ttlMsLive <= 0) return null;
+      if (cacheDisabled()) {
+        if (explainCacheDebug()) console.log('[explain-cache] get skip (disabled)');
+        return null;
+      }
+      const ttl = explainCacheTtlMs();
+      if (ttl <= 0) {
+        if (explainCacheDebug())
+          console.log('[explain-cache] get skip (EXPLAIN_CACHE_DAYS is 0 or invalid)');
+        return null;
+      }
       const { path: fp } = pathsFor(slug, promptId, contentKey);
       try {
         const raw = await fsp.readFile(fp, 'utf8');
-        /** @type {{ answer?: unknown; cachedAt?: unknown }} */
+        /** @type {{ answer?: unknown; cachedAt?: unknown; promptHash?: unknown }} */
         const j = JSON.parse(raw);
+        if (typeof j.promptHash === 'string' && j.promptHash !== contentKey) {
+          if (explainCacheDebug())
+            console.log('[explain-cache] reject stale promptHash', fp);
+          await fsp.unlink(fp).catch(() => {});
+          return null;
+        }
         if (typeof j.answer !== 'string' || !j.answer.trim())
           return null;
         const t =
@@ -123,12 +157,17 @@ export function createExplainCache(apiRoot) {
             : typeof j.cachedAt === 'string'
               ? Number.parseInt(String(j.cachedAt), 10)
               : NaN;
-        if (!Number.isFinite(t) || Date.now() - t >= ttlMsLive) {
+        if (!Number.isFinite(t) || Date.now() - t >= ttl) {
+          if (explainCacheDebug()) console.log('[explain-cache] miss expired', fp);
           await fsp.unlink(fp).catch(() => {});
           return null;
         }
+        if (explainCacheDebug()) console.log('[explain-cache] HIT', fp);
         return { answer: j.answer };
-      } catch {
+      } catch (e) {
+        const err = /** @type {{ code?: string }} */ (e);
+        if (err?.code !== 'ENOENT' && explainCacheDebug())
+          console.log('[explain-cache] read error', fp, e);
         return null;
       }
     },
@@ -140,7 +179,9 @@ export function createExplainCache(apiRoot) {
      * @param {string} answer
      */
     async set(slug, promptId, contentKey, answer) {
-      if (disabled || ttlMsLive <= 0) return;
+      if (cacheDisabled()) return;
+      const ttl = explainCacheTtlMs();
+      if (ttl <= 0) return;
       const { path: fp } = pathsFor(slug, promptId, contentKey);
       const dir = path.dirname(fp);
       await ensureDir(dir);
@@ -160,7 +201,9 @@ export function createExplainCache(apiRoot) {
       try {
         await fsp.writeFile(tmp, body);
         await fsp.rename(tmp, fp);
-      } catch {
+        if (explainCacheDebug()) console.log('[explain-cache] STORE', fp);
+      } catch (e) {
+        console.error('[explain-cache] write failed', fp, e);
         await fsp.unlink(tmp).catch(() => {});
       }
     },

@@ -16,9 +16,12 @@
  *   EXPLAIN_RATE_WINDOW_MS   — default 900000
  *   CLAUDE_EXPLAIN_TIMEOUT_MS — default 240000
  *   CLAUDE_MODEL             — optional model id
- *   EXPLAIN_CACHE_DAYS       — file cache TTL in days for /explain-prompt (default 7; 0 disables writes)
+ *   EXPLAIN_CACHE_DAYS       — file cache TTL days (default 7; empty env = default; 0 disables)
  *   EXPLAIN_CACHE_DIR        — optional absolute path for cache JSON (default: ./cache/explain under api/)
  *   EXPLAIN_CACHE_DISABLED   — true/1 turns off caching entirely
+ *   EXPLAIN_CACHE_DEBUG      — 1 logs cache directory, HIT/MISS, write failures
+ *
+ * Successful POST /explain-prompt sets X-Explain-Cache: hit | miss | disabled (CORS-exposed).
  */
 
 import 'dotenv/config';
@@ -35,7 +38,7 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
-import { createExplainCache } from './explain-cache.mjs';
+import { createExplainCache, explainCacheActive } from './explain-cache.mjs';
 
 const PORT = Number(process.env.PORT) || 8787;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
@@ -327,6 +330,7 @@ app.use(
     },
     allowMethods: ['GET', 'POST', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
+    exposeHeaders: ['X-Explain-Cache'],
   })
 );
 
@@ -403,8 +407,13 @@ app.post('/explain-prompt', async (c) => {
     .digest('hex');
 
   const cachedHit = await explainCache.get(slug, promptId, contentKey);
-  if (cachedHit)
-    return c.json({ answer: cachedHit.answer, cached: true }, 200);
+  if (cachedHit) {
+    return c.json(
+      { answer: cachedHit.answer, cached: true },
+      200,
+      { 'X-Explain-Cache': 'hit' }
+    );
+  }
 
   const ip = clientIp(c.req.header('x-forwarded-for'));
   if (!allowExplainRate(ip)) {
@@ -433,8 +442,13 @@ app.post('/explain-prompt', async (c) => {
   try {
     const out = await runClaudeExplanation(fullPromptText, abortController);
     if (out.ok && out.text) {
-      explainCache.set(slug, promptId, contentKey, out.text).catch(() => {});
-      return c.json({ answer: out.text, cached: false }, 200);
+      await explainCache.set(slug, promptId, contentKey, out.text);
+      const xCache = explainCacheActive() ? 'miss' : 'disabled';
+      return c.json(
+        { answer: out.text, cached: false },
+        200,
+        { 'X-Explain-Cache': xCache }
+      );
     }
     const clientMsg =
       out.error === 'timeout_or_aborted'
