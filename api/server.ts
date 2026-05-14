@@ -680,6 +680,8 @@ const githubRepoParsed = parseRepo(GITHUB_REPO_RAW);
 
 const explainCache = createExplainCache(API_ROOT);
 
+const inFlightExplains = new Map<string, Promise<ExplainRunResult>>();
+
 const app = new Hono();
 
 app.use(
@@ -807,20 +809,38 @@ app.post('/explain-prompt', async (c) => {
     `${preamble}\n\n---\nTopic: ${topicLine}\nLecture row title: ${rowTitle}\n\n` +
     `--- Student-facing study prompt ---\n\n${chatQuery.trim()}`;
 
-  const clientSig = c.req.raw.signal;
-  const merged = mergeAbortControllers(
-    AbortSignal.timeout(EXPLAIN_AGENT_TIMEOUT_MS),
-    clientSig,
-  );
-  const abortController = merged;
+  const brokerKey = `${slug}:${promptId}:${contentKey}:${variantKey}`;
+  let brokerPromise = inFlightExplains.get(brokerKey);
+
+  if (!brokerPromise) {
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(() => abortController.abort(), EXPLAIN_AGENT_TIMEOUT_MS);
+
+    brokerPromise = (async () => {
+      try {
+        const out =
+          explainProvider === 'cursor'
+            ? await runCursorExplanation(fullPromptText, abortController)
+            : explainProvider === 'codex'
+              ? await runCodexExplanation(fullPromptText, abortController)
+              : await runClaudeExplanation(fullPromptText, abortController);
+        
+        if (out.ok) {
+          await explainCache.set(slug, promptId, contentKey, variantKey, out.text).catch(e => console.error('[explain-cache]', e));
+        }
+        return out;
+      } catch (e) {
+        return { ok: false, error: e instanceof Error ? e.message : String(e) } as ExplainRunResult;
+      } finally {
+        clearTimeout(timeoutId);
+        inFlightExplains.delete(brokerKey);
+      }
+    })();
+    inFlightExplains.set(brokerKey, brokerPromise);
+  }
 
   try {
-    const out =
-      explainProvider === 'cursor'
-        ? await runCursorExplanation(fullPromptText, abortController)
-        : explainProvider === 'codex'
-          ? await runCodexExplanation(fullPromptText, abortController)
-          : await runClaudeExplanation(fullPromptText, abortController);
+    const out = await brokerPromise;
     if (!out.ok) {
       const clientMsg =
         out.error === 'timeout_or_aborted'
@@ -830,7 +850,6 @@ app.post('/explain-prompt', async (c) => {
             : 'generation_failed';
       return c.json({ error: 'explain_failed', message: clientMsg }, 502);
     }
-    await explainCache.set(slug, promptId, contentKey, variantKey, out.text);
     const xCache = explainCacheActive() ? 'miss' : 'disabled';
     return c.json(
       { answer: out.text, cached: false },
