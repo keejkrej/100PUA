@@ -46,6 +46,9 @@
  *   EXPLAIN_CACHE_DIR        — optional absolute path for cache JSON (default: ./cache/explain under api/)
  *   EXPLAIN_CACHE_DISABLED   — true/1 turns off caching entirely
  *   EXPLAIN_CACHE_DEBUG      — 1 logs cache directory, HIT/MISS, write failures
+ *   EXPLAIN_KV_URL           — optional Render Key Value / Redis-compatible URL for hot cache tier
+ *   EXPLAIN_KV_CACHE_SECONDS — optional KV TTL seconds (default 86400; 0 disables KV tier)
+ *   EXPLAIN_KV_PREFIX        — optional KV key prefix (default 100pua)
  *
  * Successful POST /explain-prompt sets X-Explain-Cache and X-Explain-Provider (CORS-exposed).
  *

@@ -16,6 +16,8 @@
 #
 # Optional: explain cache survives across instance restarts if you set API env EXPLAIN_CACHE_DIR e.g.
 # /var/data/explain-cache together with a Persistent Disk mounted at /var/data.
+# Optional: set API env EXPLAIN_KV_URL to your Render Key Value internal URL to add a hot
+# Redis-compatible cache in front of the persistent disk cache.
 
 services:
   - type: web
@@ -37,6 +39,10 @@ services:
         value: "*"
       - key: EXPLAIN_AI_PROVIDER
         value: codex
+      - key: EXPLAIN_KV_URL
+        sync: false
+      - key: EXPLAIN_KV_CACHE_SECONDS
+        value: "86400"
 
   - type: web
     name: 100pua
