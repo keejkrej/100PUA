@@ -1,0 +1,181 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import { buildChatQuery } from '../../../../lib/chat-query';
+import manifest from '../../../../data/topics.manifest.json';
+import { topicBySlug } from '../../../../lib/topic-registry';
+
+export function getStaticPaths() {
+  const paths: { params: { slug: string; promptId: string } }[] = [];
+  for (const t of manifest) {
+    const topic = topicBySlug[t.slug];
+    if (!topic) continue;
+    for (const p of topic.prompts) {
+      paths.push({ params: { slug: t.slug, promptId: p.id } });
+    }
+  }
+  return paths;
+}
+
+const slug = Astro.params.slug!;
+const promptId = Astro.params.promptId!;
+const summary = manifest.find((t) => t.slug === slug);
+const topic = topicBySlug[slug];
+const promptRow = topic?.prompts?.find((p) => p.id === promptId);
+
+if (!summary || !topic || !promptRow) {
+  return Astro.redirect('/');
+}
+
+const chatgptUrl = `https://chatgpt.com/?q=${encodeURIComponent(buildChatQuery(promptRow))}`;
+const pageTitle = `${promptRow.title} · Claude`;
+
+const suggestApiBase =
+  typeof import.meta.env.PUBLIC_SUGGEST_API_URL === 'string' &&
+  import.meta.env.PUBLIC_SUGGEST_API_URL.trim()
+    ? import.meta.env.PUBLIC_SUGGEST_API_URL.trim().replace(/\/+$/, '')
+    : '';
+
+const explainEnabled = suggestApiBase.length > 0;
+---
+
+<Layout pageTitle={pageTitle} pageDescription={topic.topicTitle}>
+  <main class="flex flex-col text-text">
+    <div class="relative flex min-h-screen flex-col items-center px-6 py-16">
+      <div class="relative z-10 w-full max-w-3xl">
+        <div class="mb-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+          <a
+            href={`/topic/${slug}/`}
+            class="group text-muted inline-flex transition-colors duration-200 hover:text-text"
+          >
+            ← back to prompts
+          </a>
+          <a
+            href="/"
+            class="group text-muted inline-flex transition-colors duration-200 hover:text-text"
+          >
+            ← all topics
+          </a>
+        </div>
+
+        <header class="mb-10">
+          <h1 class="text-text text-xl font-normal tracking-tight">
+            <a
+              href={chatgptUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="prompt-page-title hover:text-accent text-text decoration-muted/60 underline underline-offset-[5px] transition-colors hover:decoration-accent/80"
+            >
+              {promptRow.title}
+            </a>
+          </h1>
+          <p class="text-muted mt-2 text-sm leading-relaxed">{topic.topicTitle}</p>
+          <p class="text-muted mt-1 text-[11px] tracking-wide tabular-nums">
+            {promptRow.durationTimestamp}
+          </p>
+          <p class="text-muted mt-3 max-w-xl text-[11px] leading-relaxed opacity-90">
+            Use the lecture title above to open the same study prompt in ChatGPT.
+          </p>
+        </header>
+
+        <section
+          class="border-muted/35 bg-surface/40 rounded-xl border px-5 py-6"
+          aria-live="polite"
+          data-explain-api={explainEnabled ? suggestApiBase : undefined}
+          data-explain-slug={explainEnabled ? slug : undefined}
+          data-explain-prompt-id={explainEnabled ? promptId : undefined}
+        >
+          {
+            explainEnabled ? (
+              <>
+                <p class="text-muted mb-5 text-[11px] tracking-wide" id="explain-status">
+                  Generating answer…
+                </p>
+                <div
+                  id="explain-toolbar"
+                  class="mb-4 hidden justify-start"
+                  aria-hidden="true"
+                >
+                  <div
+                    class="border-muted/40 bg-void/50 inline-flex items-center rounded-lg border p-0.5 shadow-sm"
+                    role="radiogroup"
+                    aria-label="Answer format"
+                  >
+                    <button
+                      type="button"
+                      id="explain-toggle-rendered"
+                      class="explain-toggle explain-toggle--on rounded-md px-3 py-1 text-[11px] tracking-wide transition-colors outline-none"
+                      role="radio"
+                      aria-checked="true"
+                      tabindex="0"
+                    >
+                      Rendered
+                    </button>
+                    <button
+                      type="button"
+                      id="explain-toggle-raw"
+                      class="explain-toggle explain-toggle--off rounded-md px-3 py-1 text-[11px] tracking-wide transition-colors outline-none"
+                      role="radio"
+                      aria-checked="false"
+                      tabindex="-1"
+                    >
+                      Raw
+                    </button>
+                  </div>
+                </div>
+                <div id="explain-answer-slot" class="min-h-[6rem]">
+                  <div id="explain-rendered" class="explain-md" hidden />
+                  <pre
+                    id="explain-raw"
+                    class="font-mono text-subtle max-h-[min(70vh,48rem)] overflow-auto whitespace-pre-wrap text-[0.8125rem] leading-relaxed"
+                    hidden
+                  ></pre>
+                </div>
+              </>
+            ) : (
+              <p class="text-muted text-sm leading-relaxed">
+                Set <code class="text-accent/90">PUBLIC_SUGGEST_API_URL</code> on the static site so this
+                page can call the Claude endpoint on your API service (`/explain-prompt`).
+              </p>
+            )
+          }
+        </section>
+      </div>
+    </div>
+  </main>
+
+  {
+    explainEnabled ? (
+      <script>
+        import { initExplainPromptView } from '../../../../lib/explain-prompt-view';
+
+        const root = document.querySelector('[data-explain-api]');
+        if (root instanceof HTMLElement) initExplainPromptView(root);
+      </script>
+    ) : null
+  }
+
+  <script is:inline define:vars={{ slug, pid: promptRow.id }}>
+    (function markPromptOpened() {
+      if (typeof slug === 'undefined' || typeof pid === 'undefined') return;
+      var COOKIE = '100pua_prompt_clicked';
+      try {
+        var m = document.cookie.match(
+          new RegExp('(?:^|; )' + COOKIE.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&') + '=([^;]*)')
+        );
+        /** @type {Record<string, Record<string, number>>} */
+        var map = m ? JSON.parse(decodeURIComponent(m[1])) || {} : {};
+        if (!map[slug]) map[slug] = {};
+        map[slug][pid] = Date.now();
+        document.cookie =
+          COOKIE +
+          '=' +
+          encodeURIComponent(JSON.stringify(map)) +
+          ';path=/;max-age=' +
+          String(60 * 60 * 24 * 400) +
+          ';samesite=lax';
+      } catch (_) {
+        //
+      }
+    })();
+  </script>
+</Layout>

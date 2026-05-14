@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
 
 @font-face {
   font-family: Geist Mono;
@@ -98,4 +99,113 @@ html[data-theme='light'] .theme-toggle-icon--light {
   white-space: nowrap;
   width: 1px;
   height: 1px;
+}
+
+/* Claude answer markdown — used with sanitized HTML only */
+.explain-md {
+  @apply max-w-none text-sm leading-relaxed text-text;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  & h1 {
+    @apply mt-8 mb-3 text-[1.1rem] font-medium tracking-tight text-text first:mt-0;
+  }
+
+  & h2 {
+    @apply mt-7 mb-2.5 text-[1rem] font-medium tracking-tight text-text first:mt-0;
+  }
+
+  & h3 {
+    @apply mt-5 mb-2 text-[0.95rem] font-medium text-text first:mt-0;
+  }
+
+  & p {
+    @apply mb-3.5 text-subtle leading-relaxed last:mb-0;
+  }
+
+  & ul,
+  & ol {
+    @apply my-3 space-y-1.5 ps-6 text-subtle marker:text-muted;
+  }
+
+  & ul {
+    @apply list-disc;
+  }
+
+  & ol {
+    @apply list-decimal;
+  }
+
+  & li {
+    @apply leading-relaxed;
+  }
+
+  & li > p {
+    @apply mb-1.5;
+  }
+
+  & blockquote {
+    @apply border-muted my-4 border-l-2 ps-4 text-muted italic;
+  }
+
+  & hr {
+    @apply border-muted/40 my-6;
+  }
+
+  & strong {
+    @apply font-medium text-text;
+  }
+
+  & a {
+    @apply text-accent underline decoration-accent/35 underline-offset-2 hover:decoration-accent/70;
+  }
+
+  & code {
+    font-family: var(--font-mono);
+    @apply rounded bg-muted/25 px-1 py-px text-[0.85em] text-text;
+  }
+
+  & pre {
+    font-family: var(--font-mono);
+    @apply border-muted/35 bg-void mb-5 overflow-x-auto rounded-lg border p-4 text-[0.813rem] leading-relaxed;
+  }
+
+  & pre code {
+    @apply border-0 bg-transparent p-0 text-subtle;
+  }
+
+  & table {
+    @apply mb-5 w-full border-collapse text-[0.813rem];
+  }
+
+  & th,
+  & td {
+    @apply border-muted/35 border px-3 py-2 text-left align-top;
+  }
+
+  & th {
+    @apply bg-muted/15 font-medium text-text;
+  }
+
+  & .katex {
+    font-size: 1.05em;
+    color: var(--color-text);
+  }
+
+  & .katex-display {
+    margin: 1rem 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+  }
+}
+
+.explain-toggle--on {
+  @apply bg-accent/15 font-medium text-accent;
+}
+
+.explain-toggle--off {
+  @apply text-muted hover:bg-muted/15 hover:text-text;
 }

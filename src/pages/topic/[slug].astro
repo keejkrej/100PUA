@@ -1,21 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import SuggestFAB from '../../components/SuggestFAB.astro';
-import { buildChatQuery } from '../../lib/chat-query';
 import manifest from '../../data/topics.manifest.json';
-import nonequilibriumDoc from '../../data/nonequilibrium-lmu-ss2025.json';
-import selfOrganizationDoc from '../../data/self-organization-lmu-ws2025-2026.json';
-import stanfordCs336Doc from '../../data/stanford-cs336-language-modeling-spring2025.json';
-import proteinDesignDoc from '../../data/protein-design-rosetta-bootcamp.json';
-import polymerBlendDoc from '../../data/polymer-blend-regular-solution.json';
-
-const topicBySlug: Record<string, typeof nonequilibriumDoc> = {
-  'nonequilibrium-lmu-ss2025': nonequilibriumDoc,
-  'self-organization-lmu-ws2025-2026': selfOrganizationDoc,
-  'stanford-cs336-language-modeling-spring2025': stanfordCs336Doc,
-  'protein-design-rosetta-bootcamp': proteinDesignDoc,
-  'polymer-blend-regular-solution': polymerBlendDoc,
-};
+import { topicBySlug } from '../../lib/topic-registry';
 
 export function getStaticPaths() {
   return manifest.map((t) => ({ params: { slug: t.slug } }));
@@ -70,9 +57,7 @@ const pageTitle = `${topic.topicTitle} · prompts`;
         <nav class="flex flex-col gap-0" data-topic-slug={slug}>
           {topic.prompts.map((p, i) => (
             <a
-              href={`https://chatgpt.com/?q=${encodeURIComponent(buildChatQuery(p))}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/topic/${slug}/prompt/${encodeURIComponent(p.id)}/`}
               data-prompt-id={p.id}
               class="group animate-fade-in-up relative flex items-start gap-4 py-3 opacity-0"
               style={`animation-delay: ${Math.min(0.06 + i * 0.012, 0.55)}s;`}
