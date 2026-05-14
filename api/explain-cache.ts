@@ -11,7 +11,7 @@ import crypto from 'node:crypto';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 
-const SCHEMA = 'v2';
+const SCHEMA = 'v4';
 
 export function explainCacheDirectory(apiRoot: string): string {
   const custom = (process.env.EXPLAIN_CACHE_DIR ?? '').trim();

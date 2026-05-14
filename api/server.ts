@@ -22,6 +22,10 @@
  *   EXPLAIN_CACHE_DEBUG      — 1 logs cache directory, HIT/MISS, write failures
  *
  * Successful POST /explain-prompt sets X-Explain-Cache: hit | miss | disabled (CORS-exposed).
+ *
+ * Explain agent: `tools.preset === 'claude_code'` (full default Claude Code tool set).
+ * Uses permissionMode bypassPermissions + allowDangerouslySkipPermissions so tools run headlessly.
+ * cwd is an ephemeral tmp dir — not the API source tree — but Bash/WebFetch/use of env vars still widen blast radius vs WebSearch-only.
  */
 
 import 'dotenv/config';
@@ -210,9 +214,10 @@ async function runClaudeExplanation(
           CLAUDE_AGENT_SDK_CLIENT_APP: '100pua-api/1.0',
         },
         abortController,
-        tools: [],
-        maxTurns: 2,
-        permissionMode: 'dontAsk',
+        tools: { type: 'preset', preset: 'claude_code' },
+        maxTurns: 32,
+        permissionMode: 'bypassPermissions',
+        allowDangerouslySkipPermissions: true,
         settingSources: [],
         ...(process.env.CLAUDE_MODEL?.trim()
           ? { model: process.env.CLAUDE_MODEL.trim() }
@@ -464,6 +469,8 @@ app.post('/explain-prompt', async (c) => {
     `- Reply in Markdown. Prefer clarity over length (about 500–900 words unless the question is narrow).`,
     `- Use short sections, bullets, and concrete examples when helpful.`,
     `- Do not claim you watched the video; infer from the pasted prompt and URLs only.`,
+    `- You have the full Claude Code toolset (including WebSearch/WebFetch/Bash/etc.). Prefer answering from the pasted prompt when it suffices; otherwise use tools sparingly for grounding.`,
+    `- If you relied on external sources from tools, cite them briefly where it builds trust.`,
   ].join('\n');
 
   const fullPromptText =
