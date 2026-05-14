@@ -28,5 +28,11 @@
     "topicTitle": "Polymer blends — regular solution theory to gelation",
     "courseLine": "Curated readings · thermodynamics, diffusion, viscosity, gelation",
     "promptCount": 12
+  },
+  {
+    "slug": "biochemistry-wet-lab-tutorial",
+    "topicTitle": "Biochemistry Wet Lab Tutorial",
+    "courseLine": "Curated safety + instrument primers · pipettes, centrifuges, spectrophotometers, burners",
+    "promptCount": 12
   }
 ]
