@@ -241,7 +241,7 @@ function buildExplainPreambleLines(provider: ExplainProviderKind): string[] {
     ``,
     `- Reply in Markdown. Prefer clarity over length (about 500–900 words unless the question is narrow).`,
     `- Use short sections, bullets, and concrete examples when helpful.`,
-    `- Do not claim you watched the video; infer from the pasted prompt and URLs only.`,
+    `- Do not claim you watched a video or opened a specific URL; infer from the pasted prompt and any links in it only.`,
   ];
   if (provider === 'claude') {
     return [

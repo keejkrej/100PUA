@@ -8,84 +8,84 @@
       "id": "lab-orientation-safety",
       "title": "Lab orientation: PPE, SDS, and risk assessment before touching equipment",
       "query": "Create a beginner-friendly wet-lab onboarding plan for biochemistry students. Cover required PPE, how to read Safety Data Sheets (SDS), hazard labeling, waste streams, and a pre-experiment risk assessment checklist.",
-      "videoUrl": "https://www.osha.gov/sites/default/files/publications/OSHA3404laboratory-safety-guidance.pdf",
+      "resourceUrls": ["https://www.osha.gov/sites/default/files/publications/OSHA3404laboratory-safety-guidance.pdf"],
       "durationTimestamp": "Read"
     },
     {
       "id": "chemical-hygiene-plan",
       "title": "Chemical hygiene plan in practice: translating policy into bench SOPs",
       "query": "Explain how to convert a chemical hygiene plan into daily bench behavior in a biochemistry lab. Include storage, labeling, transport, spill response, and documentation habits.",
-      "videoUrl": "https://ors.od.nih.gov/sr/dohs/Documents/chemical-hygiene-plan.pdf",
+      "resourceUrls": ["https://ors.od.nih.gov/sr/dohs/Documents/chemical-hygiene-plan.pdf"],
       "durationTimestamp": "Read"
     },
     {
       "id": "micropipette-fundamentals",
       "title": "Micropipette fundamentals: selecting ranges and avoiding volume error",
       "query": "Teach micropipette basics for a new biochemistry student: choosing the right pipette range, setting volume correctly, first-stop/second-stop technique, and common mistakes that cause under/over-pipetting.",
-      "videoUrl": "https://www.eppendorf.com/us-en/lab-academy/topics-methods-technology/pipetting-dispensing/how-to-pipette-small-volumes-with-handheld-manual-pipettes/",
+      "resourceUrls": ["https://www.eppendorf.com/us-en/lab-academy/topics-methods-technology/pipetting-dispensing/how-to-pipette-small-volumes-with-handheld-manual-pipettes/"],
       "durationTimestamp": "Read"
     },
     {
       "id": "pipetting-accuracy",
       "title": "Pipetting accuracy: pre-wetting, immersion depth, and consistency drills",
       "query": "Design a 30-minute practice routine to improve pipetting accuracy and precision in biochemistry labs. Include tip pre-wetting, immersion depth, aspiration/dispense speed, and ways to self-check repeatability.",
-      "videoUrl": "https://www.eppendorf.com/product-media/doc/en/112928_Userguide/Eppendorf_Liquid-Handling_Userguide_020_Pipettes_Impact-Pipetting-Techniques-Precision-Accuracy.pdf",
+      "resourceUrls": ["https://www.eppendorf.com/product-media/doc/en/112928_Userguide/Eppendorf_Liquid-Handling_Userguide_020_Pipettes_Impact-Pipetting-Techniques-Precision-Accuracy.pdf"],
       "durationTimestamp": "Read"
     },
     {
       "id": "centrifuge-safe-loading",
       "title": "Centrifuge safe loading: balancing patterns and counterweights",
       "query": "Explain centrifuge loading and balancing for beginners. Show how to balance 2, 3, 4, and odd-number tube layouts, when to use balance tubes, and what can fail if loads are uneven.",
-      "videoUrl": "https://ehs.cornell.edu/research-safety/biosafety-biosecurity/biological-safety-manuals-and-other-documents/centrifuges",
+      "resourceUrls": ["https://ehs.cornell.edu/research-safety/biosafety-biosecurity/biological-safety-manuals-and-other-documents/centrifuges"],
       "durationTimestamp": "Read"
     },
     {
       "id": "centrifuge-biohazard-controls",
       "title": "Centrifuge biohazard controls: sealed rotors, cups, and aerosol risk",
       "query": "Teach safe centrifuge operation for potentially biohazardous samples: sealed buckets/rotors, inspection checks, rotor speed limits, decontamination workflow, and incident response after tube breakage.",
-      "videoUrl": "https://blink.ucsd.edu/safety/research-lab/laboratory/centrifuge.html",
+      "resourceUrls": ["https://blink.ucsd.edu/safety/research-lab/laboratory/centrifuge.html"],
       "durationTimestamp": "Read"
     },
     {
       "id": "spectrophotometer-basics",
       "title": "Spectrophotometer basics: absorbance, blanking, and Beer-Lambert intuition",
       "query": "Explain spectrophotometry to a biochemistry beginner: absorbance vs transmittance, why blanking is needed, and how Beer-Lambert law connects concentration to measured signal.",
-      "videoUrl": "https://www.isu.edu/biology/biolab/instructor-training/technology/spectrophotometers/",
+      "resourceUrls": ["https://www.isu.edu/biology/biolab/instructor-training/technology/spectrophotometers/"],
       "durationTimestamp": "Read"
     },
     {
       "id": "cuvette-technique",
       "title": "Cuvette technique: handling, orientation, and contamination control",
       "query": "Provide a step-by-step protocol for cuvette handling in spectrophotometer workflows: cleaning, orientation, avoiding fingerprints/bubbles, and when to use quartz vs plastic cuvettes.",
-      "videoUrl": "https://en.wikipedia.org/wiki/Cuvette",
+      "resourceUrls": ["https://en.wikipedia.org/wiki/Cuvette"],
       "durationTimestamp": "Read"
     },
     {
       "id": "fume-hood-workflow",
       "title": "Fume hood workflow: sash height, airflow discipline, and setup",
       "query": "Explain how to use a laboratory chemical fume hood correctly in wet-lab biochemistry. Include pre-use checks, sash positioning, keeping materials out of dead zones, and behavior that defeats hood protection.",
-      "videoUrl": "https://www.unmc.edu/ehs/_documents/lab-safety/laboratoryfumehoodssafetyguideline.pdf",
+      "resourceUrls": ["https://www.unmc.edu/ehs/_documents/lab-safety/laboratoryfumehoodssafetyguideline.pdf"],
       "durationTimestamp": "Read"
     },
     {
       "id": "bunsen-burner-safety",
       "title": "Bunsen burner safety: flame states, ignition sequence, and shutdown",
       "query": "Teach safe Bunsen burner operation in a biochemistry teaching lab: pre-checks, ignition order, visible safety flame vs working flame, tie-back/clearance rules, and emergency shutdown steps.",
-      "videoUrl": "https://www.ehs.harvard.edu/sites/default/files/bunsen_burner_safety_guidelines_fact_sheet.pdf",
+      "resourceUrls": ["https://www.ehs.harvard.edu/sites/default/files/bunsen_burner_safety_guidelines_fact_sheet.pdf"],
       "durationTimestamp": "Read"
     },
     {
       "id": "glassware-heating",
       "title": "Glassware + heating devices: preventing thermal shock and burns",
       "query": "Create a practical guide for heating-related safety in biochemistry labs, covering hot plates, Bunsen burners, suitable glassware, gradual heating/cooling, and burn/thermal-shock prevention.",
-      "videoUrl": "https://ehs.cornell.edu/research-safety/chemical-safety/laboratory-safety-manual/chapter-16-physical-hazards/166-heat-and",
+      "resourceUrls": ["https://ehs.cornell.edu/research-safety/chemical-safety/laboratory-safety-manual/chapter-16-physical-hazards/166-heat-and"],
       "durationTimestamp": "Read"
     },
     {
       "id": "device-to-sop",
       "title": "From device manual to SOP: writing reproducible one-page protocols",
       "query": "Show me how to turn a vendor manual for a lab device into a one-page SOP a beginner can follow. Include sections for purpose, setup, calibration, run steps, safety controls, and troubleshooting.",
-      "videoUrl": "https://www.csusm.edu/shs/safetyprograms/centrifugesafety.html",
+      "resourceUrls": ["https://www.csusm.edu/shs/safetyprograms/centrifugesafety.html"],
       "durationTimestamp": "Read"
     }
   ]

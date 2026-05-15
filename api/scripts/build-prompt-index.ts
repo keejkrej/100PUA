@@ -21,7 +21,7 @@ type ManifestRow = { slug?: string };
 type TopicPrompt = {
   id?: string;
   title?: string;
-  videoUrl?: string;
+  resourceUrls?: string[];
   query?: string;
 };
 type TopicFile = {
@@ -30,11 +30,24 @@ type TopicFile = {
 };
 
 function buildChatQuery(prompt: TopicPrompt): string {
-  const url = (prompt.videoUrl ?? '').trim();
+  const raw = prompt.resourceUrls;
+  const seen = new Set<string>();
+  const urls: string[] = [];
+  if (Array.isArray(raw)) {
+    for (const u of raw) {
+      if (typeof u !== 'string') continue;
+      const t = u.trim();
+      if (!t || seen.has(t)) continue;
+      seen.add(t);
+      urls.push(t);
+    }
+  }
   const base = (prompt.query ?? '').trimEnd();
-  if (!url) return base;
-  if (base.includes(url)) return base;
-  return `${base}\n\nYouTube lecture (use this URL when looking up captions or transcript): ${url}`;
+  if (urls.length === 0) return base;
+  const missing = urls.filter((u) => !base.includes(u));
+  if (missing.length === 0) return base;
+  const lines = missing.map((u) => `- ${u}`).join('\n');
+  return `${base}\n\nReference URLs (use for context; do not claim you watched a video or accessed paywalled sources unless you can verify them):\n${lines}`;
 }
 
 function main(): void {
