@@ -7,91 +7,91 @@
     {
       "id": "MlzFudaWylc",
       "title": "Tools intro: PyMOL & VS Code",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nTools intro: PyMOL & VS Code",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nTools intro: PyMOL & VS Code",
       "resourceUrls": ["https://www.youtube.com/watch?v=MlzFudaWylc"],
       "durationTimestamp": "13:49"
     },
     {
       "id": "ObkIfV9KvDM",
       "title": "Protein structure prediction: history, challenges, and AI breakthroughs",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nProtein structure prediction: history, challenges, and AI breakthroughs",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nProtein structure prediction: history, challenges, and AI breakthroughs",
       "resourceUrls": ["https://www.youtube.com/watch?v=ObkIfV9KvDM"],
       "durationTimestamp": "10:42"
     },
     {
       "id": "zX6pmHCxvrk",
       "title": "AlphaFold2 Structure Prediction",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nAlphaFold2 Structure Prediction",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nAlphaFold2 Structure Prediction",
       "resourceUrls": ["https://www.youtube.com/watch?v=zX6pmHCxvrk"],
       "durationTimestamp": "45:48"
     },
     {
       "id": "WVmUIg0kN2E",
       "title": "ESM Fold Structure Prediction",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nESM Fold Structure Prediction",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nESM Fold Structure Prediction",
       "resourceUrls": ["https://www.youtube.com/watch?v=WVmUIg0kN2E"],
       "durationTimestamp": "16:20"
     },
     {
       "id": "xQkegATmO-c",
       "title": "PyTorch explained: from neural networks to real-world models",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nPyTorch explained: from neural networks to real-world models",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nPyTorch explained: from neural networks to real-world models",
       "resourceUrls": ["https://www.youtube.com/watch?v=xQkegATmO-c"],
       "durationTimestamp": "33:10"
     },
     {
       "id": "P6sHA0EmzY8",
       "title": "AlphaFold3 Structure Prediction: what's new and why it matters",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nAlphaFold3 Structure Prediction: what's new and why it matters",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nAlphaFold3 Structure Prediction: what's new and why it matters",
       "resourceUrls": ["https://www.youtube.com/watch?v=P6sHA0EmzY8"],
       "durationTimestamp": "24:46"
     },
     {
       "id": "oCmGYVh7tgQ",
       "title": "Backbone generation in protein design workflows",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nBackbone generation in protein design workflows",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nBackbone generation in protein design workflows",
       "resourceUrls": ["https://www.youtube.com/watch?v=oCmGYVh7tgQ"],
       "durationTimestamp": "22:25"
     },
     {
       "id": "o8JWPjSH1Ig",
       "title": "Inverse folding using ProteinMPNN",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nInverse folding using ProteinMPNN",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nInverse folding using ProteinMPNN",
       "resourceUrls": ["https://www.youtube.com/watch?v=o8JWPjSH1Ig"],
       "durationTimestamp": "29:56"
     },
     {
       "id": "WOSBRgQBSm4",
       "title": "Cutting-edge ML tools for protein design pipelines",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nCutting-edge ML tools for protein design pipelines",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nCutting-edge ML tools for protein design pipelines",
       "resourceUrls": ["https://www.youtube.com/watch?v=WOSBRgQBSm4"],
       "durationTimestamp": "33:32"
     },
     {
       "id": "IvqyD7tehSo",
       "title": "Protein design compute explained: when to use GPU vs CPU",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nProtein design compute explained: when to use GPU vs CPU",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nProtein design compute explained: when to use GPU vs CPU",
       "resourceUrls": ["https://www.youtube.com/watch?v=IvqyD7tehSo"],
       "durationTimestamp": "19:25"
     },
     {
       "id": "nVmuGyvV9Lg",
       "title": "Modern Protein Docking: Traditional Methods vs AI Tools",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nModern Protein Docking: Traditional Methods vs AI Tools",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nModern Protein Docking: Traditional Methods vs AI Tools",
       "resourceUrls": ["https://www.youtube.com/watch?v=nVmuGyvV9Lg"],
       "durationTimestamp": "24:21"
     },
     {
       "id": "gzg-v00Jnhc",
       "title": "AI driven protein design workflow: A practical example",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nAI driven protein design workflow: A practical example",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nAI driven protein design workflow: A practical example",
       "resourceUrls": ["https://www.youtube.com/watch?v=gzg-v00Jnhc"],
       "durationTimestamp": "21:12"
     },
     {
       "id": "9pQeQKXhS70",
       "title": "Protein design roundtable discussion: real challenges and practical solutions",
-      "query": "Help me understand this topic from a Rosetta Bootcamp lecture (machine learning for protein design):\n\nProtein design roundtable discussion: real challenges and practical solutions",
+      "query": "Help me understand this topic from the Rosetta Bootcamp (machine learning for protein design):\n\nProtein design roundtable discussion: real challenges and practical solutions",
       "resourceUrls": ["https://www.youtube.com/watch?v=9pQeQKXhS70"],
       "durationTimestamp": "23:55"
     }

@@ -240,7 +240,7 @@ function explainAgentMisconfiguredMessage(provider: ExplainProviderKind): string
 
 function buildExplainPreambleLines(provider: ExplainProviderKind): string[] {
   const common = [
-    `You help students digest lecture-aligned study prompts (the same text they might paste into ChatGPT).`,
+    `You help students digest topic-aligned study prompts (the same text they might paste into ChatGPT).`,
     ``,
     `- Reply in Markdown. Prefer clarity over length (about 500–900 words unless the question is narrow).`,
     `- Use short sections, bullets, and concrete examples when helpful.`,
@@ -842,7 +842,7 @@ app.post('/explain-prompt', async (c) => {
   const preamble = buildExplainPreambleLines(explainProvider).join('\n');
 
   const fullPromptText =
-    `${preamble}\n\n---\nTopic: ${topicLine}\nLecture row title: ${rowTitle}\n\n` +
+    `${preamble}\n\n---\nTopic: ${topicLine}\nPrompt title: ${rowTitle}\n\n` +
     `--- Student-facing study prompt ---\n\n${chatQuery.trim()}`;
 
   const brokerKey = `${slug}:${promptId}:${contentKey}:${variantKey}`;
