@@ -16,7 +16,7 @@ jobs:
         with:
           script: |
             const body =
-              '@cursor-agent please investigate this issue and open a PR with a fix when appropriate.';
+              '@cursoragent please investigate this issue and open a PR with a fix when appropriate.';
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
