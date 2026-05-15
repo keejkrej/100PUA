@@ -1,0 +1,120 @@
+{
+  "slug": "cellacdc-spotmax",
+  "topicTitle": "Cell-ACDC and SpotMAX — microscopy segmentation, tracking, and spot analysis",
+  "courseLine": "Official docs · beginner workflows to advanced models, AI spots, and HPC",
+  "promptCount": 16,
+  "prompts": [
+    {
+      "id": "cellacdc-install-run-main-menu",
+      "title": "Cell-ACDC first run: environments, launching `acdc`, and the main menu",
+      "query": "I am new to Cell-ACDC. Walk me through installing it (conda vs pip), activating the environment, running `acdc` or `cellacdc`, and what each main-menu module is for (create data structure, data prep, segmentation, GUI). Mention where to look if the window seems frozen.",
+      "videoUrl": "https://cell-acdc.readthedocs.io/en/latest/installation.html",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "cellacdc-microscopy-to-folder-structure",
+      "title": "From raw microscopy files to Cell-ACDC folder layout",
+      "query": "Explain how to use Cell-ACDC module 0 to build the experiment/position/Images folder structure from vendor files. Cover Bio-Formats vs AICSImageIO, metadata review, RAM considerations, and the macOS limitation with python-bioformats plus the Fiji macro workaround.",
+      "videoUrl": "https://cell-acdc.readthedocs.io/en/latest/getting-started.html#creating-data-structure",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "cellacdc-dataprep-zslice-align-crop-roi",
+      "title": "Data prep in Cell-ACDC: z-slice or projection, alignment, crops, and background ROIs",
+      "query": "Teach the Cell-ACDC data-prep module for timelapse and z-stacks: choosing a sharp z-slice or projection, frame alignment with phase cross-correlation, defining analysis and background ROIs, optional z-cropping, and how background ROIs flow into later CSV measurements.",
+      "videoUrl": "https://cell-acdc.readthedocs.io/en/latest/getting-started.html#preparing-data-for-further-analysis-data-prep",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "cellacdc-automated-segmentation-tracking",
+      "title": "Running automated segmentation and tracking in Cell-ACDC",
+      "query": "Describe the segmentation module workflow: pick position folder and segmentation channel, choose a segmentation model and parameters, optional stop frame, pick a tracker, and what to expect while processing. Link concepts to when I should re-open the GUI for corrections.",
+      "videoUrl": "https://cell-acdc.readthedocs.io/en/latest/getting-started.html#segmentation-and-tracking",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "cellacdc-gui-fix-tracking-segmentation",
+      "title": "GUI mode: fixing masks, IDs, merges, splits, and repeat tracking",
+      "query": "I have Cell-ACDC outputs with tracking or mask errors. Explain viewer vs segmentation/tracking mode, key tools (eraser, brush, separation, edit ID, merge IDs), repeat segmentation/tracking, excluding cells or border objects, and keyboard shortcuts that speed up curation.",
+      "videoUrl": "https://cell-acdc.readthedocs.io/en/latest/tooltips.html",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "cellacdc-yeast-mother-bud-cell-cycle",
+      "title": "Yeast-style cell cycle annotation: mother–bud pairing and reinitialization",
+      "query": "How do I use Cell-ACDC cell cycle analysis mode after masks are clean? Cover assign bud to mother, unknown history, reinitialize cell cycle annotation forward, breaking/rebinding pairs after division, and why starting from the first frame is usually recommended.",
+      "videoUrl": "https://cell-acdc.readthedocs.io/en/latest/getting-started.html#cell-cycle-annotation",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "cellacdc-segmentation-models-and-trackers",
+      "title": "Choosing segmentation models and trackers for difficult movies",
+      "query": "Compare major Cell-ACDC segmentation backends and when each tends to work (e.g., crowded yeast, nuclei in tissue, 3D). Then explain tracker choice and post-processing levers I should tune before giving up on automation.",
+      "videoUrl": "https://cell-acdc.readthedocs.io/en/latest/models.html",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "cellacdc-add-custom-segmentation-model",
+      "title": "Integrating a custom segmentation model into Cell-ACDC",
+      "query": "I trained my own model elsewhere. Outline the steps and interfaces Cell-ACDC expects to register a new segmentation model, how parameters surface in the UI, and how to validate it on a few frames before a full run.",
+      "videoUrl": "https://cell-acdc.readthedocs.io/en/latest/models.html#adding-a-new-model",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "cellacdc-bidirectional-scan-shift-correction",
+      "title": "Bidirectional scanning artifacts and Cell-ACDC shift-correction scripts",
+      "query": "My confocal line-scan data shows alternating row offsets from bidirectional scanning. How does Cell-ACDC approach correction, when should I apply it relative to data prep/segmentation, and what sanity checks confirm the fix worked?",
+      "videoUrl": "https://cell-acdc.readthedocs.io/en/latest/bdir_corr.html",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "spotmax-install-cluster-gpu-options",
+      "title": "Installing SpotMAX: stable vs latest, HPC, and GPU-enabled PyTorch on Linux",
+      "query": "Compare installing SpotMAX stable vs latest vs from source. When is the HPC path appropriate, and how should I think about CUDA/PyTorch versions on a Linux workstation versus a cluster headless node?",
+      "videoUrl": "https://spotmax.readthedocs.io/en/latest/install/index.html",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "spotmax-end-to-end-recommended-workflow",
+      "title": "SpotMAX recommended workflow: GUI setup, CLI batch, and Python API",
+      "query": "Describe SpotMAX’s recommended analysis workflow from configuring parameters in the GUI to rerunning headlessly on a server, including when to use the CLI versus importing pipeline functions in a notebook.",
+      "videoUrl": "https://spotmax.readthedocs.io/en/latest/misc/get_started.html",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "spotmax-reference-channel-and-spot-detection",
+      "title": "How SpotMAX works: reference segmentation, spot prediction, detection, quantification",
+      "query": "Explain SpotMAX’s pipeline stages—reference channel segmentation, spot prediction, detection, and quantification—and how outputs relate to tables and masks. Use intuition for smFISH-like puncta plus organelle reference channels.",
+      "videoUrl": "https://spotmax.readthedocs.io/en/latest/how_it_works/index.html",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "spotmax-parameter-tuning-low-snr-density",
+      "title": "Tuning SpotMAX when SNR is low or spots are dense and touching",
+      "query": "My spots are dim and crowded or frequently merge in the preview. Which SpotMAX parameter groups should I adjust first, how do AI-related parameters differ from classical thresholds, and what iterative strategy avoids overfitting to one field of view?",
+      "videoUrl": "https://spotmax.readthedocs.io/en/latest/parameters/parameters_tuning.html",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "spotmax-training-and-ai-assisted-detection",
+      "title": "Training SpotMAX AI and using learned models responsibly",
+      "query": "Outline how SpotMAX AI training is set up: data requirements, augmentation pitfalls, judging generalization across positions, and how to document model version and parameters for a paper supplement.",
+      "videoUrl": "https://spotmax.readthedocs.io/en/latest/misc/training_ai.html",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "spotmax-smfish-mitochondria-tutorials",
+      "title": "Worked-style goals: smFISH counting and mitochondrial DNA plus network quantification",
+      "query": "Summarize goals, inputs, and evaluation metrics for SpotMAX tutorials aimed at smFISH in yeast and joint mtDNA puncta with mitochondrial network segmentation, including how I would sanity-check counts against manual ground truth on a subset.",
+      "videoUrl": "https://spotmax.readthedocs.io/en/latest/tutorials/index.html",
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "cellacdc-spotmax-community-citation",
+      "title": "Community support, citing Cell-ACDC and SpotMAX, and reproducible methods text",
+      "query": "Draft a methods paragraph skeleton that mentions Cell-ACDC for cell segmentation/tracking/cell-cycle curation and SpotMAX for puncta or organelle quantification, including version pins, key parameters, and correct citations plus where to ask questions (Image.sc forum, GitHub).",
+      "videoUrl": "https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-022-01372-6",
+      "durationTimestamp": "Read"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import stanfordCs336Doc from '../data/stanford-cs336-language-modeling-spring202
 import proteinDesignDoc from '../data/protein-design-rosetta-bootcamp.json';
 import polymerBlendDoc from '../data/polymer-blend-regular-solution.json';
 import biochemistryWetLabTutorialDoc from '../data/biochemistry-wet-lab-tutorial.json';
+import cellacdcSpotmaxDoc from '../data/cellacdc-spotmax.json';
 
 export type TopicDoc = typeof nonequilibriumDoc;
 
@@ -14,4 +15,5 @@ export const topicBySlug: Record<string, TopicDoc> = {
   'protein-design-rosetta-bootcamp': proteinDesignDoc,
   'polymer-blend-regular-solution': polymerBlendDoc,
   'biochemistry-wet-lab-tutorial': biochemistryWetLabTutorialDoc,
+  'cellacdc-spotmax': cellacdcSpotmaxDoc,
 };
