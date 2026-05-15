@@ -2,7 +2,7 @@
   "slug": "cellacdc-spotmax",
   "topicTitle": "Cell-ACDC and SpotMAX — microscopy segmentation, tracking, and spot analysis",
   "courseLine": "Official docs · beginner workflows to advanced models, AI spots, and HPC",
-  "promptCount": 16,
+  "promptCount": 17,
   "prompts": [
     {
       "id": "cellacdc-install-run-main-menu",
@@ -30,6 +30,16 @@
       "title": "Running automated segmentation and tracking in Cell-ACDC",
       "query": "Describe the segmentation module workflow: pick position folder and segmentation channel, choose a segmentation model and parameters, optional stop frame, pick a tracker, and what to expect while processing. Link concepts to when I should re-open the GUI for corrections.",
       "resourceUrls": ["https://cell-acdc.readthedocs.io/en/latest/getting-started.html#segmentation-and-tracking"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "cellacdc-3d-segmentation",
+      "title": "3D segmentation with Cell-ACDC",
+      "query": "I have 3D confocal or light-sheet stacks (possibly timelapse) and want nuclei or whole-cell masks in 3D with Cell-ACDC. Explain how 3D differs from 2D in the pipeline: data structure and channel naming, z-spacing and anisotropy, which segmentation models or settings are realistic for thick samples, RAM and processing time trade-offs, when to preprocess (crop, projection, or per-slice) versus true 3D inference, and how to validate results (orthogonal slices, surface renderings, spot checks on dividing cells). Point me to where the GUI exposes 3D-specific options and what to try first when masks leak between adjacent objects or look jagged between z-planes.",
+      "resourceUrls": [
+        "https://github.com/SchmollerLab/Cell_ACDC",
+        "https://cell-acdc.readthedocs.io/en/latest/models.html"
+      ],
       "durationTimestamp": "Read"
     },
     {
