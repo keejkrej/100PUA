@@ -40,5 +40,11 @@
     "topicTitle": "Cell-ACDC and SpotMAX — microscopy segmentation, tracking, and spot analysis",
     "courseLine": "Official docs · beginner workflows to advanced models, AI spots, and HPC",
     "promptCount": 16
+  },
+  {
+    "slug": "foundations-of-artificial-intelligence-papers",
+    "topicTitle": "The Foundations of Artificial Intelligence: Tracing the Pillars of Modern AI",
+    "courseLine": "Curated classics · foundational papers that shaped modern AI",
+    "promptCount": 15
   }
 ]

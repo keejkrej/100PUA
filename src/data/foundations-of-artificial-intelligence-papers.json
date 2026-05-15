@@ -1,0 +1,83 @@
+{
+  "slug": "foundations-of-artificial-intelligence-papers",
+  "topicTitle": "The Foundations of Artificial Intelligence: Tracing the Pillars of Modern AI",
+  "courseLine": "Curated classics · foundational papers that shaped modern AI",
+  "promptCount": 15,
+  "prompts": [
+    {
+      "id": "perceptron",
+      "title": "The perceptron: a probabilistic model for information storage and organization in the brain",
+      "query": "Explain this foundational AI paper in depth:\n\nThe perceptron: a probabilistic model for information storage and organization in the brain\n\nCover the historical context, the core model, mathematical setup, and why this paper matters for later neural-network work."
+    },
+    {
+      "id": "emergent-neural-networks",
+      "title": "Neural networks and physical systems with emergent collective computational abilities",
+      "query": "Explain this foundational AI paper in depth:\n\nNeural networks and physical systems with emergent collective computational abilities\n\nSummarize the core insight, model structure, and impact on later work in collective neural computation."
+    },
+    {
+      "id": "boltzmann-machines",
+      "title": "Boltzmann machines: constraint satisfaction networks that learn",
+      "query": "Explain this foundational AI paper in depth:\n\nBoltzmann machines: constraint satisfaction networks that learn\n\nDescribe the model, learning rule, and how it relates to energy-based models and probabilistic inference."
+    },
+    {
+      "id": "error-propagation-representations",
+      "title": "Learning internal representations by error propagation",
+      "query": "Explain this foundational AI paper in depth:\n\nLearning internal representations by error propagation\n\nDescribe the learning objective, network architecture assumptions, and how error backpropagation is used to learn internal features."
+    },
+    {
+      "id": "actor-critic-architecture",
+      "title": "Looking back on the actor-critic architecture",
+      "query": "Explain this foundational AI paper in depth:\n\nLooking back on the actor-critic architecture\n\nSummarize the actor-critic idea, its historical role in control/reinforcement learning, and modern descendants."
+    },
+    {
+      "id": "adaptive-control-elements",
+      "title": "Neuronlike adaptive elements that can solve difficult learning control problems",
+      "query": "Explain this foundational AI paper in depth:\n\nNeuronlike adaptive elements that can solve difficult learning control problems\n\nCover the proposed adaptive units, training dynamics, and their relevance to nonlinear control problems."
+    },
+    {
+      "id": "document-recognition",
+      "title": "Gradient based learning applied to document recognition",
+      "query": "Explain this foundational AI paper in depth:\n\nGradient based learning applied to document recognition\n\nDiscuss the architecture, training procedure, and why this work became important for practical pattern recognition with neural nets."
+    },
+    {
+      "id": "zip-code-backprop",
+      "title": "Backpropagation applied to handwritten zip code recognition",
+      "query": "Explain this foundational AI paper in depth:\n\nBackpropagation applied to handwritten zip code recognition\n\nDescribe the dataset and task setup, training setup, performance claims, and influence on applied deep learning workflows."
+    },
+    {
+      "id": "imagenet-convnets",
+      "title": "ImageNet classification with deep convolutional neural networks",
+      "query": "Explain this foundational AI paper in depth:\n\nImageNet classification with deep convolutional neural networks\n\nWalk through AlexNet-era ideas: convolutional stack design, regularization tricks, training strategy, and resulting shift in computer vision."
+    },
+    {
+      "id": "variational-autoencoders",
+      "title": "Auto encoding variational bayes",
+      "query": "Explain this foundational AI paper in depth:\n\nAuto encoding variational bayes\n\nSummarize the variational objective, encoder/decoder design, reparameterization trick, and practical use cases in generative modeling."
+    },
+    {
+      "id": "generative-adversarial-nets",
+      "title": "Generative adversarial nets",
+      "query": "Explain this foundational AI paper in depth:\n\nGenerative adversarial nets\n\nDescribe the generator/discriminator game, training dynamics, common failure modes, and how GANs influenced generative modeling."
+    },
+    {
+      "id": "non-equilibrium-unsupervised",
+      "title": "Deep unsupervised learning using non equilibrium thermodynamics",
+      "query": "Explain this foundational AI paper in depth:\n\nDeep unsupervised learning using non equilibrium thermodynamics\n\nExplain how the paper connects thermodynamic intuition to deep unsupervised learning and its impact on representation learning ideas."
+    },
+    {
+      "id": "neural-probabilistic-language-model",
+      "title": "A neural probabilistic language model",
+      "query": "Explain this foundational AI paper in depth:\n\nA neural probabilistic language model\n\nCover the architecture, training idea, parameter-sharing strategy, and why this shifted language modeling beyond count-based n-grams."
+    },
+    {
+      "id": "attention-all-you-need",
+      "title": "Attention is all you need",
+      "query": "Explain this foundational AI paper in depth:\n\nAttention is all you need\n\nBreak down self-attention, multi-head attention, positional encoding, and the reasons this architecture superseded recurrent designs in sequence modeling."
+    },
+    {
+      "id": "unsupervised-multitask-language-models",
+      "title": "Language models are unsupervised multitask learners",
+      "query": "Explain this foundational AI paper in depth:\n\nLanguage models are unsupervised multitask learners\n\nSummarize the scaling intuition, multitask behavior from pure language modeling, and why this paper is central to modern LLM capabilities."
+    }
+  ]
+}

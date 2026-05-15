@@ -5,6 +5,7 @@ import proteinDesignDoc from '../data/protein-design-rosetta-bootcamp.json';
 import polymerBlendDoc from '../data/polymer-blend-regular-solution.json';
 import biochemistryWetLabTutorialDoc from '../data/biochemistry-wet-lab-tutorial.json';
 import cellacdcSpotmaxDoc from '../data/cellacdc-spotmax.json';
+import foundationsArtificialIntelligencePapersDoc from '../data/foundations-of-artificial-intelligence-papers.json';
 
 export type TopicDoc = typeof nonequilibriumDoc;
 
@@ -16,4 +17,5 @@ export const topicBySlug: Record<string, TopicDoc> = {
   'polymer-blend-regular-solution': polymerBlendDoc,
   'biochemistry-wet-lab-tutorial': biochemistryWetLabTutorialDoc,
   'cellacdc-spotmax': cellacdcSpotmaxDoc,
+  'foundations-of-artificial-intelligence-papers': foundationsArtificialIntelligencePapersDoc,
 };
