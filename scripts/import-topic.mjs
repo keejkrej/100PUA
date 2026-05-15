@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 /** @typedef {{ csvPath: string; slug: string; topicTitle: string; courseLine: string; outFile: string; queryPrefix: string; normalizeTitle?: (raw: string) => string }} TopicRecipe */
 
 /**
- * YouTube CSV titles repeat "Stanford CS336 … | Spring 2025 | …". Keep lecture line only.
+ * YouTube CSV titles repeat "Stanford CS336 … | Spring 2025 | …". Keep the trailing session title only.
  * @param {string} raw
  */
 function normalizeStanfordCs336Title(raw) {
@@ -25,7 +25,7 @@ function normalizeStanfordCs336Title(raw) {
   rest = rest.replace(/^Mixture of experts$/i, 'Mixture of Experts');
   rest = rest.replace(/^Scaling laws (\d+)/i, 'Scaling Laws $1');
   rest = rest.replace(/^Alignment\s*-\s*/i, 'Alignment — ');
-  return `Lecture ${m[1]}: ${rest}`;
+  return `Session ${m[1]}: ${rest}`;
 }
 
 /**
@@ -59,7 +59,7 @@ const TOPICS = {
     courseLine: 'LMU Munich · Summer Semester 2025 · PhysicsOfLifeLMU playlist',
     outFile: 'nonequilibrium-lmu-ss2025.json',
     queryPrefix:
-      'Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n',
+      'Help me understand this topic (nonequilibrium / stochastic dynamics):\n\n',
   },
   'self-org': {
     csvPath: path.join(
@@ -74,7 +74,7 @@ const TOPICS = {
     courseLine: 'LMU Munich · Winter Semester 2025/26 · PhysicsOfLifeLMU playlist',
     outFile: 'self-organization-lmu-ws2025-2026.json',
     queryPrefix:
-      'Help me understand this topic from a lecture (self-organization / pattern formation):\n\n',
+      'Help me understand this topic (self-organization / pattern formation):\n\n',
   },
   'cs336-sp2025': {
     csvPath: path.join(
@@ -89,7 +89,7 @@ const TOPICS = {
     courseLine: 'Spring 2025 · Stanford Online',
     outFile: 'stanford-cs336-language-modeling-spring2025.json',
     queryPrefix:
-      'Help me understand this topic from a Stanford CS336 lecture (language modeling / LLMs from scratch):\n\n',
+      'Help me understand this topic from Stanford CS336 (language modeling / LLMs from scratch):\n\n',
     normalizeTitle: normalizeStanfordCs336Title,
   },
 };
