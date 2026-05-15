@@ -7,7 +7,7 @@ This file documents how curated topics are wired into the Astro site so changes 
 Do **all** of the following; partial updates look fine locally but break routing or listings.
 
 1. **`src/data/<slug>.json`**  
-   Full topic document: `slug`, `topicTitle`, `courseLine`, `promptCount`, and `prompts` (each prompt needs a stable string `id`, `title`, `query`, etc.). The filename must be `<slug>.json` and match the `slug` field inside the file.
+   Full topic document: `slug`, `topicTitle`, `courseLine`, `promptCount`, and `prompts` (each prompt needs a stable string `id`, `title`, `query`, optional `resourceUrls` as a string array for videos/docs/papers, etc.). The filename must be `<slug>.json` and match the `slug` field inside the file.
 
 2. **`src/data/topics.manifest.json`**  
    Append a row with the same `slug`, human-readable `topicTitle`, `courseLine`, and `promptCount` (used on the home page and for static path generation).

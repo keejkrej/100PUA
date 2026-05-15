@@ -30,13 +30,18 @@ function normalizeStanfordCs336Title(raw) {
 
 /**
  * @param {string} queryBody
- * @param {string} videoUrl
+ * @param {string[]} urls
  */
-function appendVideoUrlToQuery(queryBody, videoUrl) {
-  const u = videoUrl.trim();
+function appendResourceUrlsToQuery(queryBody, urls) {
+  const list = (Array.isArray(urls) ? urls : [])
+    .map((u) => String(u).trim())
+    .filter(Boolean);
   const b = queryBody.trimEnd();
-  if (!u || b.includes(u)) return b;
-  return `${b}\n\nYouTube lecture (use this URL when looking up captions or transcript): ${u}`;
+  if (!list.length) return b;
+  const missing = list.filter((u) => !b.includes(u));
+  if (!missing.length) return b;
+  const lines = missing.map((u) => `- ${u}`).join('\n');
+  return `${b}\n\nReference URLs (use for context; do not claim you watched a video or accessed paywalled sources unless you can verify them):\n${lines}`;
 }
 
 /** @type {Record<string, TopicRecipe>} */
@@ -165,7 +170,7 @@ function main(key) {
   const du = header.indexOf('Duration in timestamp');
   const vu = header.indexOf('Video url');
 
-  /** @type {Array<{ id: string; title: string; query: string; videoUrl: string; durationTimestamp: string }>} */
+  /** @type {Array<{ id: string; title: string; query: string; resourceUrls: string[]; durationTimestamp: string }>} */
   const prompts = [];
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
@@ -181,15 +186,16 @@ function main(key) {
       title = recipe.normalizeTitle(title);
     }
 
-    const videoUrl = row[vu] ?? '';
-    if (!videoUrl.trim()) continue;
+    const primaryUrl = (row[vu] ?? '').trim();
+    if (!primaryUrl) continue;
 
-    const m = videoUrl.match(/(?:v=|youtu\.be\/)([\w-]{11})/);
+    const m = primaryUrl.match(/(?:v=|youtu\.be\/)([\w-]{11})/);
     const id = m ? m[1] : `row-${r}`;
     const duration = du >= 0 ? (row[du] ?? '') : '';
 
-    const query = appendVideoUrlToQuery(recipe.queryPrefix + title, videoUrl);
-    prompts.push({ id, title, query, videoUrl, durationTimestamp: duration });
+    const resourceUrls = [primaryUrl];
+    const query = appendResourceUrlsToQuery(recipe.queryPrefix + title, resourceUrls);
+    prompts.push({ id, title, query, resourceUrls, durationTimestamp: duration });
   }
 
   const out = {

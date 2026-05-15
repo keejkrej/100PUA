@@ -8,280 +8,280 @@
       "id": "-pEPKnuN1iY",
       "title": "1. Thermodynamics, Statistical Mechanics, Nonequilibrium Physics and My Teaching Philosophy",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n1. Thermodynamics, Statistical Mechanics, Nonequilibrium Physics and My Teaching Philosophy",
-      "videoUrl": "https://www.youtube.com/watch?v=-pEPKnuN1iY",
+      "resourceUrls": ["https://www.youtube.com/watch?v=-pEPKnuN1iY"],
       "durationTimestamp": "43:40"
     },
     {
       "id": "MZUqBwZMN_o",
       "title": "2. Simple Random Walk",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n2. Simple Random Walk",
-      "videoUrl": "https://www.youtube.com/watch?v=MZUqBwZMN_o",
+      "resourceUrls": ["https://www.youtube.com/watch?v=MZUqBwZMN_o"],
       "durationTimestamp": "41:38"
     },
     {
       "id": "QhSNRQR6m8k",
       "title": "3. Gaussian Random Walk, Poisson Process, Gillespie algorithm",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n3. Gaussian Random Walk, Poisson Process, Gillespie algorithm",
-      "videoUrl": "https://www.youtube.com/watch?v=QhSNRQR6m8k",
+      "resourceUrls": ["https://www.youtube.com/watch?v=QhSNRQR6m8k"],
       "durationTimestamp": "45:45"
     },
     {
       "id": "sMxtJJycqa0",
       "title": "4. Gillespie Algorithm, Master Equationn, Generating Function, Population Dynamics",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n4. Gillespie Algorithm, Master Equationn, Generating Function, Population Dynamics",
-      "videoUrl": "https://www.youtube.com/watch?v=sMxtJJycqa0",
+      "resourceUrls": ["https://www.youtube.com/watch?v=sMxtJJycqa0"],
       "durationTimestamp": "45:35"
     },
     {
       "id": "rzd3W_D-Nu0",
       "title": "5. Population Dynamics: Linear Death Process, The Lotka-Volterra Process",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n5. Population Dynamics: Linear Death Process, The Lotka-Volterra Process",
-      "videoUrl": "https://www.youtube.com/watch?v=rzd3W_D-Nu0",
+      "resourceUrls": ["https://www.youtube.com/watch?v=rzd3W_D-Nu0"],
       "durationTimestamp": "58:40"
     },
     {
       "id": "2OIb5O07Ni8",
       "title": "6. Fundamental Equations For Markov Processes: Chapman-Kolmogorov Equation",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n6. Fundamental Equations For Markov Processes: Chapman-Kolmogorov Equation",
-      "videoUrl": "https://www.youtube.com/watch?v=2OIb5O07Ni8",
+      "resourceUrls": ["https://www.youtube.com/watch?v=2OIb5O07Ni8"],
       "durationTimestamp": "36:16"
     },
     {
       "id": "Ymqf05u3-mM",
       "title": "7. Forward Master Eq., Q-matrix for Linear Birth-death Process, General Properties of Master Eq.",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n7. Forward Master Eq., Q-matrix for Linear Birth-death Process, General Properties of Master Eq.",
-      "videoUrl": "https://www.youtube.com/watch?v=Ymqf05u3-mM",
+      "resourceUrls": ["https://www.youtube.com/watch?v=Ymqf05u3-mM"],
       "durationTimestamp": "41:16"
     },
     {
       "id": "dUg1Vvqn9zo",
       "title": "8. Perron-Frobenius thm., Indecomposable Q-matrices, Rev. & Stationary Procs., Detailed Balance",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n8. Perron-Frobenius thm., Indecomposable Q-matrices, Rev. & Stationary Procs., Detailed Balance",
-      "videoUrl": "https://www.youtube.com/watch?v=dUg1Vvqn9zo",
+      "resourceUrls": ["https://www.youtube.com/watch?v=dUg1Vvqn9zo"],
       "durationTimestamp": "48:20"
     },
     {
       "id": "geyCbo2uupY",
       "title": "9. Consequences of Detailed Balance, Irreversibility and Entropy Production",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n9. Consequences of Detailed Balance, Irreversibility and Entropy Production",
-      "videoUrl": "https://www.youtube.com/watch?v=geyCbo2uupY",
+      "resourceUrls": ["https://www.youtube.com/watch?v=geyCbo2uupY"],
       "durationTimestamp": "42:51"
     },
     {
       "id": "YRC7QdPMGlQ",
       "title": "10. The Ehrenfest Model, Entropy and Kullback-Leibler Divergence",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n10. The Ehrenfest Model, Entropy and Kullback-Leibler Divergence",
-      "videoUrl": "https://www.youtube.com/watch?v=YRC7QdPMGlQ",
+      "resourceUrls": ["https://www.youtube.com/watch?v=YRC7QdPMGlQ"],
       "durationTimestamp": "37:00"
     },
     {
       "id": "-5XcSPsd6IA",
       "title": "11. Markov Chain Monte Carlo, Jump Processes, Diffusion Processes, Fokker-Planck Equation",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n11. Markov Chain Monte Carlo, Jump Processes, Diffusion Processes, Fokker-Planck Equation",
-      "videoUrl": "https://www.youtube.com/watch?v=-5XcSPsd6IA",
+      "resourceUrls": ["https://www.youtube.com/watch?v=-5XcSPsd6IA"],
       "durationTimestamp": "54:08"
     },
     {
       "id": "0MxnGzRjJZQ",
       "title": "12. Brownian Motion (Wiener Process), Ornstein-Uhlenbeck Process, Einstein-Stokes Relation",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n12. Brownian Motion (Wiener Process), Ornstein-Uhlenbeck Process, Einstein-Stokes Relation",
-      "videoUrl": "https://www.youtube.com/watch?v=0MxnGzRjJZQ",
+      "resourceUrls": ["https://www.youtube.com/watch?v=0MxnGzRjJZQ"],
       "durationTimestamp": "35:29"
     },
     {
       "id": "ciOFJvEQcJo",
       "title": "13. Monte Carlo Sampling as Stochastic Process",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n13. Monte Carlo Sampling as Stochastic Process",
-      "videoUrl": "https://www.youtube.com/watch?v=ciOFJvEQcJo",
+      "resourceUrls": ["https://www.youtube.com/watch?v=ciOFJvEQcJo"],
       "durationTimestamp": "44:23"
     },
     {
       "id": "eN5JyV6f-WU",
       "title": "14. Hamiltonian Monte Carlo Sampling",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n14. Hamiltonian Monte Carlo Sampling",
-      "videoUrl": "https://www.youtube.com/watch?v=eN5JyV6f-WU",
+      "resourceUrls": ["https://www.youtube.com/watch?v=eN5JyV6f-WU"],
       "durationTimestamp": "49:13"
     },
     {
       "id": "RYCCVnJDMU4",
       "title": "15. Chemotaxis, Run-and-Tumble Motion as Two-State Process, Keller–Segel model",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n15. Chemotaxis, Run-and-Tumble Motion as Two-State Process, Keller–Segel model",
-      "videoUrl": "https://www.youtube.com/watch?v=RYCCVnJDMU4",
+      "resourceUrls": ["https://www.youtube.com/watch?v=RYCCVnJDMU4"],
       "durationTimestamp": "47:59"
     },
     {
       "id": "EVkNzTb5_Ds",
       "title": "16. Schnitzer Model, Anti-Diffusion, Motility-Induced Phase Separation",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n16. Schnitzer Model, Anti-Diffusion, Motility-Induced Phase Separation",
-      "videoUrl": "https://www.youtube.com/watch?v=EVkNzTb5_Ds",
+      "resourceUrls": ["https://www.youtube.com/watch?v=EVkNzTb5_Ds"],
       "durationTimestamp": "33:54"
     },
     {
       "id": "jonJHFcYTso",
       "title": "17. Langevin Equation, Brownian Particle, Fluctuation–Dissipation Theorem",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n17. Langevin Equation, Brownian Particle, Fluctuation–Dissipation Theorem",
-      "videoUrl": "https://www.youtube.com/watch?v=jonJHFcYTso",
+      "resourceUrls": ["https://www.youtube.com/watch?v=jonJHFcYTso"],
       "durationTimestamp": "43:57"
     },
     {
       "id": "sHU7BaFkNFU",
       "title": "18. Fokker-Planck Equation of Brownian Particle, Overdamped Langevin Equation, Smoluchowsky equation",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n18. Fokker-Planck Equation of Brownian Particle, Overdamped Langevin Equation, Smoluchowsky equation",
-      "videoUrl": "https://www.youtube.com/watch?v=sHU7BaFkNFU",
+      "resourceUrls": ["https://www.youtube.com/watch?v=sHU7BaFkNFU"],
       "durationTimestamp": "39:54"
     },
     {
       "id": "cyq54l5ChqU",
       "title": "19. Path Integral Formulation of Langevin Equations",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n19. Path Integral Formulation of Langevin Equations",
-      "videoUrl": "https://www.youtube.com/watch?v=cyq54l5ChqU",
+      "resourceUrls": ["https://www.youtube.com/watch?v=cyq54l5ChqU"],
       "durationTimestamp": "45:17"
     },
     {
       "id": "KwSewG0jte8",
       "title": "20. Stochastic Differential Equations, Ito’s Lemma, Stochastic integrals, Ito and Stratonovich",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n20. Stochastic Differential Equations, Ito’s Lemma, Stochastic integrals, Ito and Stratonovich",
-      "videoUrl": "https://www.youtube.com/watch?v=KwSewG0jte8",
+      "resourceUrls": ["https://www.youtube.com/watch?v=KwSewG0jte8"],
       "durationTimestamp": "42:14"
     },
     {
       "id": "cWcOh5sQh5A",
       "title": "21. Ito's Formulas, Transformation Between Stratonovich and Ito Formulation",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n21. Ito's Formulas, Transformation Between Stratonovich and Ito Formulation",
-      "videoUrl": "https://www.youtube.com/watch?v=cWcOh5sQh5A",
+      "resourceUrls": ["https://www.youtube.com/watch?v=cWcOh5sQh5A"],
       "durationTimestamp": "47:55"
     },
     {
       "id": "XwfwiWCtlc8",
       "title": "22. Path Integrals for Systems with Multiplicative Noise",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n22. Path Integrals for Systems with Multiplicative Noise",
-      "videoUrl": "https://www.youtube.com/watch?v=XwfwiWCtlc8",
+      "resourceUrls": ["https://www.youtube.com/watch?v=XwfwiWCtlc8"],
       "durationTimestamp": "27:21"
     },
     {
       "id": "yNQXf5EU1xw",
       "title": "23. Interacting Brownian Particles, Fluctuations Near Equilibrium, Time Correlations of Fluctuations",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n23. Interacting Brownian Particles, Fluctuations Near Equilibrium, Time Correlations of Fluctuations",
-      "videoUrl": "https://www.youtube.com/watch?v=yNQXf5EU1xw",
+      "resourceUrls": ["https://www.youtube.com/watch?v=yNQXf5EU1xw"],
       "durationTimestamp": "47:12"
     },
     {
       "id": "yd1-DuM9Ze4",
       "title": "24. Onsager Coefficients and Symmetry Relations, Dynamic Form of the Fluctuation–Dissipation Theorem",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n24. Onsager Coefficients and Symmetry Relations, Dynamic Form of the Fluctuation–Dissipation Theorem",
-      "videoUrl": "https://www.youtube.com/watch?v=yd1-DuM9Ze4",
+      "resourceUrls": ["https://www.youtube.com/watch?v=yd1-DuM9Ze4"],
       "durationTimestamp": "45:52"
     },
     {
       "id": "Y6kYmKz55t8",
       "title": "25. Gradient Dynamics, Model A, Classical Ising model, Ginzburg–Landau Equation, Allen–Cahn Equation",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n25. Gradient Dynamics, Model A, Classical Ising model, Ginzburg–Landau Equation, Allen–Cahn Equation",
-      "videoUrl": "https://www.youtube.com/watch?v=Y6kYmKz55t8",
+      "resourceUrls": ["https://www.youtube.com/watch?v=Y6kYmKz55t8"],
       "durationTimestamp": "54:22"
     },
     {
       "id": "NbzoXbLS61E",
       "title": "26. Critical Slowing Down, Response Function, Dynamic Susceptibility, Model B",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n26. Critical Slowing Down, Response Function, Dynamic Susceptibility, Model B",
-      "videoUrl": "https://www.youtube.com/watch?v=NbzoXbLS61E",
+      "resourceUrls": ["https://www.youtube.com/watch?v=NbzoXbLS61E"],
       "durationTimestamp": "39:10"
     },
     {
       "id": "bebswA0mNg4",
       "title": "27. Hydrodynamics of Simple Fluids, Frictionless Fluids, Euler Equation",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n27. Hydrodynamics of Simple Fluids, Frictionless Fluids, Euler Equation",
-      "videoUrl": "https://www.youtube.com/watch?v=bebswA0mNg4",
+      "resourceUrls": ["https://www.youtube.com/watch?v=bebswA0mNg4"],
       "durationTimestamp": "51:17"
     },
     {
       "id": "yTwCqZO1OME",
       "title": "28. Viscous Fluid, Navier-Stokes Equation, Entropy Balance and Heat Conduction",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n28. Viscous Fluid, Navier-Stokes Equation, Entropy Balance and Heat Conduction",
-      "videoUrl": "https://www.youtube.com/watch?v=yTwCqZO1OME",
+      "resourceUrls": ["https://www.youtube.com/watch?v=yTwCqZO1OME"],
       "durationTimestamp": "41:19"
     },
     {
       "id": "55SV1h52Oyo",
       "title": "29. Irreversible Linear Thermodynamics, Dry Diffusive Particles Systems",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n29. Irreversible Linear Thermodynamics, Dry Diffusive Particles Systems",
-      "videoUrl": "https://www.youtube.com/watch?v=55SV1h52Oyo",
+      "resourceUrls": ["https://www.youtube.com/watch?v=55SV1h52Oyo"],
       "durationTimestamp": "46:15"
     },
     {
       "id": "iDweumPsDxA",
       "title": "30. Brownian Particles Suspended in a Fluid, Model H",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n30. Brownian Particles Suspended in a Fluid, Model H",
-      "videoUrl": "https://www.youtube.com/watch?v=iDweumPsDxA",
+      "resourceUrls": ["https://www.youtube.com/watch?v=iDweumPsDxA"],
       "durationTimestamp": "30:45"
     },
     {
       "id": "ZfGZRdFhCkc",
       "title": "31. Dynamic Functionals for Field Theories with Additive Noise, Onsager-Machlup Functional",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n31. Dynamic Functionals for Field Theories with Additive Noise, Onsager-Machlup Functional",
-      "videoUrl": "https://www.youtube.com/watch?v=ZfGZRdFhCkc",
+      "resourceUrls": ["https://www.youtube.com/watch?v=ZfGZRdFhCkc"],
       "durationTimestamp": "1:03:14"
     },
     {
       "id": "EXYZIwXkLg4",
       "title": "32. Janssen-De Dominicis Response Functional, Fluctuation-Dissipation Relation",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n32. Janssen-De Dominicis Response Functional, Fluctuation-Dissipation Relation",
-      "videoUrl": "https://www.youtube.com/watch?v=EXYZIwXkLg4",
+      "resourceUrls": ["https://www.youtube.com/watch?v=EXYZIwXkLg4"],
       "durationTimestamp": "25:50"
     },
     {
       "id": "7LyHDQnmmro",
       "title": "33. Non-Equilibrium Work and Fluctuation Theorem, Jarzynski’s Work Relation, Crooks' Fluct. Theorem",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n33. Non-Equilibrium Work and Fluctuation Theorem, Jarzynski’s Work Relation, Crooks' Fluct. Theorem",
-      "videoUrl": "https://www.youtube.com/watch?v=7LyHDQnmmro",
+      "resourceUrls": ["https://www.youtube.com/watch?v=7LyHDQnmmro"],
       "durationTimestamp": "1:19:59"
     },
     {
       "id": "2DWO5-7yujw",
       "title": "34. Directed Percolation, Spectral Method for Linear Death Process",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n34. Directed Percolation, Spectral Method for Linear Death Process",
-      "videoUrl": "https://www.youtube.com/watch?v=2DWO5-7yujw",
+      "resourceUrls": ["https://www.youtube.com/watch?v=2DWO5-7yujw"],
       "durationTimestamp": "1:06:42"
     },
     {
       "id": "svMQ6eAuBQM",
       "title": "35. Path Integral for Master Equation",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n35. Path Integral for Master Equation",
-      "videoUrl": "https://www.youtube.com/watch?v=svMQ6eAuBQM",
+      "resourceUrls": ["https://www.youtube.com/watch?v=svMQ6eAuBQM"],
       "durationTimestamp": "31:51"
     },
     {
       "id": "AKq18fpZsGQ",
       "title": "36. Coherent State Path Integral, Operator Algebra and the Imaginary Noise",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n36. Coherent State Path Integral, Operator Algebra and the Imaginary Noise",
-      "videoUrl": "https://www.youtube.com/watch?v=AKq18fpZsGQ",
+      "resourceUrls": ["https://www.youtube.com/watch?v=AKq18fpZsGQ"],
       "durationTimestamp": "40:33"
     },
     {
       "id": "o4DMWv9eQZg",
       "title": "37. Kramers-Moyal Expansion and the Low Noise Limit of the Path Integral",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n37. Kramers-Moyal Expansion and the Low Noise Limit of the Path Integral",
-      "videoUrl": "https://www.youtube.com/watch?v=o4DMWv9eQZg",
+      "resourceUrls": ["https://www.youtube.com/watch?v=o4DMWv9eQZg"],
       "durationTimestamp": "41:38"
     },
     {
       "id": "gERHbTNWJ9s",
       "title": "38. Multi-Species Path Integrals, Rock-Paper-Scissors",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n38. Multi-Species Path Integrals, Rock-Paper-Scissors",
-      "videoUrl": "https://www.youtube.com/watch?v=gERHbTNWJ9s",
+      "resourceUrls": ["https://www.youtube.com/watch?v=gERHbTNWJ9s"],
       "durationTimestamp": "49:10"
     },
     {
       "id": "neDHaKprkQU",
       "title": "39. Path Integrals on a Lattice: From Hopping to Continuous Field Theories",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n39. Path Integrals on a Lattice: From Hopping to Continuous Field Theories",
-      "videoUrl": "https://www.youtube.com/watch?v=neDHaKprkQU",
+      "resourceUrls": ["https://www.youtube.com/watch?v=neDHaKprkQU"],
       "durationTimestamp": "43:37"
     },
     {
       "id": "zdEetCSEFgg",
       "title": "40. Kramers-Moyal Path Integral Approach, Field Theory for Interacting Particles",
       "query": "Help me understand this topic from a lecture (nonequilibrium / stochastic dynamics):\n\n40. Kramers-Moyal Path Integral Approach, Field Theory for Interacting Particles",
-      "videoUrl": "https://www.youtube.com/watch?v=zdEetCSEFgg",
+      "resourceUrls": ["https://www.youtube.com/watch?v=zdEetCSEFgg"],
       "durationTimestamp": "32:28"
     }
   ]
