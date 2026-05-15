@@ -193,6 +193,9 @@ const CORS_ALLOWED_LIST = CORS_WILDCARD
   ? []
   : ALLOWED_ORIGINS_RAW.split(',').map((s) => s.trim()).filter(Boolean);
 
+const CURSOR_TRIGGER_COMMENT =
+  '@cursoragent please investigate this issue and open a PR with a fix when appropriate.';
+
 function originAllowed(originHeader: string | undefined): boolean {
   if (CORS_WILDCARD) return true;
   const o = originHeader || '';
@@ -676,6 +679,39 @@ async function githubCreateIssue(
     : {};
 }
 
+async function githubCreateIssueComment(
+  parsed: { owner: string; repo: string },
+  issueNumber: number,
+  body: string,
+): Promise<void> {
+  const url = `https://api.github.com/repos/${encodeURIComponent(parsed.owner)}/${encodeURIComponent(parsed.repo)}/issues/${issueNumber}/comments`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/vnd.github+json',
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
+      'X-GitHub-Api-Version': '2022-11-28',
+      'User-Agent': '100pua-suggest-api',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ body }),
+  });
+
+  if (!res.ok) {
+    let data: unknown = null;
+    try {
+      data = await res.json();
+    } catch {
+      /* */
+    }
+    const msg =
+      data && typeof data === 'object' && data !== null && 'message' in data
+        ? String((data as { message?: string }).message)
+        : `GitHub API ${res.status}`;
+    throw new Error(`GitHub API ${res.status}: ${msg}`);
+  }
+}
+
 const githubRepoParsed = parseRepo(GITHUB_REPO_RAW);
 
 const explainCache = createExplainCache(API_ROOT);
@@ -922,6 +958,21 @@ app.post('/suggestions', async (c) => {
         : typeof issue.number === 'string'
           ? Number.parseInt(issue.number, 10)
           : undefined;
+
+    if (typeof number === 'number' && Number.isFinite(number)) {
+      try {
+        await githubCreateIssueComment(
+          githubRepoParsed,
+          number,
+          CURSOR_TRIGGER_COMMENT,
+        );
+      } catch (e) {
+        console.error(
+          '[suggestions] failed to post @cursoragent comment',
+          e instanceof Error ? e.message : String(e),
+        );
+      }
+    }
 
     return c.json(
       {
