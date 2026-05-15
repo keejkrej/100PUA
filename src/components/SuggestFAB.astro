@@ -49,6 +49,12 @@ const heading =
 <dialog
   id="suggest-dialog"
   class="fixed left-1/2 top-1/2 z-[100] w-[min(100%,28rem)] max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-muted/40 bg-surface p-6 text-text shadow-xl backdrop:bg-black/50 open:flex open:flex-col"
+  data-suggest-mode={mode}
+  data-topic-slug={topicSlug}
+  data-topic-title={topicTitle}
+  data-github-repo={githubRepo}
+  data-suggest-api-base={suggestApiBase}
+  data-use-suggest-api={useSuggestApi ? 'true' : 'false'}
 >
   <form id="suggest-form" class="flex flex-col gap-4">
     <div class="flex items-start justify-between gap-3">
@@ -155,8 +161,9 @@ const heading =
   </form>
 </dialog>
 
-<script is:inline define:vars={{ githubRepo, mode, topicSlug, topicTitle, suggestApiBase, useSuggestApi }}>
+<script is:inline>
   (function suggestFab() {
+    function bindSuggestFab() {
     var openBtn = document.getElementById('suggest-open');
     var dlg = document.getElementById('suggest-dialog');
     var closeBtn = document.getElementById('suggest-close');
@@ -164,6 +171,17 @@ const heading =
     if (!openBtn || !dlg || !closeBtn || !form) return;
     if (dlg.dataset.bound === '1') return;
     dlg.dataset.bound = '1';
+
+    var mode = dlg.dataset.suggestMode || 'topic';
+    var topicSlug = dlg.dataset.topicSlug || '';
+    var topicTitle = dlg.dataset.topicTitle || '';
+    var githubRepo =
+      dlg.dataset.githubRepo && dlg.dataset.githubRepo.trim()
+        ? dlg.dataset.githubRepo.trim()
+        : 'keejkrej/100PUA';
+    var rawApi = dlg.dataset.suggestApiBase || '';
+    var suggestApiBase = rawApi.replace(/\/+$/, '');
+    var useSuggestApi = dlg.dataset.useSuggestApi === 'true';
 
     var URL_MAX = 7800;
     var feedback = document.getElementById('suggest-feedback');
@@ -190,10 +208,7 @@ const heading =
       form.reset();
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent =
-          typeof useSuggestApi !== 'undefined' && useSuggestApi
-            ? 'Submit suggestion'
-            : 'Open GitHub draft';
+        submitBtn.textContent = useSuggestApi ? 'Submit suggestion' : 'Open GitHub draft';
       }
     }
 
@@ -367,5 +382,12 @@ const heading =
       window.open(buildGithubDraftUrl(title, body), '_blank', 'noopener,noreferrer');
       dlg.close();
     });
+    }
+
+    bindSuggestFab();
+    if (!window.__puaSuggestFabPageLoad) {
+      window.__puaSuggestFabPageLoad = true;
+      document.addEventListener('astro:page-load', bindSuggestFab);
+    }
   })();
 </script>
