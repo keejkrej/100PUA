@@ -97,6 +97,7 @@ const heading =
                 id="suggest-topic-title"
                 name="title"
                 required
+                minlength="6"
                 maxlength="120"
                 autocomplete="off"
                 class="rounded-lg border border-muted/40 bg-void px-3 py-2 text-sm text-text outline-none ring-accent/30 transition-shadow focus:border-accent/50 focus:ring-2"
@@ -287,6 +288,17 @@ const heading =
         if (mode === 'topic') {
           var tv = topicValues();
           if (!tv.tit) return;
+          if (tv.tit.length < 6) {
+            showFeedback(false, 'Topic title is too short — add a specific course or playlist name.');
+            return;
+          }
+          if (tv.tit.length < 20 && tv.bod.length < 20) {
+            showFeedback(
+              false,
+              'For a short title, add at least 20 characters of notes (links, why it fits, source).',
+            );
+            return;
+          }
           apiPayload = { mode: 'topic', title: tv.tit, notes: tv.bod };
         } else {
           var pv = promptValues();
@@ -335,6 +347,8 @@ const heading =
               var msg =
                 j.error === 'rate_limit'
                   ? 'Too many attempts — try again later.'
+                  : j.error === 'weak_topic_suggestion'
+                    ? 'That topic suggestion is too vague. Use a specific title, or add enough notes (links, context) for maintainers to act on.'
                   : j.error === 'invalid_payload'
                     ? 'Invalid input.'
                     : j.error === 'origin_not_allowed'
@@ -358,6 +372,17 @@ const heading =
       if (mode === 'topic') {
         var tv2 = topicValues();
         if (!tv2.tit) return;
+        if (tv2.tit.length < 6) {
+          showFeedback(false, 'Topic title is too short — add a specific course or playlist name.');
+          return;
+        }
+        if (tv2.tit.length < 20 && tv2.bod.length < 20) {
+          showFeedback(
+            false,
+            'For a short title, add at least 20 characters of notes (links, why it fits, source).',
+          );
+          return;
+        }
         title = 'Suggestion: new topic · ' + tv2.tit.slice(0, 100);
         body =
           '### Proposed topic\n' +

@@ -3,6 +3,7 @@
  *
  * Env:
  *   GITHUB_TOKEN             — PAT / fine-grained with issues write (required for POST /suggestions)
+ *   POST /suggestions rejects thin topic payloads with 400 `weak_topic_suggestion` (see validateAndBuild).
  *   GITHUB_REPO              — owner/repo (default: keejkrej/100PUA)
  *   PORT                     — injected by Render
  *   ALLOWED_ORIGINS          — comma-separated origins or "*" (default "*")
@@ -142,6 +143,53 @@ const LEN = {
   topicTitleCtx: 500,
   topicSlug: 200,
 } as const;
+
+/** Reject one-word / toy titles that still pass maxlength checks. */
+const TOPIC_TITLE_MIN = 6;
+/** Short titles must carry context in notes so issues are actionable. */
+const TOPIC_TITLE_DETAIL_THRESHOLD = 20;
+const TOPIC_NOTES_MIN_WHEN_TITLE_SHORT = 20;
+
+const TOPIC_TITLE_BLOCKLIST = new Set([
+  'asdf',
+  'bar',
+  'blah',
+  'demo',
+  'foo',
+  'hello',
+  'hey',
+  'hi',
+  'lol',
+  'lorem',
+  'none',
+  'ping',
+  'pong',
+  'qwerty',
+  'temp',
+  'temporary',
+  'test',
+  'testing',
+  'tmp',
+  'todo',
+  'xxx',
+]);
+
+function normalizeTopicTitleKey(title: string): string {
+  return title.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function isWeakTopicSuggestion(title: string, notes: string): boolean {
+  const tit = title.trim();
+  const bod = notes.trim();
+  if (tit.length < TOPIC_TITLE_MIN) return true;
+  if (tit.length > LEN.topicTitle) return true;
+  const key = normalizeTopicTitleKey(tit);
+  if (TOPIC_TITLE_BLOCKLIST.has(key)) return true;
+  if (/^(.)\1{3,}$/.test(key)) return true;
+  if (tit.length < TOPIC_TITLE_DETAIL_THRESHOLD && bod.length < TOPIC_NOTES_MIN_WHEN_TITLE_SHORT)
+    return true;
+  return false;
+}
 
 const rateBuckets = new Map<string, number[]>();
 
@@ -593,9 +641,11 @@ const PROMPT_INDEX = loadPromptIndex();
 
 type SuggestionPayload = Record<string, unknown>;
 
-function validateAndBuild(
-  payload: SuggestionPayload,
-): { title: string; body: string } | null {
+type SuggestionBuildResult =
+  | { ok: true; title: string; body: string; pingCursorAgent: boolean }
+  | { ok: false; error: 'invalid_payload' | 'weak_topic_suggestion' };
+
+function validateAndBuild(payload: SuggestionPayload): SuggestionBuildResult {
   const mode = payload?.mode;
   const footerRepo = `https://github.com/${GITHUB_REPO_RAW}`;
   const footer = `\n\n---\n_Sent via [100 prompts site](${footerRepo}). Issue created automatically._`;
@@ -603,11 +653,20 @@ function validateAndBuild(
   if (mode === 'topic') {
     const tit = typeof payload.title === 'string' ? payload.title.trim() : '';
     const bod = typeof payload.notes === 'string' ? payload.notes.trim() : '';
-    if (!tit || tit.length > LEN.topicTitle) return null;
-    if (bod.length > LEN.topicNotes) return null;
+    if (!tit || tit.length > LEN.topicTitle)
+      return { ok: false, error: 'invalid_payload' };
+    if (bod.length > LEN.topicNotes)
+      return { ok: false, error: 'invalid_payload' };
+    if (isWeakTopicSuggestion(tit, bod))
+      return { ok: false, error: 'weak_topic_suggestion' };
     const issueTitle = `Suggestion: new topic · ${tit.slice(0, 100)}`;
     const issueBody = `### Proposed topic\n${tit}\n\n### Notes\n${bod || '_none_'}`;
-    return { title: issueTitle, body: issueBody + footer };
+    return {
+      ok: true,
+      title: issueTitle,
+      body: issueBody + footer,
+      pingCursorAgent: false,
+    };
   }
 
   if (mode === 'prompt') {
@@ -619,24 +678,31 @@ function validateAndBuild(
       typeof payload.pretitle === 'string' ? payload.pretitle.trim() : '';
     const pb =
       typeof payload.promptBody === 'string' ? payload.promptBody.trim() : '';
-    if (!topicTitle || topicTitle.length > LEN.topicTitleCtx) return null;
+    if (!topicTitle || topicTitle.length > LEN.topicTitleCtx)
+      return { ok: false, error: 'invalid_payload' };
     if (
       !topicSlug ||
       topicSlug.length > LEN.topicSlug ||
       topicSlug.includes('..')
     )
-      return null;
-    if (pre.length > LEN.pretitle) return null;
-    if (!pb || pb.length > LEN.promptBody) return null;
+      return { ok: false, error: 'invalid_payload' };
+    if (pre.length > LEN.pretitle) return { ok: false, error: 'invalid_payload' };
+    if (!pb || pb.length > LEN.promptBody)
+      return { ok: false, error: 'invalid_payload' };
     const issueTitle = `Suggestion: new prompt · ${(pre || topicTitle).slice(0, 80)}`;
     const issueBody =
       `### Topic\n${topicTitle}\n**Slug:** \`${topicSlug}\`\n\n### Suggested row / prompt\n` +
       (pre ? `**Title:** ${pre}\n\n` : '') +
       pb;
-    return { title: issueTitle, body: issueBody + footer };
+    return {
+      ok: true,
+      title: issueTitle,
+      body: issueBody + footer,
+      pingCursorAgent: true,
+    };
   }
 
-  return null;
+  return { ok: false, error: 'invalid_payload' };
 }
 
 async function githubCreateIssue(
@@ -939,9 +1005,9 @@ app.post('/suggestions', async (c) => {
   const built =
     payload && typeof payload === 'object' && !Array.isArray(payload)
       ? validateAndBuild(payload as SuggestionPayload)
-      : null;
-  if (!built) {
-    return c.json({ error: 'invalid_payload' }, 400);
+      : { ok: false as const, error: 'invalid_payload' as const };
+  if (!built.ok) {
+    return c.json({ error: built.error }, 400);
   }
 
   try {
@@ -959,7 +1025,11 @@ app.post('/suggestions', async (c) => {
           ? Number.parseInt(issue.number, 10)
           : undefined;
 
-    if (typeof number === 'number' && Number.isFinite(number)) {
+    if (
+      built.pingCursorAgent &&
+      typeof number === 'number' &&
+      Number.isFinite(number)
+    ) {
       try {
         await githubCreateIssueComment(
           githubRepoParsed,
