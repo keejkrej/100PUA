@@ -1,0 +1,104 @@
+{
+  "slug": "effect-library",
+  "topicTitle": "Effect — typed functional effects in TypeScript",
+  "courseLine": "Official Effect docs · fibers, Schema, Context/Layers, resource safety, and schedules",
+  "promptCount": 12,
+  "prompts": [
+    {
+      "id": "install-tooling-quickstart",
+      "title": "Install Effect, strict TypeScript, and your first runnable program",
+      "query": "I am setting up Effect in a new TypeScript project. Walk through prerequisites (TypeScript version, strict tsconfig), installing the `effect` package, choosing a runner (tsx / node / bun), and a minimal program using `Console.log` and `Effect.runSync` or `Effect.runPromise`. Explain what “lazy” means for Effect values and one common mistake (accidentally running side effects at module load time).",
+      "resourceUrls": [
+        "https://effect.website/docs/quickstart",
+        "https://effect.website/docs/getting-started/introduction"
+      ],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "effect-type-success-error-requirements",
+      "title": "The Effect type: success, errors, and requirements (R channel)",
+      "query": "Teach `Effect<A, E, R>` in plain language: what each type parameter means, how requirements accumulate when composing effects, and how `never` is used for “no error” or “no requirements.” Compare briefly to Promise typing. Show how to extract inferred types with `Effect.Success`, `Effect.Error`, and `Effect.Context`, and when to prefer `runPromiseExit` over `runPromise` for inspection.",
+      "resourceUrls": ["https://effect.website/docs/getting-started/the-effect-type"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "effect-gen-yield-star",
+      "title": "`Effect.gen` and `yield*`: readable control flow without async/await",
+      "query": "Explain how to structure programs with `Effect.gen` and generator functions: `yield*` vs returning plain values, short-circuiting on failure, using normal `if`/`for`/`while` inside generators, and how this differs from `async`/`await` in terms of interruption and typed errors. Include a small example that sequences a few effects and fails early.",
+      "resourceUrls": ["https://effect.website/docs/getting-started/using-generators"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "expected-errors-defects-recovery",
+      "title": "Expected failures vs defects, plus `catchTag` / `catchTags` patterns",
+      "query": "Contrast expected (typed) errors vs unexpected defects in Effect. Show practical patterns: `Effect.fail`, `Data.TaggedError` / yieldable errors, `Effect.catchTag` and `Effect.catchTags`, and when `catchAllDefect` or similar tools matter. Give guidance on modeling domain errors so they remain recoverable and observable.",
+      "resourceUrls": [
+        "https://effect.website/docs/error-management/two-error-types",
+        "https://effect.website/docs/error-management/yieldable-errors"
+      ],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "schema-decode-encode-unknown",
+      "title": "Effect Schema: decoding unknown inputs and round-tripping encodings",
+      "query": "Introduce `effect/Schema` for validating external data: `Schema` type parameters (Type, Encoded, Requirements), decoding from `unknown`, encoding back out, and why round-trip consistency matters. Mention optional `exactOptionalPropertyTypes` interactions and when to prefer `decodeUnknownSync` vs async decode paths for IO boundaries.",
+      "resourceUrls": ["https://effect.website/docs/schema/introduction"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "context-tags-provide-service",
+      "title": "Context tags and `provideService`: dependency injection without globals",
+      "query": "Explain services in Effect using `Context.Tag` (class Tag pattern), accessing implementations with `yield* MyService`, and providing implementations via `Effect.provideService`. Contrast interface design that leaks dependencies vs keeping service methods returning plain `Effect` values without extra requirements in their signatures.",
+      "resourceUrls": ["https://effect.website/docs/requirements-management/services"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "layers-merge-provide",
+      "title": "Layers: composing constructors for services and their dependencies",
+      "query": "Teach `Layer` as a blueprint for building services: `Layer.succeed`, `Layer.effect`, merging layers, and `Effect.provide(program, layer)` to eliminate requirements. Use a small dependency graph (for example Config → Logger → Database) to show how layers avoid leaking transitive dependencies into public service interfaces.",
+      "resourceUrls": ["https://effect.website/docs/requirements-management/layers"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "resource-safety-scope-finalizers",
+      "title": "Resource safety: `Effect.scoped`, finalizers, and release on interruption",
+      "query": "Describe how Effect ensures cleanup: `Effect.ensuring` / `Effect.onExit`, scoped resources, `Effect.addFinalizer`, and why finalizer order is reversed. Give a concrete pattern for “acquire → use → always release” that still works when the workflow fails or is interrupted mid-flight.",
+      "resourceUrls": [
+        "https://effect.website/docs/resource-management/introduction",
+        "https://effect.website/docs/resource-management/scope"
+      ],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "concurrency-fork-fiber-interrupt",
+      "title": "Concurrency: `Effect.all` options, fibers, fork/join, and interruption",
+      "query": "Cover Effect concurrency basics: default sequential `Effect.all`, `concurrency` options, `Effect.fork` / joining fibers, and cooperative interruption (`Fiber.interrupt`, `Effect.interrupt`). Explain supervision at a high level (child fibers tied to parent scope) and when to reach for higher-level combinators instead of manual fiber juggling.",
+      "resourceUrls": ["https://effect.website/docs/concurrency/basic-concurrency"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "streams-vs-effect-collections",
+      "title": "Streams: multiple emissions, backpressure intuition, and `Stream` vs `Effect`",
+      "query": "Explain `Stream<A, E, R>` as an extension of `Effect` that can emit many values: finite vs infinite streams, common constructors (`Stream.fromIterable`, `Stream.range`, `Stream.async`), and typical use cases (event batches, pagination, replacing ad-hoc async iterators). Mention how errors and requirements line up with the stream type.",
+      "resourceUrls": ["https://effect.website/docs/stream/introduction"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "schedules-retry-repeat",
+      "title": "Schedules: retries, backoff, repetition, and composing policies",
+      "query": "Introduce `Schedule<Out, In, R>`: how schedules consume inputs (errors for retry, values for repeat), composing schedules (`union`, `intersect`), and wiring schedules into `Effect.retry` / repetition workflows. Give practical recipes for exponential backoff with caps and jitter at a conceptual level.",
+      "resourceUrls": [
+        "https://effect.website/docs/scheduling/introduction",
+        "https://effect.website/docs/error-management/retrying"
+      ],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "testing-testclock-provide-layers",
+      "title": "Testing: `TestClock`, `TestContext`, and swapping layers for fakes",
+      "query": "Outline a testing strategy for Effect programs: controlling time with `TestClock.adjust`, using `Effect.provide` / test layers to replace real IO with fakes, and keeping tests deterministic. Mention `Effect.runPromiseExit` in tests for asserting failures without thrown rejections, and one pitfall (forgetting to fork before advancing time when sleep is involved).",
+      "resourceUrls": ["https://effect.website/docs/testing/testclock"],
+      "durationTimestamp": "Read"
+    }
+  ]
+}

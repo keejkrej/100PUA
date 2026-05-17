@@ -58,5 +58,11 @@
     "topicTitle": "PyQtGraph — fast scientific plotting in Python",
     "courseLine": "Official docs · Qt integration, performance, images, ROI tools, and real-time data",
     "promptCount": 12
+  },
+  {
+    "slug": "effect-library",
+    "topicTitle": "Effect — typed functional effects in TypeScript",
+    "courseLine": "Official Effect docs · fibers, Schema, Context/Layers, resource safety, and schedules",
+    "promptCount": 12
   }
 ]
