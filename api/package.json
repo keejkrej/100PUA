@@ -9,7 +9,8 @@
     "build": "tsc && node dist/scripts/build-prompt-index.js",
     "start": "node dist/server.js",
     "dev": "tsx watch server.ts",
-    "prewarm:explain": "tsx scripts/prewarm-explain-cache.ts",
+    "prewarm:explain": "node dist/scripts/prewarm-explain-cache.js",
+    "prewarm:explain:src": "tsx scripts/prewarm-explain-cache.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

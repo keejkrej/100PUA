@@ -6,9 +6,8 @@ import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
-import { query, type Query } from '@anthropic-ai/claude-agent-sdk';
-import { Agent, CursorAgentError } from '@cursor/sdk';
-import { Codex } from '@openai/codex-sdk';
+import type { Query } from '@anthropic-ai/claude-agent-sdk';
+import type { Codex } from '@openai/codex-sdk';
 
 import {
   DEFAULT_CLAUDE_MODEL,
@@ -164,6 +163,7 @@ async function runClaudeExplanation(
   fullPromptText: string,
   abortController: AbortController,
 ): Promise<ExplainRunResult> {
+  const { query } = await import('@anthropic-ai/claude-agent-sdk');
   const sessionHome = await fsp.mkdtemp(path.join(os.tmpdir(), '100pua-cc-'));
   let qIter: Query | null = null;
   try {
@@ -231,6 +231,7 @@ async function runCursorExplanation(
   fullPromptText: string,
   abortController: AbortController,
 ): Promise<ExplainRunResult> {
+  const { Agent, CursorAgentError } = await import('@cursor/sdk');
   const apiKey = (process.env.CURSOR_API_KEY ?? '').trim();
   if (!apiKey) return { ok: false, error: 'missing_cursor_api_key' };
 
@@ -361,6 +362,7 @@ async function runCodexExplanation(
   fullPromptText: string,
   abortController: AbortController,
 ): Promise<ExplainRunResult> {
+  const { Codex } = await import('@openai/codex-sdk');
   const auth = resolveCodexExplainAuthMode();
   if ('error' in auth) return { ok: false, error: auth.error };
 
