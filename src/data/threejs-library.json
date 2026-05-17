@@ -1,0 +1,119 @@
+{
+  "slug": "threejs-library",
+  "topicTitle": "three.js — WebGL scenes, materials, animation, and performance",
+  "courseLine": "Official manual & API · scene graph, lighting, loaders, shaders, and production tips",
+  "promptCount": 14,
+  "prompts": [
+    {
+      "id": "scene-camera-renderer-basics",
+      "title": "First scene: Scene, Camera, WebGLRenderer, and the render loop",
+      "query": "I am new to three.js. Explain the minimal setup: Scene, PerspectiveCamera, WebGLRenderer, setting size and pixel ratio, appending the canvas, adding a Mesh with BoxGeometry and MeshBasicMaterial, and a requestAnimationFrame loop that calls renderer.render(scene, camera). Include common pitfalls (forgetting to update aspect on resize, wrong near/far planes, canvas CSS sizing vs setSize). Prefer explanations aligned with current three.js patterns.\n\nStart from the official introduction: https://threejs.org/docs/#manual/en/introduction/Creating-a-scene",
+      "resourceUrls": [
+        "https://threejs.org/docs/#manual/en/introduction/Creating-a-scene",
+        "https://threejs.org/docs/#api/en/renderers/WebGLRenderer"
+      ]
+    },
+    {
+      "id": "object3d-scene-graph",
+      "title": "Scene graph: Object3D, groups, transforms, and update order",
+      "query": "Teach the three.js scene graph using Object3D concepts: position/rotation/scale/quaternion, parent–child hierarchies with Group, world vs local matrices, matrixAutoUpdate, and when to call updateMatrixWorld. Give practical patterns for rigs, orbit pivots, and attaching props to animated characters.",
+      "resourceUrls": ["https://threejs.org/docs/#api/en/core/Object3D"]
+    },
+    {
+      "id": "geometries-buffergeometry",
+      "title": "Geometry: built-ins, BufferGeometry attributes, and normals",
+      "query": "Compare using built-in geometries versus composing BufferGeometry from position/normal/uv/index attributes. Explain vertex normals vs flat shading, uv layout expectations for common materials, and how to dispose of geometry and textures when hot-reloading in dev.",
+      "resourceUrls": [
+        "https://threejs.org/docs/#api/en/core/BufferGeometry",
+        "https://threejs.org/docs/#api/en/geometries/BoxGeometry"
+      ]
+    },
+    {
+      "id": "materials-lighting-pbr",
+      "title": "Materials and lighting: MeshStandardMaterial and physically based workflow",
+      "query": "Walk through a physically based lighting setup in three.js: MeshStandardMaterial parameters (color, metalness, roughness, envMapIntensity), choosing lights (Directional, Point, Spot, Hemisphere), shadow maps (basics, bias, radius), and using an environment map for image-based lighting. Note trade-offs for mobile vs desktop.",
+      "resourceUrls": [
+        "https://threejs.org/docs/#api/en/materials/MeshStandardMaterial",
+        "https://threejs.org/docs/#api/en/lights/DirectionalLight"
+      ]
+    },
+    {
+      "id": "textures-color-space-filters",
+      "title": "Textures: loading, color space, filtering, and mipmaps",
+      "query": "Explain TextureLoader and CubeTextureLoader usage, colorSpace choices (SRGBColorSpace vs LinearSRGBColorSpace) for albedo vs data textures, anisotropy, min/mag filters, repeat/offset, and disposing textures. Include a short checklist for assets that look washed out or banded.",
+      "resourceUrls": [
+        "https://threejs.org/docs/#api/en/textures/Texture",
+        "https://threejs.org/docs/#api/en/loaders/TextureLoader"
+      ]
+    },
+    {
+      "id": "gltf-loader-animations",
+      "title": "glTF: GLTFLoader, Draco/KTX2, skins, and AnimationMixer",
+      "query": "How do I load a glTF/glb with GLTFLoader, handle Draco-compressed meshes (DRACOLoader) and optional KTX2/Basis textures, traverse the scene to find meshes and cameras, play skeletal animations with AnimationMixer/AnimationAction, and manage dispose() for cloned scenes?",
+      "resourceUrls": [
+        "https://threejs.org/docs/#examples/en/loaders/GLTFLoader",
+        "https://threejs.org/docs/#api/en/animation/AnimationMixer"
+      ]
+    },
+    {
+      "id": "cameras-controls-framing",
+      "title": "Cameras and framing: perspective vs orthographic and controls",
+      "query": "Compare PerspectiveCamera and OrthographicCamera for product viewers, CAD-style scenes, and games. Explain field of view vs sensor feel, zoom for orthographic cameras, and how to frame an arbitrary bounding box with a camera (conceptual steps using Box3). Mention OrbitControls patterns (target, damping, enableDamping) at a high level.",
+      "resourceUrls": [
+        "https://threejs.org/docs/#api/en/cameras/PerspectiveCamera",
+        "https://threejs.org/docs/#examples/en/controls/OrbitControls"
+      ]
+    },
+    {
+      "id": "raycasting-picking",
+      "title": "Raycaster: picking, hover, and interaction patterns",
+      "query": "Teach Raycaster usage for pointer picking: normalizing device coordinates from pointer events, setFromCamera, intersectObjects with recursive traversal, sorting by distance, and handling instanced meshes (InstancedMesh) versus merged geometry. Include notes on precision and updating matrices before casting.",
+      "resourceUrls": ["https://threejs.org/docs/#api/en/core/Raycaster"]
+    },
+    {
+      "id": "performance-instancing-lod",
+      "title": "Performance: draw calls, InstancedMesh, LOD, and profiling",
+      "query": "Give a practical performance guide for three.js: reducing draw calls (merging vs InstancedMesh), frustum culling awareness, using LOD levels, reusing materials and geometries, renderer.info for stats, and when post-processing or shadows dominate cost. Suggest a profiling order when FPS drops on mid-range laptops.",
+      "resourceUrls": [
+        "https://threejs.org/docs/#api/en/objects/InstancedMesh",
+        "https://threejs.org/docs/#api/en/objects/LOD"
+      ]
+    },
+    {
+      "id": "postprocessing-effectcomposer",
+      "title": "Post-processing: render targets, passes, and tone mapping",
+      "query": "Outline how post-processing fits into the render pipeline (EffectComposer, RenderPass, ShaderPass), common passes (bloom, SSAO, outline) at a conceptual level, and how tone mapping and outputColorSpace on the renderer interact with post-FX. Warn about half-float precision and mobile bandwidth.",
+      "resourceUrls": ["https://threejs.org/docs/#examples/en/postprocessing/EffectComposer"]
+    },
+    {
+      "id": "custom-shaders-shadermaterial",
+      "title": "Custom shaders: ShaderMaterial and RawShaderMaterial",
+      "query": "Compare ShaderMaterial vs RawShaderMaterial, three.js shader chunks versus fully custom GLSL, passing uniforms and attributes, updating uniforms per frame, and debugging WebGL compile/link errors. Provide a minimal vertex/fragment pair that supports normals and a time uniform for a wave effect (conceptual, not framework-specific beyond three.js).",
+      "resourceUrls": [
+        "https://threejs.org/docs/#api/en/materials/ShaderMaterial",
+        "https://threejs.org/docs/#api/en/materials/RawShaderMaterial"
+      ]
+    },
+    {
+      "id": "math-utils-vectors",
+      "title": "Math: Vector3, Quaternion, Euler, Matrix4, and animation utilities",
+      "query": "Explain when to use Vector3 vs Quaternion for rotations, common Euler gimbal pitfalls, Matrix4.compose/decompose patterns, lerp/slerp for interpolation, and MathUtils helpers (degToRad, clamp, damp). Tie examples to camera rigs and object motion.",
+      "resourceUrls": [
+        "https://threejs.org/docs/#api/en/math/Vector3",
+        "https://threejs.org/docs/#api/en/math/Quaternion"
+      ]
+    },
+    {
+      "id": "webgpu-renderer-path",
+      "title": "WebGPU renderer: how it differs from WebGLRenderer",
+      "query": "Summarize the three.js WebGPU path at a high level: when WebGPURenderer is appropriate, feature gaps versus WebGLRenderer to watch for, node materials direction (conceptual), and how I should structure a codebase if I want to experiment with WebGPU without abandoning WebGL entirely.",
+      "resourceUrls": ["https://threejs.org/docs/#api/en/renderers/WebGPURenderer"]
+    },
+    {
+      "id": "production-checklist",
+      "title": "Production checklist: disposal, resize, errors, and asset pipeline",
+      "query": "Create a production checklist for a three.js app: disposing geometries/materials/textures/render targets on teardown, handling window resize and devicePixelRatio caps, lost WebGL context recovery basics, loading states and progress for large assets, and separating editor vs runtime asset prep (glTF validation, texture sizes, KTX2).",
+      "resourceUrls": ["https://threejs.org/docs/#manual/en/introduction/Libraries-and-Plugins"]
+    }
+  ]
+}
