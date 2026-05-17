@@ -1,0 +1,92 @@
+{
+  "slug": "pyqtgraph",
+  "topicTitle": "PyQtGraph — fast scientific plotting in Python",
+  "courseLine": "Official docs · Qt integration, performance, images, ROI tools, and real-time data",
+  "promptCount": 12,
+  "prompts": [
+    {
+      "id": "orientation-install-stack",
+      "title": "Orientation: what PyQtGraph is and how it fits with PyQt vs PySide",
+      "query": "I am new to PyQtGraph. Explain what problem it solves versus Matplotlib for interactive scientific GUIs, how it relates to Qt (PyQt5/6 vs PySide2/6), typical install choices, and a minimal mental model: PlotWidget, GraphicsView, Scene, and Items. Call out common beginner mistakes (wrong Qt binding mix, missing event loop).",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/getting_started/installation.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "first-plotwidget-curve",
+      "title": "First interactive plot: PlotWidget, pens, and clearing/replacing data",
+      "query": "Walk me through a minimal PyQtGraph example: create a Qt window with a PlotWidget, plot y vs x with a pen, set axis labels and title, and update the curve in a loop or button handler. Explain when to use plot() return values versus keeping a PlotDataItem reference for setData().",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/getting_started/plotting.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "performance-large-datasets",
+      "title": "Performance: large arrays, downsampling, clip-to-view, and connect modes",
+      "query": "Teach PyQtGraph performance patterns for plotting millions of points: auto-downsampling, clip-to-view, decimation, choosing connect='finite' or 'pairs', and when OpenGL line plots help versus CPU paths. Give practical rules of thumb and a checklist when plots feel laggy.",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/plotting.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "scatter-errorbars",
+      "title": "Scatter plots, symbol brushes, and error bars",
+      "query": "Show how to build publication-style scatter plots in PyQtGraph: ScatterPlotItem with symbol size/brush/pen, per-point colors or sizes, and error bars (horizontal and vertical). Compare to using multiple PlotDataItem curves when data is dense.",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/plotting.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "images-imageview-levels",
+      "title": "Images: ImageItem, colormap/lookup tables, and levels (contrast)",
+      "query": "Explain PyQtGraph image display for 2D numpy arrays: ImageItem basics, setting colormap/LUT, adjusting levels for contrast, handling NaNs, and axis scaling so pixels look square. Mention when ImageView is the right widget versus a raw PlotItem + ImageItem.",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/api_reference/graphicsItems/imageitem.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "imageview-ui-histogram-roi",
+      "title": "ImageView: linked histogram, ROI, and time-axis stacks",
+      "query": "Teach the ImageView widget workflow: integrated histogram/levels UI, ROI overlays for inspecting regions, and common patterns for 3D stacks (time or z). Include tips for large stacks (lazy updates, downsampling on load, memory pitfalls).",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/api_reference/widgets/imageview.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "axes-log-secondary",
+      "title": "Axes: ticks, log scales, SI prefixes, and multiple y-axes",
+      "query": "How do I customize axes in PyQtGraph? Cover AxisItem tick strings, log scaling, disabling auto-range for one axis, linking X ranges across PlotItems, and patterns for dual y-axes or stacked plots using GraphicsLayout.",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/plotting.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "regions-lines-roi",
+      "title": "Regions, infinite lines, and ROI items for measurement UIs",
+      "query": "Design an interactive measurement UI with PyQtGraph: LinearRegionItem for selecting ranges, InfiniteLine for cursors/thresholds, and ROI subclasses for rectangles/ellipses. Explain signals for region changes, how to read selected data from numpy arrays, and how to keep ROI coordinates consistent with image transforms.",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/api_reference/graphicsItems/linearregionitem.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "legend-multiple-series",
+      "title": "Legends, labels, and managing many series cleanly",
+      "query": "Show best practices for plots with many curves: LegendItem setup, naming series, toggling visibility, color palettes that remain distinguishable, and organizing code so updates remain readable as complexity grows.",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/plotting.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "realtime-acquisition-loop",
+      "title": "Real-time data: timers, threading, and safe UI updates from acquisition",
+      "query": "I am streaming measurements into a Qt GUI using PyQtGraph. Explain a safe architecture: acquisition thread or asyncio worker, queueing samples, updating PlotDataItem with setData on the GUI thread, limiting update rate, and avoiding GIL stalls. Include a minimal pattern using QTimer versus signal/slot from worker threads.",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/plotting.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "opengl-when-and-how",
+      "title": "OpenGL plotting: when it helps, limitations, and setup notes",
+      "query": "When should I enable OpenGL in PyQtGraph (useOpenGL) for line/scatter plots? Summarize trade-offs, platform/driver caveats, items that do not translate cleanly to GL, and how to fall back to CPU rendering for problematic systems.",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/api_reference/graphicsItems/plotitem.html"],
+      "durationTimestamp": "Read"
+    },
+    {
+      "id": "export-print-and-io",
+      "title": "Export: screenshots, vector output, and saving arrays from ROIs",
+      "query": "Describe practical export workflows from PyQtGraph plots: exporting the scene to PNG/PDF/SVG where supported, capturing widgets at fixed DPI, and exporting processed data (selected ROI windows, downsampled traces) to CSV/NPZ from the same UI.",
+      "resourceUrls": ["https://pyqtgraph.readthedocs.io/en/latest/api_reference/exporters.html"],
+      "durationTimestamp": "Read"
+    }
+  ]
+}
