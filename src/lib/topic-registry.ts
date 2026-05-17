@@ -7,6 +7,7 @@ import biochemistryWetLabTutorialDoc from '../data/biochemistry-wet-lab-tutorial
 import cellacdcSpotmaxDoc from '../data/cellacdc-spotmax.json';
 import foundationsArtificialIntelligencePapersDoc from '../data/foundations-of-artificial-intelligence-papers.json';
 import threejsLibraryDoc from '../data/threejs-library.json';
+import pyqtgraphDoc from '../data/pyqtgraph.json';
 
 export type TopicDoc = typeof nonequilibriumDoc;
 
@@ -20,4 +21,5 @@ export const topicBySlug: Record<string, TopicDoc> = {
   'cellacdc-spotmax': cellacdcSpotmaxDoc,
   'foundations-of-artificial-intelligence-papers': foundationsArtificialIntelligencePapersDoc,
   'threejs-library': threejsLibraryDoc,
+  'pyqtgraph': pyqtgraphDoc,
 };
