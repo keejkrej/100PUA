@@ -46,5 +46,11 @@
     "topicTitle": "The Foundations of Artificial Intelligence: Tracing the Pillars of Modern AI",
     "courseLine": "Curated classics · foundational papers that shaped modern AI",
     "promptCount": 15
+  },
+  {
+    "slug": "threejs-library",
+    "topicTitle": "three.js — WebGL scenes, materials, animation, and performance",
+    "courseLine": "Official manual & API · scene graph, lighting, loaders, shaders, and production tips",
+    "promptCount": 14
   }
 ]

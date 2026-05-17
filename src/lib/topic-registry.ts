@@ -6,6 +6,7 @@ import polymerBlendDoc from '../data/polymer-blend-regular-solution.json';
 import biochemistryWetLabTutorialDoc from '../data/biochemistry-wet-lab-tutorial.json';
 import cellacdcSpotmaxDoc from '../data/cellacdc-spotmax.json';
 import foundationsArtificialIntelligencePapersDoc from '../data/foundations-of-artificial-intelligence-papers.json';
+import threejsLibraryDoc from '../data/threejs-library.json';
 
 export type TopicDoc = typeof nonequilibriumDoc;
 
@@ -18,4 +19,5 @@ export const topicBySlug: Record<string, TopicDoc> = {
   'biochemistry-wet-lab-tutorial': biochemistryWetLabTutorialDoc,
   'cellacdc-spotmax': cellacdcSpotmaxDoc,
   'foundations-of-artificial-intelligence-papers': foundationsArtificialIntelligencePapersDoc,
+  'threejs-library': threejsLibraryDoc,
 };
