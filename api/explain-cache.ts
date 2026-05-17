@@ -178,6 +178,7 @@ type CacheEntryJson = {
 
 export type ExplainDiskCache = {
   prime: () => Promise<void>;
+  close: () => Promise<void>;
   get: (
     slug: string,
     promptId: string,
@@ -339,6 +340,14 @@ export function createExplainCache(apiRoot: string): ExplainDiskCache {
           explainKvConfiguredActive() ? 'enabled' : 'disabled',
         );
       }
+    },
+
+    async close(): Promise<void> {
+      if (!explainKvClient) return;
+      const client = explainKvClient;
+      explainKvClient = null;
+      if (client.isOpen) await client.quit().catch(() => client.destroy());
+      else client.destroy();
     },
 
     async get(
