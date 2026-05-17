@@ -25,7 +25,6 @@
  *   OPENAI_API_KEY or CODEX_API_KEY — API usage; SDK sets CODEX_API_KEY on the CLI process when using api_key mode
  *   ChatGPT (OAuth) — set CODEX_EXPLAIN_AUTH=chatgpt or rely on auto when no API key is set:
  *     CODEX_HOME — directory containing auth.json (from `codex login` / CI flow; CLI uses CODEX_HOME for auth)
- *     CODEX_CHATGPT_AUTH_JSON — optional full auth.json body (e.g. Render secret); written to a temp CODEX_HOME per request
  *   When using ChatGPT auth, OPENAI_API_KEY and CODEX_API_KEY are omitted from the CLI env so they do not override OAuth.
  *   CODEX_EXPLAIN_AUTH          — optional: auto (default) | api_key | chatgpt
  *   CODEX_MODEL              — optional; default gpt-5.5
@@ -91,6 +90,7 @@ import {
   DEFAULT_CODEX_WEB_SEARCH_MODE,
 } from './explain-defaults.js';
 import {
+  codexChatgptAuthHome,
   hasCodexExplainCredential,
   resolveCodexExplainAuthMode,
 } from './codex-explain-auth.js';
@@ -229,7 +229,7 @@ function explainAgentMisconfiguredMessage(provider: ExplainProviderKind): string
   }
   if (provider === 'codex') {
     if (!hasCodexExplainCredential()) {
-      return 'Set OPENAI_API_KEY or CODEX_API_KEY, or ChatGPT OAuth (CODEX_HOME with auth.json or CODEX_CHATGPT_AUTH_JSON); see api/.env.example.';
+      return 'Set OPENAI_API_KEY or CODEX_API_KEY, or ChatGPT OAuth (CODEX_HOME with auth.json); see api/.env.example.';
     }
     const r = resolveCodexExplainAuthMode();
     if ('error' in r) return r.error;
@@ -505,6 +505,19 @@ function codexApprovalPolicy(): CodexApprovalSetting {
   return DEFAULT_CODEX_APPROVAL_POLICY;
 }
 
+async function ensureCodexChatgptAuthHome(): Promise<string | null> {
+  const codexHome = codexChatgptAuthHome();
+  if (!codexHome) return null;
+
+  const authPath = path.join(codexHome, 'auth.json');
+  try {
+    await fsp.access(authPath);
+    return codexHome;
+  } catch {
+    return null;
+  }
+}
+
 async function runCodexExplanation(
   fullPromptText: string,
   abortController: AbortController,
@@ -514,7 +527,6 @@ async function runCodexExplanation(
 
   const sessionHome = await fsp.mkdtemp(path.join(os.tmpdir(), '100pua-codex-'));
   const webSearch = codexWebSearchModeSetting();
-  let oauthHomeDisposable: string | null = null;
 
   try {
     const codexModel =
@@ -524,22 +536,8 @@ async function runCodexExplanation(
     if (auth.mode === 'api_key') {
       codex = new Codex({ apiKey: auth.apiKey });
     } else {
-      let codexHome: string;
-      const inlineAuth = (process.env.CODEX_CHATGPT_AUTH_JSON ?? '').trim();
-      if (inlineAuth.length > 0) {
-        oauthHomeDisposable = await fsp.mkdtemp(
-          path.join(os.tmpdir(), '100pua-codex-oauth-'),
-        );
-        codexHome = oauthHomeDisposable;
-        await fsp.writeFile(
-          path.join(codexHome, 'auth.json'),
-          inlineAuth,
-          'utf8',
-        );
-      } else {
-        codexHome = (process.env.CODEX_HOME ?? '').trim();
-        if (!codexHome) return { ok: false, error: 'missing_codex_chatgpt_auth' };
-      }
+      const codexHome = await ensureCodexChatgptAuthHome();
+      if (!codexHome) return { ok: false, error: 'missing_codex_chatgpt_auth' };
 
       const childEnv: Record<string, string> = {};
       for (const [key, val] of Object.entries(process.env)) {
@@ -581,11 +579,6 @@ async function runCodexExplanation(
     };
   } finally {
     await fsp.rm(sessionHome, { recursive: true, force: true }).catch(() => {});
-    if (oauthHomeDisposable) {
-      await fsp
-        .rm(oauthHomeDisposable, { recursive: true, force: true })
-        .catch(() => {});
-    }
   }
 }
 

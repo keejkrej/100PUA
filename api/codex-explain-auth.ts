@@ -12,18 +12,13 @@ export function codexApiKeyFromEnv(): string {
   );
 }
 
-/** ChatGPT sign-in session: `CODEX_HOME/auth.json` (from `codex login`) or inline JSON secret. */
+export function codexChatgptAuthHome(): string {
+  return (process.env.CODEX_HOME ?? '').trim();
+}
+
+/** ChatGPT sign-in session: `CODEX_HOME/auth.json` from `codex login`. */
 export function hasCodexChatgptExplainAuth(): boolean {
-  const rawJson = (process.env.CODEX_CHATGPT_AUTH_JSON ?? '').trim();
-  if (rawJson.length > 0) {
-    try {
-      JSON.parse(rawJson);
-      return true;
-    } catch {
-      return false;
-    }
-  }
-  const home = (process.env.CODEX_HOME ?? '').trim();
+  const home = codexChatgptAuthHome();
   if (home.length === 0) return false;
   try {
     fs.accessSync(path.join(home, 'auth.json'));
@@ -39,17 +34,6 @@ export function hasCodexExplainCredential(): boolean {
 
 export type CodexExplainAuthMode = 'api_key' | 'chatgpt';
 
-function invalidCodexChatgptAuthJsonEnv(): boolean {
-  const raw = (process.env.CODEX_CHATGPT_AUTH_JSON ?? '').trim();
-  if (raw.length === 0) return false;
-  try {
-    JSON.parse(raw);
-    return false;
-  } catch {
-    return true;
-  }
-}
-
 export function resolveCodexExplainAuthMode():
   | { mode: 'api_key'; apiKey: string }
   | { mode: 'chatgpt' }
@@ -61,15 +45,9 @@ export function resolveCodexExplainAuthMode():
 
   if (raw === 'chatgpt' || raw === 'oauth') {
     if (!oauth) {
-      if (invalidCodexChatgptAuthJsonEnv()) {
-        return {
-          error:
-            'CODEX_CHATGPT_AUTH_JSON is set but is not valid JSON (expected Codex CLI auth.json contents).',
-        };
-      }
       return {
         error:
-          'CODEX_EXPLAIN_AUTH=chatgpt requires CODEX_HOME with auth.json (from `codex login`) or CODEX_CHATGPT_AUTH_JSON.',
+          'CODEX_EXPLAIN_AUTH=chatgpt requires CODEX_HOME with auth.json from `codex login`.',
       };
     }
     return { mode: 'chatgpt' };
@@ -90,15 +68,9 @@ export function resolveCodexExplainAuthMode():
   }
   if (apiKey) return { mode: 'api_key', apiKey };
   if (oauth) return { mode: 'chatgpt' };
-  if (invalidCodexChatgptAuthJsonEnv()) {
-    return {
-      error:
-        'CODEX_CHATGPT_AUTH_JSON is set but is not valid JSON (expected Codex CLI auth.json contents).',
-    };
-  }
   return {
     error:
-      'Set OPENAI_API_KEY or CODEX_API_KEY, or ChatGPT OAuth (CODEX_HOME + auth.json or CODEX_CHATGPT_AUTH_JSON).',
+      'Set OPENAI_API_KEY or CODEX_API_KEY, or ChatGPT OAuth (CODEX_HOME + auth.json).',
   };
 }
 

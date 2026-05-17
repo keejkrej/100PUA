@@ -52,6 +52,8 @@
     "topicTitle": "three.js — WebGL scenes, materials, animation, and performance",
     "courseLine": "Official manual & API · scene graph, lighting, loaders, shaders, and production tips",
     "promptCount": 14
+  },
+  {
     "slug": "pyqtgraph",
     "topicTitle": "PyQtGraph — fast scientific plotting in Python",
     "courseLine": "Official docs · Qt integration, performance, images, ROI tools, and real-time data",
