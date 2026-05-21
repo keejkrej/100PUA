@@ -1,10 +1,8 @@
 /**
  * Pre-generates cached /explain-prompt answers for prompt rows.
  *
- * Examples:
- *   npm run prewarm:explain -- --provider claude --model claude-sonnet-4-5
- *   npm run prewarm:explain -- --provider codex --model gpt-5.5 --concurrency 2
- *   npm run prewarm:explain -- --provider claude --slug pyqtgraph --force
+ * Example:
+ *   npm run prewarm:explain -- --model composer-2
  */
 import 'dotenv/config';
 
@@ -15,8 +13,6 @@ import {
   buildExplainVariantCacheKey,
   createExplainCache,
   explainCacheActive,
-  explainProviderFromEnv,
-  type ExplainProviderKind,
 } from '../explain-cache.js';
 import {
   buildFullExplainPrompt,
@@ -37,7 +33,6 @@ const apiRoot =
     : path.resolve(__dirnamePath, '..');
 
 type CliOptions = {
-  provider: ExplainProviderKind | null;
   model: string | null;
   concurrency: number;
   force: boolean;
@@ -59,8 +54,7 @@ function usage(): string {
     'Usage: npm run prewarm:explain -- [options]',
     '',
     'Options:',
-    '  --provider claude|cursor|codex  Backend to use (default: EXPLAIN_AI_PROVIDER or codex)',
-    '  --model <id>                   Model id for the selected backend',
+    '  --model <id>                   Cursor model id (default from CURSOR_MODEL env)',
     '  --concurrency <n>              Parallel generations (default: 1)',
     '  --slug <slug>                  Limit to one topic slug',
     '  --prompt <id>                  Limit to one prompt id (requires --slug)',
@@ -68,12 +62,6 @@ function usage(): string {
     '  --dry-run                      List work without calling a model or writing cache',
     '  --help                         Show this help',
   ].join('\n');
-}
-
-function parseProvider(raw: string): ExplainProviderKind {
-  const v = raw.trim().toLowerCase();
-  if (v === 'claude' || v === 'cursor' || v === 'codex') return v;
-  throw new Error('--provider must be claude, cursor, or codex');
 }
 
 function readValue(args: string[], index: number, flag: string): string {
@@ -84,7 +72,6 @@ function readValue(args: string[], index: number, flag: string): string {
 
 function parseArgs(argv: string[]): CliOptions {
   const out: CliOptions = {
-    provider: null,
     model: null,
     concurrency: 1,
     force: false,
@@ -105,11 +92,6 @@ function parseArgs(argv: string[]): CliOptions {
     }
     if (arg === '--dry-run') {
       out.dryRun = true;
-      continue;
-    }
-    if (arg === '--provider') {
-      out.provider = parseProvider(readValue(argv, i, arg));
-      i += 1;
       continue;
     }
     if (arg === '--model') {
@@ -143,17 +125,12 @@ function parseArgs(argv: string[]): CliOptions {
   return out;
 }
 
-function applyModelEnv(provider: ExplainProviderKind, model: string | null): void {
-  if (!model) return;
-  if (provider === 'claude') process.env.CLAUDE_MODEL = model;
-  else if (provider === 'cursor') process.env.CURSOR_MODEL = model;
-  else process.env.CODEX_MODEL = model;
+function applyModelEnv(model: string | null): void {
+  if (model) process.env.CURSOR_MODEL = model;
 }
 
-function selectedModel(provider: ExplainProviderKind): string {
-  if (provider === 'claude') return (process.env.CLAUDE_MODEL ?? '').trim() || '(default)';
-  if (provider === 'cursor') return (process.env.CURSOR_MODEL ?? '').trim() || '(default)';
-  return (process.env.CODEX_MODEL ?? '').trim() || '(default)';
+function selectedModel(): string {
+  return (process.env.CURSOR_MODEL ?? '').trim() || '(default)';
 }
 
 function collectJobs(
@@ -174,8 +151,7 @@ function collectJobs(
 
 async function main(): Promise<void> {
   const opts = parseArgs(process.argv.slice(2));
-  const provider = opts.provider ?? explainProviderFromEnv();
-  applyModelEnv(provider, opts.model);
+  applyModelEnv(opts.model);
 
   // Keep the command self-contained after topic edits.
   await import('./build-prompt-index.js');
@@ -185,8 +161,8 @@ async function main(): Promise<void> {
     throw new Error('No prompt index found. Run `npm run build` in api/.');
   }
 
-  if (!opts.dryRun && !explainAgentConfigured(provider)) {
-    throw new Error(explainAgentMisconfiguredMessage(provider));
+  if (!opts.dryRun && !explainAgentConfigured()) {
+    throw new Error(explainAgentMisconfiguredMessage());
   }
 
   if (!opts.dryRun && !explainCacheActive()) {
@@ -199,14 +175,14 @@ async function main(): Promise<void> {
   try {
     if (!opts.dryRun) await cache.prime();
 
-    const variantKey = buildExplainVariantCacheKey(provider);
+    const variantKey = buildExplainVariantCacheKey();
     const jobs = collectJobs(promptIndex, opts);
     if (jobs.length === 0) {
       throw new Error('No matching prompts found.');
     }
 
     console.log(
-      `[prewarm-explain-cache] provider=${provider} model=${selectedModel(provider)} prompts=${jobs.length} concurrency=${opts.concurrency} force=${opts.force ? 'yes' : 'no'} variant=${variantKey}`,
+      `[prewarm-explain-cache] model=${selectedModel()} prompts=${jobs.length} concurrency=${opts.concurrency} force=${opts.force ? 'yes' : 'no'} variant=${variantKey}`,
     );
 
     let next = 0;
@@ -238,8 +214,7 @@ async function main(): Promise<void> {
       );
       try {
         const out = await runExplanation(
-          provider,
-          buildFullExplainPrompt(provider, job.row),
+          buildFullExplainPrompt(job.row),
           abortController,
         );
         if (!out.ok) {

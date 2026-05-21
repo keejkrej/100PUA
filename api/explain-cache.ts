@@ -14,51 +14,16 @@ import path from 'node:path';
 
 import { createClient } from 'redis';
 
-import {
-  DEFAULT_CLAUDE_MODEL,
-  DEFAULT_CURSOR_MODEL,
-  DEFAULT_CODEX_APPROVAL_POLICY,
-  DEFAULT_CODEX_MODEL,
-  DEFAULT_CODEX_SANDBOX_MODE,
-  DEFAULT_CODEX_WEB_SEARCH_MODE,
-} from './explain-defaults.js';
-import { codexExplainAuthCacheSegment } from './codex-explain-auth.js';
+import { DEFAULT_CURSOR_MODEL } from './explain-defaults.js';
 
-const SCHEMA = 'v9';
+const SCHEMA = 'v10';
 const DEFAULT_KV_TTL_SECONDS = 24 * 60 * 60;
 
-export type ExplainProviderKind = 'claude' | 'cursor' | 'codex';
+export type ExplainProvider = 'cursor';
 
-/** Active provider when the API client omits `provider` in the JSON body. */
-export function explainProviderFromEnv(): ExplainProviderKind {
-  const raw = (process.env.EXPLAIN_AI_PROVIDER ?? 'codex').trim().toLowerCase();
-  if (raw === 'cursor') return 'cursor';
-  if (raw === 'codex') return 'codex';
-  return 'claude';
-}
-
-/** Cache path segment derived from backend + relevant model / option env vars. */
-export function buildExplainVariantCacheKey(
-  provider: ExplainProviderKind,
-): string {
-  switch (provider) {
-    case 'cursor':
-      return `cursor:${(process.env.CURSOR_MODEL ?? '').trim() || DEFAULT_CURSOR_MODEL}`;
-    case 'codex':
-      return [
-        'codex',
-        codexExplainAuthCacheSegment(),
-        (process.env.CODEX_MODEL ?? '').trim() || DEFAULT_CODEX_MODEL,
-        (process.env.CODEX_WEB_SEARCH_MODE ?? '').trim() ||
-          DEFAULT_CODEX_WEB_SEARCH_MODE,
-        (process.env.CODEX_SANDBOX_MODE ?? '').trim() ||
-          DEFAULT_CODEX_SANDBOX_MODE,
-        (process.env.CODEX_APPROVAL_POLICY ?? '').trim() ||
-          DEFAULT_CODEX_APPROVAL_POLICY,
-      ].join(':');
-    default:
-      return `claude:${(process.env.CLAUDE_MODEL ?? '').trim() || DEFAULT_CLAUDE_MODEL}`;
-  }
+/** Cache path segment derived from Cursor model env. */
+export function buildExplainVariantCacheKey(): string {
+  return `cursor:${(process.env.CURSOR_MODEL ?? '').trim() || DEFAULT_CURSOR_MODEL}`;
 }
 
 export function explainCacheDirectory(apiRoot: string): string {

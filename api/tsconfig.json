@@ -17,7 +17,6 @@
     "explain-cache.ts",
     "explain-defaults.ts",
     "explain-runner.ts",
-    "codex-explain-auth.ts",
     "scripts/**/*.ts"
   ],
   "exclude": ["node_modules", "dist"]

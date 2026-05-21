@@ -6,15 +6,8 @@
 # PUBLIC_SUGGEST_API_URL = https://<100pua-api service>.onrender.com (no slash),
 # then trigger a redeploy. Tighten ALLOWED_ORIGINS on the API for production.
 #
-# For /explain-prompt: defaults use codex unless you override EXPLAIN_AI_PROVIDER (claude | cursor | codex). See api/.env.example.
-#
-# Claude: CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY.
+# For /explain-prompt: Cursor via CURSOR_API_KEY. See api/.env.example.
 # Cursor: CURSOR_API_KEY (local SDK runtime + platform optional deps).
-# Codex: API key or ChatGPT OAuth — see api/.env.example (CODEX_HOME).
-#   https://github.com/openai/codex/tree/main/sdk/typescript · codex CLI optional deps.
-# Omit Codex env overrides to use API defaults: gpt-5.5, web search live, sandbox danger-full-access, approval never.
-# For ChatGPT OAuth on Render, mount a Persistent Disk at /var/data, set CODEX_HOME=/var/data/codex,
-# and place auth.json in that directory.
 #
 # Optional: explain cache survives across instance restarts if you set API env EXPLAIN_CACHE_DIR e.g.
 # /var/data/explain-cache together with a Persistent Disk mounted at /var/data.
@@ -39,10 +32,6 @@ services:
         sync: false
       - key: ALLOWED_ORIGINS
         value: "*"
-      - key: EXPLAIN_AI_PROVIDER
-        value: codex
-      - key: CODEX_HOME
-        value: /var/data/codex
       - key: EXPLAIN_KV_URL
         sync: false
       - key: EXPLAIN_KV_CACHE_SECONDS
@@ -58,5 +47,3 @@ services:
         value: "22.12.0"
       - key: PUBLIC_GITHUB_REPO
         value: keejkrej/100PUA
-      - key: PUBLIC_EXPLAIN_DEFAULT_PROVIDER
-        value: codex

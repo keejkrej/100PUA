@@ -10,37 +10,16 @@
  *   SUGGEST_RATE_WINDOW_MS   — window ms (default 900000)
  *
  * POST /explain-prompt (after `npm run build` → data/prompt-index.json):
- *   EXPLAIN_AI_PROVIDER     — `codex` (default), `claude`, or `cursor` — backend for explains
- *
- * Claude (Anthropic Claude Agent SDK) when provider is `claude`:
- *   CLAUDE_CODE_OAUTH_TOKEN  — from `claude setup-token` (subscription OAuth); or
- *   ANTHROPIC_API_KEY        — Console API key
- *
- * Cursor (@cursor/sdk) when provider is `cursor`:
  *   CURSOR_API_KEY           — Cursor API key (dashboard or service account)
- *   CURSOR_MODEL             — optional; default composer-2; use `auto` for server-selected model
- *
- * Codex (@openai/codex-sdk) when provider is `codex` — https://developers.openai.com/codex/sdk
- *   Auth (see https://github.com/openai/codex/tree/main/sdk/typescript — `apiKey` and `env`):
- *   OPENAI_API_KEY or CODEX_API_KEY — API usage; SDK sets CODEX_API_KEY on the CLI process when using api_key mode
- *   ChatGPT (OAuth) — set CODEX_EXPLAIN_AUTH=chatgpt or rely on auto when no API key is set:
- *     CODEX_HOME — directory containing auth.json (from `codex login` / CI flow; CLI uses CODEX_HOME for auth)
- *   When using ChatGPT auth, OPENAI_API_KEY and CODEX_API_KEY are omitted from the CLI env so they do not override OAuth.
- *   CODEX_EXPLAIN_AUTH          — optional: auto (default) | api_key | chatgpt
- *   CODEX_MODEL              — optional; default gpt-5.5
- *   CODEX_WEB_SEARCH_MODE    — optional: disabled | cached | live (default live)
- *   CODEX_SANDBOX_MODE       — optional: read-only | workspace-write | danger-full-access (default danger-full-access)
- *   CODEX_APPROVAL_POLICY    — optional: never | on-request | on-failure | untrusted (default never)
+ *   CURSOR_MODEL             — optional; default composer-2
  *
  * POST /explain-prompt JSON body:
  *   slug, promptId          — required
- *   provider                — optional: `claude` | `cursor` | `codex` (default: EXPLAIN_AI_PROVIDER env)
  *
  * Shared explain settings:
  *   EXPLAIN_RATE_LIMIT       — default 12
  *   EXPLAIN_RATE_WINDOW_MS   — default 900000
- *   CLAUDE_EXPLAIN_TIMEOUT_MS — default 240000 (bounds wait for all providers)
- *   CLAUDE_MODEL             — optional; overrides default claude-haiku-4-5 (Claude backend only)
+ *   EXPLAIN_TIMEOUT_MS       — default 240000 (max wait for explain generation)
  *   EXPLAIN_CACHE_DAYS       — file cache TTL days (default 7; empty env = default; 0 disables)
  *   EXPLAIN_CACHE_DIR        — optional absolute path for cache JSON (default: ./cache/explain under api/)
  *   EXPLAIN_CACHE_DISABLED   — true/1 turns off caching entirely
@@ -49,13 +28,7 @@
  *   EXPLAIN_KV_CACHE_SECONDS — optional KV TTL seconds (default 86400; 0 disables KV tier)
  *   EXPLAIN_KV_PREFIX        — optional KV key prefix (default 100pua)
  *
- * Successful POST /explain-prompt sets X-Explain-Cache and X-Explain-Provider (CORS-exposed).
- *
- * Explain agent backends (maximal tool / permission posture for headless API):
- *   - Claude: `tools.preset === 'claude_code'`, bypassPermissions + allowDangerouslySkipPermissions, cwd tmp.
- *   - Cursor: local agent, sandbox disabled on the SDK path, default model composer-2.
- *   - Codex: default sandbox danger-full-access, web search live, approval never, default model gpt-5.5;
- *     API key or ChatGPT OAuth via CodexOptions (`apiKey` vs custom `env` + CODEX_HOME) per sdk/typescript.
+ * Successful POST /explain-prompt sets X-Explain-Cache (CORS-exposed).
  */
 
 import 'dotenv/config';
@@ -70,9 +43,7 @@ import { cors } from 'hono/cors';
 import {
   createExplainCache,
   explainCacheActive,
-  explainProviderFromEnv,
   buildExplainVariantCacheKey,
-  type ExplainProviderKind,
 } from './explain-cache.js';
 import {
   buildFullExplainPrompt,
@@ -186,17 +157,6 @@ function originAllowed(originHeader: string | undefined): boolean {
   const o = originHeader || '';
   if (!o) return true;
   return CORS_ALLOWED_LIST.includes(o);
-}
-
-/** `null`: omit field → caller uses env default. `false`: invalid payload. */
-function coerceExplainBodyProvider(raw: unknown): ExplainProviderKind | null | false {
-  if (raw === undefined || raw === null) return null;
-  if (typeof raw !== 'string') return false;
-  const s = raw.trim();
-  if (s === '') return null;
-  const l = s.toLowerCase();
-  if (l === 'claude' || l === 'cursor' || l === 'codex') return l;
-  return false;
 }
 
 const PROMPT_INDEX = loadPromptIndex(API_ROOT);
@@ -340,7 +300,7 @@ app.use(
     },
     allowMethods: ['GET', 'POST', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
-    exposeHeaders: ['X-Explain-Cache', 'X-Explain-Provider'],
+    exposeHeaders: ['X-Explain-Cache'],
   }),
 );
 
@@ -377,7 +337,6 @@ app.post('/explain-prompt', async (c) => {
   const p = payload as {
     slug?: unknown;
     promptId?: unknown;
-    provider?: unknown;
   } | null;
   const slug = typeof p?.slug === 'string' ? p.slug.trim() : '';
   const promptId =
@@ -397,27 +356,17 @@ app.post('/explain-prompt', async (c) => {
     return c.json({ error: 'invalid_payload' }, 400);
   }
 
-  const coerced = coerceExplainBodyProvider(p?.provider);
-  if (coerced === false) {
-    return c.json(
-      { error: 'invalid_payload', message: 'provider must be claude, cursor, or codex' },
-      400,
-    );
-  }
-  const explainProvider =
-    coerced === null ? explainProviderFromEnv() : coerced;
-
-  if (!explainAgentConfigured(explainProvider)) {
+  if (!explainAgentConfigured()) {
     return c.json(
       {
         error: 'misconfigured_server',
-        message: explainAgentMisconfiguredMessage(explainProvider),
+        message: explainAgentMisconfiguredMessage(),
       },
       503,
     );
   }
 
-  const variantKey = buildExplainVariantCacheKey(explainProvider);
+  const variantKey = buildExplainVariantCacheKey();
 
   const row = PROMPT_INDEX[slug]?.[promptId];
   const chatQuery = row?.chatQuery;
@@ -428,13 +377,12 @@ app.post('/explain-prompt', async (c) => {
   const contentKey = explainContentKey(chatQuery);
 
   const cachedHit = await explainCache.get(slug, promptId, contentKey, variantKey);
-  const providerHeaders = { 'X-Explain-Provider': explainProvider };
 
   if (cachedHit) {
     return c.json(
       { answer: cachedHit.answer, cached: true },
       200,
-      { 'X-Explain-Cache': 'hit', ...providerHeaders },
+      { 'X-Explain-Cache': 'hit' },
     );
   }
 
@@ -443,7 +391,7 @@ app.post('/explain-prompt', async (c) => {
     return c.json({ error: 'rate_limit' }, 429);
   }
 
-  const fullPromptText = buildFullExplainPrompt(explainProvider, row);
+  const fullPromptText = buildFullExplainPrompt(row);
 
   const brokerKey = `${slug}:${promptId}:${contentKey}:${variantKey}`;
   let brokerPromise = inFlightExplains.get(brokerKey);
@@ -455,7 +403,6 @@ app.post('/explain-prompt', async (c) => {
     brokerPromise = (async () => {
       try {
         const out = await runExplanation(
-          explainProvider,
           fullPromptText,
           abortController,
         );
@@ -489,7 +436,7 @@ app.post('/explain-prompt', async (c) => {
     return c.json(
       { answer: out.text, cached: false },
       200,
-      { 'X-Explain-Cache': xCache, ...providerHeaders },
+      { 'X-Explain-Cache': xCache },
     );
   } catch (e) {
     console.error(

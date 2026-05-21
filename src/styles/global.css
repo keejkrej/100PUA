@@ -101,7 +101,7 @@ html[data-theme='light'] .theme-toggle-icon--light {
   height: 1px;
 }
 
-/* Claude answer markdown — used with sanitized HTML only */
+/* Explain answer markdown — used with sanitized HTML only */
 .explain-md {
   @apply max-w-none text-sm leading-relaxed text-text;
 

@@ -60,10 +60,6 @@ function normalizeMarkdownMath(markdown: string): string {
 
 type View = 'rendered' | 'raw';
 
-export type ExplainProvider = 'claude' | 'cursor' | 'codex';
-
-const PROVIDERS: ExplainProvider[] = ['cursor', 'codex', 'claude'];
-
 function el(id: string): HTMLElement | null {
   return document.getElementById(id);
 }
@@ -98,28 +94,6 @@ function bindToggle(btn: HTMLElement, view: View) {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
     setView(view);
-  });
-}
-
-function setProviderUI(active: ExplainProvider) {
-  for (const p of PROVIDERS) {
-    const btn = el(`explain-provider-${p}`);
-    if (!btn) continue;
-    const on = p === active;
-    btn.classList.toggle('explain-toggle--on', on);
-    btn.classList.toggle('explain-toggle--off', !on);
-    btn.setAttribute('aria-checked', String(on));
-    btn.tabIndex = on ? 0 : -1;
-  }
-}
-
-function bindProviderButton(btn: HTMLElement, provider: ExplainProvider, onPick: (p: ExplainProvider) => void) {
-  btn.addEventListener('click', () => onPick(provider));
-  btn.addEventListener('keydown', (event) => {
-    if (!(event.target instanceof HTMLElement)) return;
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-    event.preventDefault();
-    onPick(provider);
   });
 }
 
@@ -204,14 +178,14 @@ function mountError(display: string) {
   }
 }
 
-function mountLoading(label: string) {
+function mountLoading() {
   const statusEl = el('explain-status');
   const toolbar = el('explain-toolbar');
   const rendered = el('explain-rendered');
   const raw = el('explain-raw');
 
   if (statusEl) {
-    statusEl.textContent = label;
+    statusEl.textContent = 'Generating answer…';
     statusEl.classList.add('text-muted');
     statusEl.classList.remove('text-accent', 'text-accent/90');
   }
@@ -232,15 +206,9 @@ function mountLoading(label: string) {
   }
 }
 
-function coerceDefaultProvider(raw: string | undefined): ExplainProvider {
-  const s = raw?.trim().toLowerCase();
-  if (s === 'cursor' || s === 'claude') return s;
-  return 'codex';
-}
-
 let explainFetchAbort: AbortController | null = null;
 let lastExplainSlugPromptKey: string | null = null;
-const answerByProvider = new Map<ExplainProvider, string>();
+let cachedAnswer: string | undefined;
 
 export function initExplainPromptView(root: HTMLElement) {
   const suggestApiBase = root.dataset.explainApi?.trim();
@@ -252,7 +220,7 @@ export function initExplainPromptView(root: HTMLElement) {
   const pageKeyInner = `${slug}:${promptId}`;
   if (lastExplainSlugPromptKey !== pageKeyInner) {
     lastExplainSlugPromptKey = pageKeyInner;
-    answerByProvider.clear();
+    cachedAnswer = undefined;
     explainFetchAbort?.abort();
     root.dataset.explainInit = '';
   }
@@ -260,33 +228,13 @@ export function initExplainPromptView(root: HTMLElement) {
   if (root.dataset.explainInit === '1') return;
   root.dataset.explainInit = '1';
 
-  const defaultProvider = coerceDefaultProvider(root.dataset.explainDefaultProvider);
-
-  const providerBar = el('explain-provider-toolbar');
-  if (providerBar && providerBar.dataset.bound !== '1') {
-    providerBar.dataset.bound = '1';
-    for (const p of PROVIDERS) {
-      const b = el(`explain-provider-${p}`);
-      if (b) bindProviderButton(b, p, (pick) => requestExplain(pick));
-    }
-  }
-
-  function requestExplain(provider: ExplainProvider) {
-    setProviderUI(provider);
-
-    const hit = answerByProvider.get(provider);
-    if (hit !== undefined) {
-      mountAnswer(hit);
+  function requestExplain() {
+    if (cachedAnswer !== undefined) {
+      mountAnswer(cachedAnswer);
       return;
     }
 
-    const label =
-      provider === 'claude'
-        ? 'Generating Claude answer…'
-        : provider === 'cursor'
-          ? 'Generating Cursor answer…'
-          : 'Generating Codex answer…';
-    mountLoading(label);
+    mountLoading();
 
     explainFetchAbort?.abort();
     const controller = new AbortController();
@@ -295,7 +243,7 @@ export function initExplainPromptView(root: HTMLElement) {
     fetch(`${suggestApiBase}/explain-prompt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug, promptId, provider }),
+      body: JSON.stringify({ slug, promptId }),
       signal: controller.signal,
     })
       .then((r) =>
@@ -313,10 +261,10 @@ export function initExplainPromptView(root: HTMLElement) {
         if (explainFetchAbort !== controller) return;
         const j = resp.json;
         if (resp.ok && typeof j.answer === 'string') {
-          answerByProvider.set(provider, j.answer);
+          cachedAnswer = j.answer;
           mountAnswer(j.answer);
         } else {
-          answerByProvider.delete(provider);
+          cachedAnswer = undefined;
           const msg =
             j.error === 'rate_limit'
               ? 'Too many attempts — try again later.'
@@ -329,7 +277,7 @@ export function initExplainPromptView(root: HTMLElement) {
       .catch((e: unknown) => {
         if (e instanceof DOMException && e.name === 'AbortError') return;
         if (explainFetchAbort !== controller) return;
-        answerByProvider.delete(provider);
+        cachedAnswer = undefined;
         mountError('Network error.');
       })
       .finally(() => {
@@ -337,7 +285,7 @@ export function initExplainPromptView(root: HTMLElement) {
       });
   }
 
-  requestExplain(defaultProvider);
+  requestExplain();
 }
 
 let explainWireInstalled = false;
