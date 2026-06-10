@@ -19,7 +19,16 @@ export default defineConfig({
     },
   },
   ssr: {
-    external: ['@cursor/sdk'],
+    external: ['@cursor/sdk', '@100pua/domain', '@100pua/api'],
   },
-  plugins: [tailwindcss(), tanstackStart(), viteReact(), nitro()],
+  plugins: [
+    tailwindcss(),
+    tanstackStart(),
+    viteReact({
+      babel: {
+        plugins: ['babel-plugin-react-compiler'],
+      },
+    }),
+    nitro(),
+  ],
 });

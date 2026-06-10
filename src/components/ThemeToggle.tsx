@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 
+import { Button } from '~/components/ui/button';
 import { applyTheme, readThemePreference, toggleTheme, type Theme } from '~/lib/theme';
+import { cn } from '~/lib/utils';
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>('dark');
@@ -12,10 +14,14 @@ export function ThemeToggle() {
   }, []);
 
   return (
-    <button
+    <Button
       type="button"
       id="theme-toggle"
-      className="theme-toggle fixed top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-[100] flex size-10 items-center justify-center rounded-lg border border-muted/40 bg-surface/90 text-muted shadow-sm backdrop-blur-sm transition-colors hover:border-accent/50 hover:text-accent"
+      variant="outline"
+      size="icon"
+      className={cn(
+        'theme-toggle fixed top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-[100] bg-surface/90 shadow-sm backdrop-blur-sm',
+      )}
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       onClick={() => setTheme(toggleTheme())}
     >
@@ -33,6 +39,6 @@ export function ThemeToggle() {
           <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
       </span>
-    </button>
+    </Button>
   );
 }

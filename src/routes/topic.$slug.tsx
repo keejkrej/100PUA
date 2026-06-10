@@ -1,5 +1,12 @@
 import { Link, createFileRoute, redirect } from '@tanstack/react-router';
+import { Effect } from 'effect';
 import { useEffect, useState } from 'react';
+
+import {
+  resolveTopic,
+  type TopicDoc,
+  type TopicManifestRow,
+} from '@100pua/domain/topics';
 
 import { SuggestFAB } from '~/components/SuggestFAB';
 import manifest from '~/data/topics.manifest.json';
@@ -12,10 +19,15 @@ import { topicBySlug } from '~/lib/topic-registry';
 
 export const Route = createFileRoute('/topic/$slug')({
   loader: ({ params }) => {
-    const summary = manifest.find((t) => t.slug === params.slug);
-    const topic = topicBySlug[params.slug];
-    if (!summary || !topic) throw redirect({ to: '/' });
-    return { summary, topic };
+    const result = Effect.runSync(
+      resolveTopic(
+        params.slug,
+        manifest as TopicManifestRow[],
+        topicBySlug as Record<string, TopicDoc>,
+      ).pipe(Effect.either),
+    );
+    if (result._tag === 'Left') throw redirect({ to: '/' });
+    return result.right;
   },
   head: ({ loaderData }) => ({
     meta: [

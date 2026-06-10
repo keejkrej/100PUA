@@ -1,4 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+
+import { submitSuggestionRequest } from '~/lib/api-client';
+import type { SuggestionRequest } from '@100pua/domain/schemas';
+import { Button } from '~/components/ui/button';
+import {
+  Dialog,
+  DialogCloseButton,
+  DialogDescription,
+  DialogHeader,
+  DialogPopup,
+  DialogTitle,
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Textarea } from '~/components/ui/textarea';
 
 type Mode = 'topic' | 'prompt';
 
@@ -48,7 +62,7 @@ export function SuggestFAB({
   topicSlug = '',
   topicTitle = '',
 }: Props) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [open, setOpen] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [feedbackOk, setFeedbackOk] = useState(true);
   const [showFields, setShowFields] = useState(true);
@@ -66,22 +80,19 @@ export function SuggestFAB({
     setSubmitting(false);
   }
 
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (!nextOpen) resetDialog();
+  }
+
   function openDialog() {
     resetDialog();
-    dialogRef.current?.showModal();
+    setOpen(true);
   }
 
   function closeDialog() {
-    dialogRef.current?.close();
+    setOpen(false);
   }
-
-  useEffect(() => {
-    const dlg = dialogRef.current;
-    if (!dlg) return;
-    const onClose = () => resetDialog();
-    dlg.addEventListener('close', onClose);
-    return () => dlg.removeEventListener('close', onClose);
-  }, []);
 
   function openGithubDraft(form: HTMLFormElement) {
     const fd = new FormData(form);
@@ -150,39 +161,43 @@ export function SuggestFAB({
     setFeedback('');
 
     try {
-      const resp = await fetch('/api/suggestions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(apiPayload),
-      });
-      const text = await resp.text();
-      let json: { issueUrl?: string; error?: string } = {};
-      try {
-        json = JSON.parse(text) as typeof json;
-      } catch {
-        json = {};
-      }
+      const result = await submitSuggestionRequest(
+        apiPayload as SuggestionRequest,
+      );
 
-      if (resp.status === 503) {
-        openGithubDraft(form);
+      if (result._tag === 'Left') {
+        const cause = result.left as { error?: string; message?: string };
+        if (
+          cause &&
+          typeof cause === 'object' &&
+          cause.error === 'misconfigured_server'
+        ) {
+          openGithubDraft(form);
+          return;
+        }
+        const msg =
+          cause?.error === 'rate_limit'
+            ? 'Too many attempts — try again later.'
+            : cause?.error === 'invalid_payload'
+              ? 'Invalid input.'
+              : 'Could not create issue.';
+        setFeedbackOk(false);
+        setFeedback(msg);
+        setSubmitting(false);
         return;
       }
 
-      if (resp.ok && json.issueUrl) {
+      const success = result.right;
+      const json = Array.isArray(success) ? success[0] : success;
+      if (json.issueUrl) {
         setFeedbackOk(true);
         setFeedback(
           `Created. <a class="underline decoration-accent/50 hover:text-accent" href="${escapeAttrHref(json.issueUrl)}" target="_blank" rel="noopener noreferrer">View issue</a>`,
         );
         setShowFields(false);
       } else {
-        const msg =
-          json.error === 'rate_limit'
-            ? 'Too many attempts — try again later.'
-            : json.error === 'invalid_payload'
-              ? 'Invalid input.'
-              : 'Could not create issue.';
         setFeedbackOk(false);
-        setFeedback(msg);
+        setFeedback('Could not create issue.');
         setSubmitting(false);
       }
     } catch {
@@ -192,9 +207,9 @@ export function SuggestFAB({
 
   return (
     <>
-      <button
+      <Button
         type="button"
-        className="text-muted cursor-pointer text-[11px] tracking-wide underline decoration-transparent underline-offset-2 transition-colors hover:text-accent hover:decoration-accent/60"
+        variant="link"
         aria-haspopup="dialog"
         aria-controls="suggest-dialog"
         aria-label={
@@ -203,119 +218,97 @@ export function SuggestFAB({
         onClick={openDialog}
       >
         add
-      </button>
+      </Button>
 
-      <dialog
-        ref={dialogRef}
-        id="suggest-dialog"
-        className="fixed left-1/2 top-1/2 z-[100] w-[min(100%,28rem)] max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-muted/40 bg-surface p-6 text-text shadow-xl backdrop:bg-black/50 open:flex open:flex-col"
-        onClick={(ev) => {
-          if (ev.target === dialogRef.current) closeDialog();
-        }}
-      >
-        <form className="flex flex-col gap-4" onSubmit={onSubmit}>
-          <div className="flex items-start justify-between gap-3">
-            <h2 className="text-sm font-medium leading-snug tracking-tight text-text">
-              {heading}
-            </h2>
-            <button
-              type="button"
-              className="text-muted -mr-1 -mt-1 shrink-0 rounded px-2 py-1 text-lg leading-none transition-colors hover:text-text"
-              aria-label="Close"
-              onClick={closeDialog}
-            >
-              ×
-            </button>
-          </div>
-          {showFields && (
-            <p className="text-[11px] leading-relaxed text-muted">
-              Your suggestion is turned into a GitHub issue when the API is
-              configured; otherwise this opens a GitHub draft.
-            </p>
-          )}
-          {feedback ? (
-            <p
-              role="status"
-              className={`text-[11px] leading-relaxed ${feedbackOk ? 'text-muted' : 'text-accent'}`}
-              dangerouslySetInnerHTML={{ __html: feedback }}
-            />
-          ) : null}
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogPopup id="suggest-dialog">
+          <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+            <DialogHeader>
+              <DialogTitle>{heading}</DialogTitle>
+              <DialogCloseButton />
+            </DialogHeader>
+            {showFields ? (
+              <DialogDescription>
+                Your suggestion is turned into a GitHub issue when the API is
+                configured; otherwise this opens a GitHub draft.
+              </DialogDescription>
+            ) : null}
+            {feedback ? (
+              <p
+                role="status"
+                className={`text-[11px] leading-relaxed ${feedbackOk ? 'text-muted' : 'text-accent'}`}
+                dangerouslySetInnerHTML={{ __html: feedback }}
+              />
+            ) : null}
 
-          {showFields ? (
-            <div className="flex flex-col gap-4">
-              {mode === 'topic' ? (
-                <>
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="suggest-topic-title" className="text-[11px] text-muted">
-                      Title (short)
-                    </label>
-                    <input
-                      id="suggest-topic-title"
-                      name="title"
-                      required
-                      maxLength={120}
-                      autoComplete="off"
-                      className="rounded-lg border border-muted/40 bg-void px-3 py-2 text-sm text-text outline-none ring-accent/30 transition-shadow focus:border-accent/50 focus:ring-2"
-                      placeholder="e.g. MIT 8.04 Quantum Physics playlist"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="suggest-topic-body" className="text-[11px] text-muted">
-                      Notes (links, why it fits, CSV source…)
-                    </label>
-                    <textarea
-                      id="suggest-topic-body"
-                      name="body"
-                      rows={5}
-                      maxLength={4000}
-                      className="resize-y rounded-lg border border-muted/40 bg-void px-3 py-2 text-sm text-text outline-none ring-accent/30 transition-shadow focus:border-accent/50 focus:ring-2"
-                      placeholder="Optional details"
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="suggest-prompt-title" className="text-[11px] text-muted">
-                      Suggested title (optional)
-                    </label>
-                    <input
-                      id="suggest-prompt-title"
-                      name="pretitle"
-                      maxLength={200}
-                      autoComplete="off"
-                      className="rounded-lg border border-muted/40 bg-void px-3 py-2 text-sm text-text outline-none ring-accent/30 transition-shadow focus:border-accent/50 focus:ring-2"
-                      placeholder="Short label or section title"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="suggest-prompt-body" className="text-[11px] text-muted">
-                      Prompt text or source (YouTube URL, chapter, etc.)
-                    </label>
-                    <textarea
-                      id="suggest-prompt-body"
-                      name="body"
-                      required
-                      rows={5}
-                      maxLength={4000}
-                      className="resize-y rounded-lg border border-muted/40 bg-void px-3 py-2 text-sm text-text outline-none ring-accent/30 transition-shadow focus:border-accent/50 focus:ring-2"
-                      placeholder="What should the new row say or link to?"
-                    />
-                  </div>
-                </>
-              )}
+            {showFields ? (
+              <div className="flex flex-col gap-4">
+                {mode === 'topic' ? (
+                  <>
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor="suggest-topic-title" className="text-[11px] text-muted">
+                        Title (short)
+                      </label>
+                      <Input
+                        id="suggest-topic-title"
+                        name="title"
+                        required
+                        maxLength={120}
+                        autoComplete="off"
+                        placeholder="e.g. MIT 8.04 Quantum Physics playlist"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor="suggest-topic-body" className="text-[11px] text-muted">
+                        Notes (links, why it fits, CSV source…)
+                      </label>
+                      <Textarea
+                        id="suggest-topic-body"
+                        name="body"
+                        rows={5}
+                        maxLength={4000}
+                        placeholder="Optional details"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor="suggest-prompt-title" className="text-[11px] text-muted">
+                        Suggested title (optional)
+                      </label>
+                      <Input
+                        id="suggest-prompt-title"
+                        name="pretitle"
+                        maxLength={200}
+                        autoComplete="off"
+                        placeholder="Short label or section title"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor="suggest-prompt-body" className="text-[11px] text-muted">
+                        Prompt text or source (YouTube URL, chapter, etc.)
+                      </label>
+                      <Textarea
+                        id="suggest-prompt-body"
+                        name="body"
+                        required
+                        rows={5}
+                        maxLength={4000}
+                        placeholder="What should the new row say or link to?"
+                      />
+                    </div>
+                  </>
+                )}
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="rounded-lg border border-accent/40 bg-accent/10 py-2.5 text-sm text-accent transition-colors hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {submitting ? 'Submitting…' : 'Submit suggestion'}
-              </button>
-            </div>
-          ) : null}
-        </form>
-      </dialog>
+                <Button type="submit" disabled={submitting} className="py-2.5">
+                  {submitting ? 'Submitting…' : 'Submit suggestion'}
+                </Button>
+              </div>
+            ) : null}
+          </form>
+        </DialogPopup>
+      </Dialog>
     </>
   );
 }

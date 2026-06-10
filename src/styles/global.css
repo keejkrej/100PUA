@@ -34,6 +34,16 @@
   --color-gold: #d4a853;
   --color-silver: #94a3b8;
 
+  /* coss / shadcn semantic aliases */
+  --color-background: var(--color-void);
+  --color-foreground: var(--color-text);
+  --color-primary: var(--color-accent);
+  --color-primary-foreground: var(--color-void);
+  --color-muted-foreground: var(--color-muted);
+  --color-border: color-mix(in oklab, var(--color-muted) 40%, transparent);
+  --color-input: color-mix(in oklab, var(--color-muted) 40%, transparent);
+  --color-ring: color-mix(in oklab, var(--color-accent) 40%, transparent);
+
   --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -190,10 +200,3 @@ html[data-theme='light'] .theme-toggle-icon--light {
   }
 }
 
-.explain-toggle--on {
-  @apply bg-accent/15 font-medium text-accent;
-}
-
-.explain-toggle--off {
-  @apply text-muted hover:bg-muted/15 hover:text-text;
-}

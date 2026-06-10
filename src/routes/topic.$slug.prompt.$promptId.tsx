@@ -1,25 +1,39 @@
 import { Link, createFileRoute, redirect } from '@tanstack/react-router';
+import { createServerFn } from '@tanstack/react-start';
+import { Effect } from 'effect';
 import { useEffect } from 'react';
+
+import {
+  resolvePrompt,
+  type TopicDoc,
+  type TopicManifestRow,
+} from '@100pua/domain/topics';
 
 import { ExplainPrompt } from '~/components/ExplainPrompt';
 import manifest from '~/data/topics.manifest.json';
 import { buildChatQuery } from '~/lib/chat-query';
 import { recordPromptOpened } from '~/lib/prompt-progress';
 import { topicBySlug } from '~/lib/topic-registry';
-import { getExplainEnabled } from '~/server/explain-config';
+
+const getExplainEnabled = createServerFn({ method: 'GET' }).handler(() =>
+  Boolean((process.env.CURSOR_API_KEY ?? '').trim()),
+);
 
 export const Route = createFileRoute('/topic/$slug/prompt/$promptId')({
   loader: async ({ params }) => {
-    const summary = manifest.find((t) => t.slug === params.slug);
-    const topic = topicBySlug[params.slug];
-    const promptRow = topic?.prompts?.find((p) => p.id === params.promptId);
-    if (!summary || !topic || !promptRow) throw redirect({ to: '/' });
-    return {
-      topic,
-      promptRow,
-      chatgptUrl: `https://chatgpt.com/?q=${encodeURIComponent(buildChatQuery(promptRow))}`,
-      explainEnabled: await getExplainEnabled(),
-    };
+    const explainEnabled = await getExplainEnabled();
+    const result = Effect.runSync(
+      resolvePrompt(
+        params.slug,
+        params.promptId,
+        manifest as TopicManifestRow[],
+        topicBySlug as Record<string, TopicDoc>,
+        buildChatQuery,
+        explainEnabled,
+      ).pipe(Effect.either),
+    );
+    if (result._tag === 'Left') throw redirect({ to: '/' });
+    return result.right;
   },
   head: ({ loaderData }) => ({
     meta: [

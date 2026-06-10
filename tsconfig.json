@@ -12,8 +12,18 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@100pua/domain": ["./packages/domain/src/index.ts"],
+      "@100pua/domain/*": ["./packages/domain/src/*"],
+      "@100pua/api": ["./packages/api/src/index.ts"],
+      "@100pua/api/*": ["./packages/api/src/*"]
     }
   },
-  "include": ["src/**/*", "scripts/**/*", "vite.config.ts", "src/vite-env.d.ts"]
+  "include": [
+    "src/**/*",
+    "scripts/**/*",
+    "packages/**/*",
+    "vite.config.ts",
+    "src/vite-env.d.ts"
+  ]
 }

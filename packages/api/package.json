@@ -1,0 +1,14 @@
+{
+  "name": "@100pua/api",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./api": "./src/api.ts"
+  },
+  "dependencies": {
+    "@100pua/domain": "workspace:*",
+    "@effect/platform": "^0.96.1",
+    "effect": "^3.21.3"
+  }
+}

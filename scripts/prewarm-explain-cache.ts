@@ -3,29 +3,24 @@
  */
 import 'dotenv/config';
 
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { Effect } from 'effect';
 
 import {
-  buildExplainVariantCacheKey,
-  createExplainCache,
-  explainCacheActive,
-} from '../src/server/explain-cache';
-import {
+  buildExplainVariantCacheKeyFromEnv,
   buildFullExplainPrompt,
+  createExplainCache,
   explainAgentConfigured,
   explainAgentMisconfiguredMessage,
   explainAgentTimeoutMs,
   explainContentKey,
+  isExplainCacheActiveFromEnv,
   loadPromptIndex,
   runExplanation,
+  scriptProjectRoot,
   type PromptRow,
-} from '../src/server/explain-runner';
+} from '../packages/domain/src/script-helpers.js';
 
-const repoRoot = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '..',
-);
+const repoRoot = scriptProjectRoot();
 
 type CliOptions = {
   model: string | null;
@@ -46,7 +41,7 @@ type JobStatus = 'cached' | 'dry-run' | 'failed' | 'generated' | 'skipped';
 
 function usage(): string {
   return [
-    'Usage: npm run prewarm:explain -- [options]',
+    'Usage: bun run prewarm:explain -- [options]',
     '',
     'Options:',
     '  --model <id>                   Cursor model id (default from CURSOR_MODEL env)',
@@ -148,27 +143,27 @@ async function main(): Promise<void> {
   const opts = parseArgs(process.argv.slice(2));
   applyModelEnv(opts.model);
 
-  await import('./build-prompt-index');
+  await import('./build-prompt-index.js');
 
   const promptIndex = loadPromptIndex(repoRoot);
   if (!promptIndex || Object.keys(promptIndex).length === 0) {
-    throw new Error('No prompt index found. Run `npm run build`.');
+    throw new Error('No prompt index found. Run `bun run build`.');
   }
 
   if (!opts.dryRun && !explainAgentConfigured()) {
     throw new Error(explainAgentMisconfiguredMessage());
   }
 
-  if (!opts.dryRun && !explainCacheActive()) {
+  if (!opts.dryRun && !isExplainCacheActiveFromEnv()) {
     throw new Error(
       'Explain cache is disabled. Set EXPLAIN_CACHE_DAYS > 0 or unset EXPLAIN_CACHE_DISABLED.',
     );
   }
 
   const cache = createExplainCache(repoRoot);
-  if (!opts.dryRun) await cache.prime();
+  if (!opts.dryRun) await cache.prime().pipe(Effect.runPromise);
 
-  const variantKey = buildExplainVariantCacheKey();
+  const variantKey = buildExplainVariantCacheKeyFromEnv();
   const jobs = collectJobs(promptIndex, opts);
   if (jobs.length === 0) {
     throw new Error('No matching prompts found.');
@@ -194,7 +189,9 @@ async function main(): Promise<void> {
 
     const contentKey = explainContentKey(chatQuery);
     if (!opts.force && !opts.dryRun) {
-      const hit = await cache.get(job.slug, job.promptId, contentKey, variantKey);
+      const hit = await Effect.runPromise(
+        cache.get(job.slug, job.promptId, contentKey, variantKey),
+      );
       if (hit) return 'cached';
     }
 
@@ -216,7 +213,9 @@ async function main(): Promise<void> {
         );
         return 'failed';
       }
-      await cache.set(job.slug, job.promptId, contentKey, variantKey, out.text);
+      await Effect.runPromise(
+        cache.set(job.slug, job.promptId, contentKey, variantKey, out.text),
+      );
       return 'generated';
     } finally {
       clearTimeout(timeoutId);

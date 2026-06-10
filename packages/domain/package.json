@@ -1,0 +1,17 @@
+{
+  "name": "@100pua/domain",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schemas": "./src/schemas.ts",
+    "./errors": "./src/errors.ts",
+    "./topics": "./src/topics.ts",
+    "./config": "./src/config.ts"
+  },
+  "dependencies": {
+    "@cursor/sdk": "1.0.13",
+    "@effect/platform": "^0.96.1",
+    "effect": "^3.21.3"
+  }
+}

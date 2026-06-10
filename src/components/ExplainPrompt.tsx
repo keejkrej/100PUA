@@ -2,7 +2,11 @@ import DOMPurify from 'dompurify';
 import katex from 'katex';
 import renderMathInElement from 'katex/contrib/auto-render';
 import { marked } from 'marked';
+import { Result, useAtomSet, useAtomValue } from '@effect-atom/atom-react';
 import { useEffect, useRef, useState } from 'react';
+
+import { Toggle, ToggleGroup } from '~/components/ui/toggle-group';
+import { explainPromptMutation } from '~/lib/api-client';
 
 marked.use({ gfm: true, breaks: true });
 
@@ -53,6 +57,19 @@ function normalizeMarkdownMath(markdown: string): string {
   return md;
 }
 
+function errorMessage(cause: unknown): string {
+  if (cause && typeof cause === 'object') {
+    const c = cause as { error?: string; message?: string };
+    if (c.error === 'rate_limit') {
+      return 'Too many attempts — try again later.';
+    }
+    if (typeof c.message === 'string' && c.message.length > 0) {
+      return c.message;
+    }
+  }
+  return 'Service error.';
+}
+
 type Props = {
   slug: string;
   promptId: string;
@@ -60,76 +77,41 @@ type Props = {
 };
 
 export function ExplainPrompt({ slug, promptId, explainEnabled }: Props) {
-  const [status, setStatus] = useState('Generating answer…');
-  const [statusClass, setStatusClass] = useState('text-muted');
+  const runExplain = useAtomSet(explainPromptMutation);
+  const explainResult = useAtomValue(explainPromptMutation);
   const [view, setView] = useState<View>('rendered');
-  const [markdown, setMarkdown] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const renderedRef = useRef<HTMLDivElement>(null);
-  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!explainEnabled) return;
+    runExplain({ payload: { slug, promptId } });
+  }, [slug, promptId, explainEnabled, runExplain]);
 
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
+  const status =
+    Result.builder(explainResult)
+      .onInitialOrWaiting(() => ({
+        text: 'Generating answer…',
+        className: 'text-muted',
+      }))
+      .onSuccess(() => ({ text: 'Answer', className: 'text-accent/90' }))
+      .onError(() => ({
+        text: 'Could not load answer',
+        className: 'text-accent',
+      }))
+      .render() ?? { text: 'Generating answer…', className: 'text-muted' };
 
-    setStatus('Generating answer…');
-    setStatusClass('text-muted');
-    setMarkdown(null);
-    setError(null);
-    setView('rendered');
+  const markdown = Result.match(explainResult, {
+    onInitial: () => null,
+    onFailure: () => null,
+    onSuccess: (success) => success.value.answer,
+  });
 
-    fetch('/api/explain-prompt', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug, promptId }),
-      signal: controller.signal,
-    })
-      .then((r) =>
-        r.text().then((t) => {
-          let json: Record<string, unknown> = {};
-          try {
-            json = JSON.parse(t) as Record<string, unknown>;
-          } catch {
-            json = {};
-          }
-          return { ok: r.ok, json };
-        }),
-      )
-      .then((resp) => {
-        if (abortRef.current !== controller) return;
-        const j = resp.json;
-        if (resp.ok && typeof j.answer === 'string') {
-          setMarkdown(j.answer);
-          setStatus('Answer');
-          setStatusClass('text-accent/90');
-        } else {
-          const msg =
-            j.error === 'rate_limit'
-              ? 'Too many attempts — try again later.'
-              : typeof j.message === 'string'
-                ? j.message
-                : 'Service error.';
-          setError(msg);
-          setStatus('Could not load answer');
-          setStatusClass('text-accent');
-        }
-      })
-      .catch((e: unknown) => {
-        if (e instanceof DOMException && e.name === 'AbortError') return;
-        if (abortRef.current !== controller) return;
-        setError('Network error.');
-        setStatus('Could not load answer');
-        setStatusClass('text-accent');
-      })
-      .finally(() => {
-        if (abortRef.current === controller) abortRef.current = null;
-      });
-
-    return () => controller.abort();
-  }, [slug, promptId, explainEnabled]);
+  const error = Result.matchWithError(explainResult, {
+    onInitial: () => null,
+    onError: (cause) => errorMessage(cause),
+    onDefect: () => 'Service error.',
+    onSuccess: () => null,
+  });
 
   useEffect(() => {
     if (!markdown || !renderedRef.current) return;
@@ -167,35 +149,23 @@ export function ExplainPrompt({ slug, promptId, explainEnabled }: Props) {
 
   return (
     <>
-      <p className={`mb-5 text-[11px] tracking-wide ${statusClass}`}>{status}</p>
+      <p className={`mb-5 text-[11px] tracking-wide ${status.className}`}>
+        {status.text}
+      </p>
       {showToolbar ? (
         <div className="mb-4 flex w-full min-w-0 flex-wrap items-center justify-end gap-x-4 gap-y-2">
-          <div
-            className="inline-flex shrink-0 items-center"
-            role="radiogroup"
+          <ToggleGroup
+            className="shrink-0"
             aria-label="Answer format"
+            value={[view]}
+            onValueChange={(values) => {
+              const next = values[0];
+              if (next === 'rendered' || next === 'raw') setView(next);
+            }}
           >
-            <div className="border-muted/40 bg-void/50 inline-flex items-center rounded-lg border p-0.5 shadow-sm">
-              <button
-                type="button"
-                className={`explain-toggle rounded-md px-3 py-1 text-[11px] tracking-wide transition-colors outline-none ${view === 'rendered' ? 'explain-toggle--on' : 'explain-toggle--off'}`}
-                role="radio"
-                aria-checked={view === 'rendered'}
-                onClick={() => setView('rendered')}
-              >
-                Rendered
-              </button>
-              <button
-                type="button"
-                className={`explain-toggle rounded-md px-3 py-1 text-[11px] tracking-wide transition-colors outline-none ${view === 'raw' ? 'explain-toggle--on' : 'explain-toggle--off'}`}
-                role="radio"
-                aria-checked={view === 'raw'}
-                onClick={() => setView('raw')}
-              >
-                Raw
-              </button>
-            </div>
-          </div>
+            <Toggle value="rendered">Rendered</Toggle>
+            <Toggle value="raw">Raw</Toggle>
+          </ToggleGroup>
         </div>
       ) : null}
       <div className="min-h-[6rem]">
