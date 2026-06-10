@@ -1,8 +1,5 @@
 /**
- * Pre-generates cached /explain-prompt answers for prompt rows.
- *
- * Example:
- *   npm run prewarm:explain -- --model composer-2
+ * Pre-generates cached /api/explain-prompt answers for prompt rows.
  */
 import 'dotenv/config';
 
@@ -13,7 +10,7 @@ import {
   buildExplainVariantCacheKey,
   createExplainCache,
   explainCacheActive,
-} from '../explain-cache.js';
+} from '../src/server/explain-cache';
 import {
   buildFullExplainPrompt,
   explainAgentConfigured,
@@ -23,14 +20,12 @@ import {
   loadPromptIndex,
   runExplanation,
   type PromptRow,
-} from '../explain-runner.js';
+} from '../src/server/explain-runner';
 
-const __dirnamePath = path.dirname(fileURLToPath(import.meta.url));
-/** `dist/scripts` when compiled, `scripts` when run via tsx from source. */
-const apiRoot =
-  path.basename(path.dirname(__dirnamePath)) === 'dist'
-    ? path.resolve(__dirnamePath, '..', '..')
-    : path.resolve(__dirnamePath, '..');
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+);
 
 type CliOptions = {
   model: string | null;
@@ -153,12 +148,11 @@ async function main(): Promise<void> {
   const opts = parseArgs(process.argv.slice(2));
   applyModelEnv(opts.model);
 
-  // Keep the command self-contained after topic edits.
-  await import('./build-prompt-index.js');
+  await import('./build-prompt-index');
 
-  const promptIndex = loadPromptIndex(apiRoot);
+  const promptIndex = loadPromptIndex(repoRoot);
   if (!promptIndex || Object.keys(promptIndex).length === 0) {
-    throw new Error('No prompt index found. Run `npm run build` in api/.');
+    throw new Error('No prompt index found. Run `npm run build`.');
   }
 
   if (!opts.dryRun && !explainAgentConfigured()) {
@@ -167,99 +161,95 @@ async function main(): Promise<void> {
 
   if (!opts.dryRun && !explainCacheActive()) {
     throw new Error(
-      'Explain cache is disabled. Set EXPLAIN_CACHE_DAYS > 0, configure EXPLAIN_KV_URL, or unset EXPLAIN_CACHE_DISABLED.',
+      'Explain cache is disabled. Set EXPLAIN_CACHE_DAYS > 0 or unset EXPLAIN_CACHE_DISABLED.',
     );
   }
 
-  const cache = createExplainCache(apiRoot);
-  try {
-    if (!opts.dryRun) await cache.prime();
+  const cache = createExplainCache(repoRoot);
+  if (!opts.dryRun) await cache.prime();
 
-    const variantKey = buildExplainVariantCacheKey();
-    const jobs = collectJobs(promptIndex, opts);
-    if (jobs.length === 0) {
-      throw new Error('No matching prompts found.');
+  const variantKey = buildExplainVariantCacheKey();
+  const jobs = collectJobs(promptIndex, opts);
+  if (jobs.length === 0) {
+    throw new Error('No matching prompts found.');
+  }
+
+  console.log(
+    `[prewarm-explain-cache] model=${selectedModel()} prompts=${jobs.length} concurrency=${opts.concurrency} force=${opts.force ? 'yes' : 'no'} variant=${variantKey}`,
+  );
+
+  let next = 0;
+  let completed = 0;
+  const counts: Record<JobStatus, number> = {
+    cached: 0,
+    'dry-run': 0,
+    failed: 0,
+    generated: 0,
+    skipped: 0,
+  };
+
+  async function runJob(job: PromptJob): Promise<JobStatus> {
+    const chatQuery = job.row.chatQuery;
+    if (typeof chatQuery !== 'string' || !chatQuery.trim()) return 'skipped';
+
+    const contentKey = explainContentKey(chatQuery);
+    if (!opts.force && !opts.dryRun) {
+      const hit = await cache.get(job.slug, job.promptId, contentKey, variantKey);
+      if (hit) return 'cached';
     }
 
-    console.log(
-      `[prewarm-explain-cache] model=${selectedModel()} prompts=${jobs.length} concurrency=${opts.concurrency} force=${opts.force ? 'yes' : 'no'} variant=${variantKey}`,
+    if (opts.dryRun) return 'dry-run';
+
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(
+      () => abortController.abort(),
+      explainAgentTimeoutMs(),
     );
-
-    let next = 0;
-    let completed = 0;
-    const counts: Record<JobStatus, number> = {
-      cached: 0,
-      'dry-run': 0,
-      failed: 0,
-      generated: 0,
-      skipped: 0,
-    };
-
-    async function runJob(job: PromptJob): Promise<JobStatus> {
-      const chatQuery = job.row.chatQuery;
-      if (typeof chatQuery !== 'string' || !chatQuery.trim()) return 'skipped';
-
-      const contentKey = explainContentKey(chatQuery);
-      if (!opts.force && !opts.dryRun) {
-        const hit = await cache.get(job.slug, job.promptId, contentKey, variantKey);
-        if (hit) return 'cached';
-      }
-
-      if (opts.dryRun) return 'dry-run';
-
-      const abortController = new AbortController();
-      const timeoutId = setTimeout(
-        () => abortController.abort(),
-        explainAgentTimeoutMs(),
+    try {
+      const out = await runExplanation(
+        buildFullExplainPrompt(job.row),
+        abortController,
       );
-      try {
-        const out = await runExplanation(
-          buildFullExplainPrompt(job.row),
-          abortController,
+      if (!out.ok) {
+        console.error(
+          `[prewarm-explain-cache] failed ${job.slug}/${job.promptId}: ${out.error}`,
         );
-        if (!out.ok) {
-          console.error(
-            `[prewarm-explain-cache] failed ${job.slug}/${job.promptId}: ${out.error}`,
-          );
-          return 'failed';
-        }
-        await cache.set(job.slug, job.promptId, contentKey, variantKey, out.text);
-        return 'generated';
-      } finally {
-        clearTimeout(timeoutId);
+        return 'failed';
       }
+      await cache.set(job.slug, job.promptId, contentKey, variantKey, out.text);
+      return 'generated';
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    async function worker(): Promise<void> {
-      for (;;) {
-        const idx = next;
-        next += 1;
-        const job = jobs[idx];
-        if (!job) return;
-
-        const status = await runJob(job);
-        counts[status] += 1;
-        completed += 1;
-        console.log(
-          `[prewarm-explain-cache] ${completed}/${jobs.length} ${status} ${job.slug}/${job.promptId}`,
-        );
-      }
-    }
-
-    await Promise.all(
-      Array.from({ length: Math.min(opts.concurrency, jobs.length) }, () =>
-        worker(),
-      ),
-    );
-
-    console.log(
-      `[prewarm-explain-cache] done generated=${counts.generated} cached=${counts.cached} dry-run=${counts['dry-run']} skipped=${counts.skipped} failed=${counts.failed}`,
-    );
-
-    if (counts.failed > 0) process.exitCode = 1;
-  } finally {
-    await cache.close();
   }
+
+  async function worker(): Promise<void> {
+    for (;;) {
+      const idx = next;
+      next += 1;
+      const job = jobs[idx];
+      if (!job) return;
+
+      const status = await runJob(job);
+      counts[status] += 1;
+      completed += 1;
+      console.log(
+        `[prewarm-explain-cache] ${completed}/${jobs.length} ${status} ${job.slug}/${job.promptId}`,
+      );
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: Math.min(opts.concurrency, jobs.length) }, () =>
+      worker(),
+    ),
+  );
+
+  console.log(
+    `[prewarm-explain-cache] done generated=${counts.generated} cached=${counts.cached} dry-run=${counts['dry-run']} skipped=${counts.skipped} failed=${counts.failed}`,
+  );
+
+  if (counts.failed > 0) process.exitCode = 1;
 }
 
 main().catch((e: unknown) => {

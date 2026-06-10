@@ -12,7 +12,7 @@ import effectLibraryDoc from '../data/effect-library.json';
 
 export type TopicDoc = typeof nonequilibriumDoc;
 
-export const topicBySlug: Record<string, TopicDoc> = {
+export const topicBySlug = {
   'nonequilibrium-lmu-ss2025': nonequilibriumDoc,
   'self-organization-lmu-ws2025-2026': selfOrganizationDoc,
   'stanford-cs336-language-modeling-spring2025': stanfordCs336Doc,
@@ -24,4 +24,4 @@ export const topicBySlug: Record<string, TopicDoc> = {
   'threejs-library': threejsLibraryDoc,
   'pyqtgraph': pyqtgraphDoc,
   'effect-library': effectLibraryDoc,
-};
+} as unknown as Record<string, TopicDoc>;

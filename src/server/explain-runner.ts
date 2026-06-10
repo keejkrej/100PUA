@@ -1,12 +1,10 @@
-import 'dotenv/config';
-
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
-import { DEFAULT_CURSOR_MODEL } from './explain-defaults.js';
+import { DEFAULT_CURSOR_MODEL } from './explain-defaults';
 
 export type PromptRow = {
   topicTitle?: string;
@@ -29,16 +27,16 @@ export function explainAgentTimeoutMs(): number {
     : DEFAULT_EXPLAIN_AGENT_TIMEOUT_MS;
 }
 
-export function loadPromptIndex(apiRoot: string): PromptIndex | null {
+export function loadPromptIndex(projectRoot: string): PromptIndex | null {
   try {
-    const fp = path.join(apiRoot, 'data', 'prompt-index.json');
+    const fp = path.join(projectRoot, 'data', 'prompt-index.json');
     const raw = fs.readFileSync(fp, 'utf8');
     const j: unknown = JSON.parse(raw);
     if (!j || typeof j !== 'object' || Array.isArray(j)) return null;
     return j as PromptIndex;
   } catch {
     console.warn(
-      '[explain-prompt] missing data/prompt-index.json - run `npm run build` in ./api',
+      '[explain-prompt] missing data/prompt-index.json - run `npm run build`',
     );
     return null;
   }
@@ -56,7 +54,7 @@ export function explainAgentConfigured(): boolean {
 }
 
 export function explainAgentMisconfiguredMessage(): string {
-  return 'Set CURSOR_API_KEY on the API service.';
+  return 'Set CURSOR_API_KEY on the server.';
 }
 
 export function buildFullExplainPrompt(row: PromptRow): string {

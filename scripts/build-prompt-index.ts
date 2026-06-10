@@ -1,20 +1,17 @@
 /**
- * Writes api/data/prompt-index.json from ../src/data (repo root relative to api/).
- * Run from api/: `npm run build` (Render build includes this).
+ * Writes data/prompt-index.json from src/data.
+ * Run via `npm run build`.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const __dirnamePath = path.dirname(fileURLToPath(import.meta.url));
-/** `dist/scripts` when compiled, `scripts` when run via tsx from source. */
-const apiRoot =
-  path.basename(path.dirname(__dirnamePath)) === 'dist'
-    ? path.resolve(__dirnamePath, '..', '..')
-    : path.resolve(__dirnamePath, '..');
-const repoRoot = path.join(apiRoot, '..');
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+);
 const manifestPath = path.join(repoRoot, 'src', 'data', 'topics.manifest.json');
-const outDir = path.join(apiRoot, 'data');
+const outDir = path.join(repoRoot, 'data');
 const outPath = path.join(outDir, 'prompt-index.json');
 
 type ManifestRow = { slug?: string };

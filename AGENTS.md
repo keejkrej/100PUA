@@ -34,9 +34,9 @@ Do **all** of the following; partial updates look fine locally but break routing
 
 **Prompt static paths:** `src/pages/topic/[slug]/prompt/[promptId].astro` only emits prompt routes when `topicBySlug[t.slug]` exists (`if (!topic) continue`). So a slug in the manifest without a registry entry can produce a broken topic index (redirect) and **no** prompt pages at all.
 
-## API / explain index (related, not Astro)
+## API / explain index (related, not route rendering)
 
-`api/scripts/build-prompt-index.ts` reads **`topics.manifest.json`** and, for each slug, **`src/data/<slug>.json`** on disk. It does **not** read `topic-registry.ts`. If the manifest references a slug but the JSON file is missing, that slug is skipped with a console warning and explain/API features for those prompts will be incomplete.
+`scripts/build-prompt-index.ts` (run via `npm run build`) reads **`topics.manifest.json`** and, for each slug, **`src/data/<slug>.json`** on disk. It does **not** read `topic-registry.ts`. If the manifest references a slug but the JSON file is missing, that slug is skipped with a console warning and explain/API features for those prompts will be incomplete.
 
 ## Optional tooling
 
