@@ -1,9 +1,9 @@
 import { FetchHttpClient, HttpClient, HttpClientRequest } from '@effect/platform';
-import { Context, Effect, Layer, Option } from 'effect';
+import { Context, Effect, Layer } from 'effect';
 
-import { AppConfig } from './config.js';
-import { CURSOR_TRIGGER_COMMENT } from './constants.js';
-import type { SuggestionRequest } from './schemas.js';
+import { AppConfig } from './config';
+import { CURSOR_TRIGGER_COMMENT } from './constants';
+import type { SuggestionRequest } from './schemas';
 
 const LEN = {
   topicTitle: 120,

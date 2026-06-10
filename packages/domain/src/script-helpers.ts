@@ -1,19 +1,19 @@
 import { Effect } from 'effect';
 
-import { AppConfig } from './config.js';
-import { ExplainAgentService } from './explain-agent.js';
+import { AppConfig } from './config';
+import { ExplainAgentService } from './explain-agent';
 import {
   createExplainCacheFromEnv,
   explainCacheActiveFromEnv,
-} from './explain-cache.js';
+} from './explain-cache';
 import {
   buildExplainVariantCacheKey,
   buildFullExplainPrompt,
   explainContentKey,
   loadPromptIndex,
   type PromptRow,
-} from './prompt-index.js';
-import { ProjectRootLive, resolveProjectRoot } from './project-root.js';
+} from './prompt-index';
+import { ProjectRootLive, resolveProjectRoot } from './project-root';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 

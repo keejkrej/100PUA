@@ -11,7 +11,7 @@ import {
 } from '@100pua/domain';
 import { clientIp } from '@100pua/domain';
 
-import { Api } from './api.js';
+import { Api } from './api';
 
 export const RoutesLive = HttpApiBuilder.group(Api, 'routes', (handlers) =>
   handlers

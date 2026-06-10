@@ -1,13 +1,13 @@
 import { Effect } from 'effect';
 
-import { AppConfig } from './config.js';
+import { AppConfig } from './config';
 import {
   GithubError,
   InvalidPayload,
   MisconfiguredServer,
-} from './errors.js';
-import { GithubIssuesService, repoConfigured } from './github.js';
-import type { SuggestionRequest, SuggestionSuccess } from './schemas.js';
+} from './errors';
+import { GithubIssuesService, repoConfigured } from './github';
+import type { SuggestionRequest, SuggestionSuccess } from './schemas';
 
 export const submitSuggestion = (
   payload: SuggestionRequest,

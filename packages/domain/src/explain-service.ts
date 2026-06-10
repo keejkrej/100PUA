@@ -1,22 +1,22 @@
 import { Effect } from 'effect';
 
-import { AppConfig } from './config.js';
+import { AppConfig } from './config';
 import {
   ExplainFailed,
   MisconfiguredServer,
   RateLimitExceeded,
   UnknownPrompt,
-} from './errors.js';
-import { ExplainAgentService } from './explain-agent.js';
-import { explainCacheActive, ExplainCacheService } from './explain-cache.js';
+} from './errors';
+import { ExplainAgentService } from './explain-agent';
+import { explainCacheActive, ExplainCacheService } from './explain-cache';
 import {
   buildExplainVariantCacheKey,
   buildFullExplainPrompt,
   explainContentKey,
   PromptIndexService,
-} from './prompt-index.js';
-import { RateLimitService } from './rate-limit.js';
-import type { ExplainPromptRequest, ExplainPromptSuccess } from './schemas.js';
+} from './prompt-index';
+import { RateLimitService } from './rate-limit';
+import type { ExplainPromptRequest, ExplainPromptSuccess } from './schemas';
 
 const inFlightExplains = new Map<
   string,

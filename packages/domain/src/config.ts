@@ -3,7 +3,7 @@ import { Context, Effect, Layer } from 'effect';
 import {
   DEFAULT_CURSOR_MODEL,
   DEFAULT_EXPLAIN_AGENT_TIMEOUT_MS,
-} from './constants.js';
+} from './constants';
 
 export class AppConfig extends Context.Tag('@100pua/AppConfig')<
   AppConfig,

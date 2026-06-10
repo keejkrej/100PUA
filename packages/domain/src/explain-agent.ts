@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { Context, Effect, Layer } from 'effect';
 
-import { AppConfig } from './config.js';
+import { AppConfig } from './config';
 
 export type ExplainRunOk = { ok: true; text: string };
 export type ExplainRunErr = { ok: false; error: string };

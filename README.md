@@ -54,4 +54,4 @@ Copy `.env.example` if present, or set vars in Render (see `render.yaml`).
 
 ## Maintainer docs
 
-See [AGENTS.md](./AGENTS.md) for the topic/prompt checklist and routing guards.
+See [`docs/agent/`](./docs/agent/) for topic wiring and stack decisions.

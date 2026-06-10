@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { Context, Effect, Layer } from 'effect';
 
-import { ProjectRoot } from './project-root.js';
+import { ProjectRoot } from './project-root';
 
 export type PromptRow = {
   topicTitle?: string;

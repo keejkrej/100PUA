@@ -1,28 +1,28 @@
-export * from './config.js';
-export * from './constants.js';
-export * from './errors.js';
-export * from './explain-agent.js';
-export * from './explain-cache.js';
-export * from './explain-service.js';
-export * from './github.js';
-export * from './project-root.js';
-export * from './prompt-index.js';
-export * from './rate-limit.js';
-export * from './schemas.js';
-export * from './suggestion-service.js';
-export * from './topics.js';
+export * from './config';
+export * from './constants';
+export * from './errors';
+export * from './explain-agent';
+export * from './explain-cache';
+export * from './explain-service';
+export * from './github';
+export * from './project-root';
+export * from './prompt-index';
+export * from './rate-limit';
+export * from './schemas';
+export * from './suggestion-service';
+export * from './topics';
 
-export * from './script-helpers.js';
+export * from './script-helpers';
 
 import { Layer } from 'effect';
 
-import { AppConfig } from './config.js';
-import { ExplainAgentService } from './explain-agent.js';
-import { ExplainCacheService } from './explain-cache.js';
-import { GithubHttpClientLive, GithubIssuesService } from './github.js';
-import { ProjectRootLive } from './project-root.js';
-import { PromptIndexService } from './prompt-index.js';
-import { RateLimitService } from './rate-limit.js';
+import { AppConfig } from './config';
+import { ExplainAgentService } from './explain-agent';
+import { ExplainCacheService } from './explain-cache';
+import { GithubHttpClientLive, GithubIssuesService } from './github';
+import { ProjectRootLive } from './project-root';
+import { PromptIndexService } from './prompt-index';
+import { RateLimitService } from './rate-limit';
 
 export const DomainLive = Layer.mergeAll(
   ProjectRootLive,

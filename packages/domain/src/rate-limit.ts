@@ -1,6 +1,6 @@
 import { Context, Effect, Layer } from 'effect';
 
-import { AppConfig } from './config.js';
+import { AppConfig } from './config';
 
 export class RateLimitService extends Context.Tag('@100pua/RateLimitService')<
   RateLimitService,

@@ -7,6 +7,16 @@
     }
   ],
   "rules": {
+    "import/extensions": [
+      "error",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never",
+        "ignorePackages": true
+      }
+    ],
     "react-hooks-js/rules-of-hooks": "error",
     "react-hooks-js/exhaustive-deps": "warn"
   }

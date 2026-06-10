@@ -1,7 +1,7 @@
 import { HttpApiBuilder, HttpServer } from '@effect/platform';
 import { Layer } from 'effect';
 
-import { ApiLive } from './handlers.js';
+import { ApiLive } from './handlers';
 
 let handler: ((request: Request) => Promise<Response>) | null = null;
 let disposeHandler: (() => Promise<void>) | null = null;
@@ -54,5 +54,5 @@ export async function disposeHttpApiHandler(): Promise<void> {
   }
 }
 
-export { Api } from './api.js';
-export { ApiLive } from './handlers.js';
+export { Api } from './api';
+export { ApiLive } from './handlers';

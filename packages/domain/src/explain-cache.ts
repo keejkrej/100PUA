@@ -4,8 +4,8 @@ import path from 'node:path';
 
 import { Context, Effect, Layer } from 'effect';
 
-import { AppConfig } from './config.js';
-import { ProjectRoot } from './project-root.js';
+import { AppConfig } from './config';
+import { ProjectRoot } from './project-root';
 
 const SCHEMA = 'v10';
 

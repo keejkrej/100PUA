@@ -18,7 +18,7 @@ import {
   runExplanation,
   scriptProjectRoot,
   type PromptRow,
-} from '../packages/domain/src/script-helpers.js';
+} from '../packages/domain/src/script-helpers';
 
 const repoRoot = scriptProjectRoot();
 
@@ -143,7 +143,7 @@ async function main(): Promise<void> {
   const opts = parseArgs(process.argv.slice(2));
   applyModelEnv(opts.model);
 
-  await import('./build-prompt-index.js');
+  await import('./build-prompt-index');
 
   const promptIndex = loadPromptIndex(repoRoot);
   if (!promptIndex || Object.keys(promptIndex).length === 0) {
