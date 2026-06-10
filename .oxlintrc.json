@@ -19,5 +19,24 @@
     ],
     "react-hooks-js/rules-of-hooks": "error",
     "react-hooks-js/exhaustive-deps": "warn"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.{tsx,jsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "warn",
+          {
+            "paths": [
+              {
+                "name": "react",
+                "importNames": ["useMemo", "useCallback", "memo"],
+                "message": "Prefer React Compiler auto-memoization. Use manual memo only when the compiler cannot optimize a hot path."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

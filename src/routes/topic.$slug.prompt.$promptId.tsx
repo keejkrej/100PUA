@@ -1,25 +1,21 @@
-import { Link, createFileRoute, redirect } from '@tanstack/react-router';
-import { createServerFn } from '@tanstack/react-start';
-import { Effect } from 'effect';
-import { useEffect } from 'react';
+import { Link, createFileRoute, redirect } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { Effect } from "effect";
+import { useEffect } from "react";
 
-import {
-  resolvePrompt,
-  type TopicDoc,
-  type TopicManifestRow,
-} from '@100pua/domain/topics';
+import { resolvePrompt, type TopicDoc, type TopicManifestRow } from "@100pua/domain/topics";
 
-import { ExplainPrompt } from '~/components/ExplainPrompt';
-import manifest from '~/data/topics.manifest.json';
-import { buildChatQuery } from '~/lib/chat-query';
-import { recordPromptOpened } from '~/lib/prompt-progress';
-import { topicBySlug } from '~/lib/topic-registry';
+import { ExplainPrompt } from "~/components/ExplainPrompt";
+import manifest from "~/data/topics.manifest.json";
+import { buildChatQuery } from "~/lib/chat-query";
+import { recordPromptOpened } from "~/lib/prompt-progress";
+import { topicBySlug } from "~/lib/topic-registry";
 
-const getExplainEnabled = createServerFn({ method: 'GET' }).handler(() =>
-  Boolean((process.env.CURSOR_API_KEY ?? '').trim()),
+const getExplainEnabled = createServerFn({ method: "GET" }).handler(() =>
+  Boolean((process.env.CURSOR_API_KEY ?? "").trim()),
 );
 
-export const Route = createFileRoute('/topic/$slug/prompt/$promptId')({
+export const Route = createFileRoute("/topic/$slug/prompt/$promptId")({
   loader: async ({ params }) => {
     const explainEnabled = await getExplainEnabled();
     const result = Effect.runSync(
@@ -32,21 +28,20 @@ export const Route = createFileRoute('/topic/$slug/prompt/$promptId')({
         explainEnabled,
       ).pipe(Effect.either),
     );
-    if (result._tag === 'Left') throw redirect({ to: '/' });
+    if (result._tag === "Left") throw redirect({ to: "/" });
     return result.right;
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: loaderData?.promptRow.title ?? 'Prompt' },
-      { name: 'description', content: loaderData?.topic.topicTitle ?? '' },
+      { title: loaderData?.promptRow.title ?? "Prompt" },
+      { name: "description", content: loaderData?.topic.topicTitle ?? "" },
     ],
   }),
   component: PromptPage,
 });
 
 function PromptPage() {
-  const { topic, promptRow, chatgptUrl, explainEnabled } =
-    Route.useLoaderData();
+  const { topic, promptRow, chatgptUrl, explainEnabled } = Route.useLoaderData();
   const { slug, promptId } = Route.useParams();
 
   useEffect(() => {
@@ -84,9 +79,7 @@ function PromptPage() {
                 {promptRow.title}
               </a>
             </h1>
-            <p className="text-muted mt-2 text-sm leading-relaxed">
-              {topic.topicTitle}
-            </p>
+            <p className="text-muted mt-2 text-sm leading-relaxed">{topic.topicTitle}</p>
             <p className="text-muted mt-1 text-[11px] tracking-wide tabular-nums">
               {promptRow.durationTimestamp}
             </p>
@@ -99,11 +92,7 @@ function PromptPage() {
             className="border-muted/35 bg-surface/40 rounded-xl border px-5 py-6"
             aria-live="polite"
           >
-            <ExplainPrompt
-              slug={slug}
-              promptId={promptId}
-              explainEnabled={explainEnabled}
-            />
+            <ExplainPrompt slug={slug} promptId={promptId} explainEnabled={explainEnabled} />
           </section>
         </div>
       </div>

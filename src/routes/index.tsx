@@ -1,11 +1,11 @@
-import { Link, createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute } from "@tanstack/react-router";
 
-import { SuggestFAB } from '~/components/SuggestFAB';
-import topics from '~/data/topics.manifest.json';
+import { SuggestFAB } from "~/components/SuggestFAB";
+import topics from "~/data/topics.manifest.json";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [{ title: '100 prompts to understand anything' }],
+    meta: [{ title: "100 prompts to understand anything" }],
   }),
   component: HomePage,
 });
@@ -17,28 +17,21 @@ function HomePage() {
         <div
           className="pointer-events-none absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.03]"
           style={{
-            background:
-              'radial-gradient(circle, #22d3ee 0%, transparent 70%)',
+            background: "radial-gradient(circle, #22d3ee 0%, transparent 70%)",
           }}
         />
 
         <div className="relative z-10 w-full max-w-3xl">
-          <header
-            className="animate-fade-in-up mb-16 opacity-0"
-            style={{ animationDelay: '0s' }}
-          >
-            <h1 className="text-text text-xl tracking-tight">
-              100 prompts to understand anything
-            </h1>
+          <header className="animate-fade-in-up mb-16 opacity-0" style={{ animationDelay: "0s" }}>
+            <h1 className="text-text text-xl tracking-tight">100 prompts to understand anything</h1>
             <p className="text-muted mt-1 text-sm">
-              Choose a topic, then paste each prompt title into ChatGPT as a
-              prompt.
+              Choose a topic, then paste each prompt title into ChatGPT as a prompt.
             </p>
           </header>
 
           <div
             className="animate-fade-in-up mb-6 flex justify-start opacity-0"
-            style={{ animationDelay: '0.048s' }}
+            style={{ animationDelay: "0.048s" }}
           >
             <SuggestFAB mode="topic" />
           </div>
@@ -56,9 +49,7 @@ function HomePage() {
                   <span className="text-subtle group-hover:text-text transition-colors duration-200">
                     {t.topicTitle}
                   </span>
-                  <span className="text-muted mt-1 text-[11px] tracking-wide">
-                    {t.courseLine}
-                  </span>
+                  <span className="text-muted mt-1 text-[11px] tracking-wide">{t.courseLine}</span>
                 </span>
                 <span className="text-muted ml-4 shrink-0 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100">
                   <svg

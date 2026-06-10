@@ -1,13 +1,9 @@
-import { Effect } from 'effect';
+import { Effect } from "effect";
 
-import { AppConfig } from './config';
-import {
-  GithubError,
-  InvalidPayload,
-  MisconfiguredServer,
-} from './errors';
-import { GithubIssuesService, repoConfigured } from './github';
-import type { SuggestionRequest, SuggestionSuccess } from './schemas';
+import { AppConfig } from "./config";
+import { GithubError, InvalidPayload, MisconfiguredServer } from "./errors";
+import { GithubIssuesService, repoConfigured } from "./github";
+import type { SuggestionRequest, SuggestionSuccess } from "./schemas";
 
 export const submitSuggestion = (
   payload: SuggestionRequest,
@@ -23,31 +19,24 @@ export const submitSuggestion = (
     if (!repoConfigured(config)) {
       return yield* Effect.fail(
         new MisconfiguredServer({
-          error: 'misconfigured_server',
-          message: '',
+          error: "misconfigured_server",
+          message: "",
         }),
       );
     }
 
-    const issueResult = yield* github.createSuggestionIssue(payload).pipe(
-      Effect.either,
-    );
+    const issueResult = yield* github.createSuggestionIssue(payload).pipe(Effect.either);
 
-    if (issueResult._tag === 'Left') {
+    if (issueResult._tag === "Left") {
       const e = issueResult.left;
-      if (e instanceof Error && e.message === 'invalid_payload') {
-        return yield* Effect.fail(
-          new InvalidPayload({ error: 'invalid_payload' }),
-        );
+      if (e instanceof Error && e.message === "invalid_payload") {
+        return yield* Effect.fail(new InvalidPayload({ error: "invalid_payload" }));
       }
-      console.error(
-        '[suggestions]',
-        e instanceof Error ? e.message : String(e),
-      );
+      console.error("[suggestions]", e instanceof Error ? e.message : String(e));
       return yield* Effect.fail(
         new GithubError({
-          error: 'github_error',
-          message: 'creating_issue_failed',
+          error: "github_error",
+          message: "creating_issue_failed",
         }),
       );
     }

@@ -1,5 +1,11 @@
 # Stack decisions
 
+## 2025-06-10
+
+- Audit vs techstack: ran `bun run format` (48 files were unformatted; CI `format:check` was failing)
+- Added oxlint `no-restricted-imports` override on TSX for manual `useMemo`/`useCallback`/`memo` (warn only)
+- Removed `submitSuggestionRequest` (`Effect.runPromise` bypass); `SuggestFAB` uses `submitSuggestionMutation` with `useAtomSet(..., { mode: 'promise' })`
+
 ## decided:
 
 - TanStack Start (Nitro output) + React 19 + React Compiler — `vite.config.ts`, `src/server.ts`

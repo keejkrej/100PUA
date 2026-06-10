@@ -1,8 +1,8 @@
-import { Context, Effect, Layer } from 'effect';
+import { Context, Effect, Layer } from "effect";
 
-import { AppConfig } from './config';
+import { AppConfig } from "./config";
 
-export class RateLimitService extends Context.Tag('@100pua/RateLimitService')<
+export class RateLimitService extends Context.Tag("@100pua/RateLimitService")<
   RateLimitService,
   {
     allowExplain: (ip: string) => Effect.Effect<boolean>;
@@ -19,21 +19,11 @@ export class RateLimitService extends Context.Tag('@100pua/RateLimitService')<
       return {
         allowExplain: (ip) =>
           Effect.sync(() =>
-            allowRate(
-              ip,
-              explainBuckets,
-              config.explainRateLimit,
-              config.explainRateWindowMs,
-            ),
+            allowRate(ip, explainBuckets, config.explainRateLimit, config.explainRateWindowMs),
           ),
         allowSuggest: (ip) =>
           Effect.sync(() =>
-            allowRate(
-              ip,
-              suggestBuckets,
-              config.suggestRateLimit,
-              config.suggestRateWindowMs,
-            ),
+            allowRate(ip, suggestBuckets, config.suggestRateLimit, config.suggestRateWindowMs),
           ),
       };
     }),
@@ -56,9 +46,9 @@ function allowRate(
 }
 
 export function clientIp(xForwardedFor: string | null): string {
-  if (typeof xForwardedFor === 'string' && xForwardedFor.length > 0) {
-    const first = xForwardedFor.split(',')[0];
-    return first ? first.trim() : 'unknown';
+  if (typeof xForwardedFor === "string" && xForwardedFor.length > 0) {
+    const first = xForwardedFor.split(",")[0];
+    return first ? first.trim() : "unknown";
   }
-  return 'unknown';
+  return "unknown";
 }

@@ -1,15 +1,11 @@
-import {
-  HttpApi,
-  HttpApiEndpoint,
-  HttpApiGroup,
-} from '@effect/platform';
+import { HttpApi, HttpApiEndpoint, HttpApiGroup } from "@effect/platform";
 import {
   ExplainPromptRequest,
   ExplainPromptSuccess,
   HealthResponse,
   SuggestionRequest,
   SuggestionSuccess,
-} from '@100pua/domain/schemas';
+} from "@100pua/domain/schemas";
 import {
   ExplainFailed,
   GithubError,
@@ -19,15 +15,13 @@ import {
   PayloadTooLarge,
   RateLimitExceeded,
   UnknownPrompt,
-} from '@100pua/domain/errors';
+} from "@100pua/domain/errors";
 
-export class Api extends HttpApi.make('100pua').add(
-  HttpApiGroup.make('routes', { topLevel: true })
+export class Api extends HttpApi.make("100pua").add(
+  HttpApiGroup.make("routes", { topLevel: true })
+    .add(HttpApiEndpoint.get("health", "/api/health").addSuccess(HealthResponse))
     .add(
-      HttpApiEndpoint.get('health', '/api/health').addSuccess(HealthResponse),
-    )
-    .add(
-      HttpApiEndpoint.post('explainPrompt', '/api/explain-prompt')
+      HttpApiEndpoint.post("explainPrompt", "/api/explain-prompt")
         .setPayload(ExplainPromptRequest)
         .addSuccess(ExplainPromptSuccess)
         .addError(MisconfiguredServer, { status: 503 })
@@ -39,7 +33,7 @@ export class Api extends HttpApi.make('100pua').add(
         .addError(PayloadTooLarge, { status: 413 }),
     )
     .add(
-      HttpApiEndpoint.post('suggestions', '/api/suggestions')
+      HttpApiEndpoint.post("suggestions", "/api/suggestions")
         .setPayload(SuggestionRequest)
         .addSuccess(SuggestionSuccess, { status: 201 })
         .addError(MisconfiguredServer, { status: 503 })

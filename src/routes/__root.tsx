@@ -1,31 +1,25 @@
-import {
-  HeadContent,
-  Outlet,
-  Scripts,
-  createRootRoute,
-} from '@tanstack/react-router';
-import type { ReactNode } from 'react';
+import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
-import { ThemeToggle } from '~/components/ThemeToggle';
-import globalCss from '~/styles/global.css?url';
+import { ThemeToggle } from "~/components/ThemeToggle";
+import globalCss from "~/styles/global.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width' },
-      { name: 'color-scheme', content: 'dark light' },
-      { name: 'theme-color', content: '#050505', id: 'theme-color-meta' },
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width" },
+      { name: "color-scheme", content: "dark light" },
+      { name: "theme-color", content: "#050505", id: "theme-color-meta" },
       {
-        name: 'description',
-        content:
-          'Structured prompts across topics — open ChatGPT with one click.',
+        name: "description",
+        content: "Structured prompts across topics — open ChatGPT with one click.",
       },
-      { title: '100 prompts to understand anything' },
+      { title: "100 prompts to understand anything" },
     ],
     links: [
-      { rel: 'stylesheet', href: globalCss },
-      { rel: 'icon', href: '/favicon.svg' },
+      { rel: "stylesheet", href: globalCss },
+      { rel: "icon", href: "/favicon.svg" },
     ],
     scripts: [
       {

@@ -1,23 +1,15 @@
-import { Link, createFileRoute, redirect } from '@tanstack/react-router';
-import { Effect } from 'effect';
-import { useEffect, useState } from 'react';
+import { Link, createFileRoute, redirect } from "@tanstack/react-router";
+import { Effect } from "effect";
+import { useEffect, useState } from "react";
 
-import {
-  resolveTopic,
-  type TopicDoc,
-  type TopicManifestRow,
-} from '@100pua/domain/topics';
+import { resolveTopic, type TopicDoc, type TopicManifestRow } from "@100pua/domain/topics";
 
-import { SuggestFAB } from '~/components/SuggestFAB';
-import manifest from '~/data/topics.manifest.json';
-import {
-  clearPromptProgress,
-  readPromptProgress,
-  recordPromptOpened,
-} from '~/lib/prompt-progress';
-import { topicBySlug } from '~/lib/topic-registry';
+import { SuggestFAB } from "~/components/SuggestFAB";
+import manifest from "~/data/topics.manifest.json";
+import { clearPromptProgress, readPromptProgress, recordPromptOpened } from "~/lib/prompt-progress";
+import { topicBySlug } from "~/lib/topic-registry";
 
-export const Route = createFileRoute('/topic/$slug')({
+export const Route = createFileRoute("/topic/$slug")({
   loader: ({ params }) => {
     const result = Effect.runSync(
       resolveTopic(
@@ -26,15 +18,15 @@ export const Route = createFileRoute('/topic/$slug')({
         topicBySlug as Record<string, TopicDoc>,
       ).pipe(Effect.either),
     );
-    if (result._tag === 'Left') throw redirect({ to: '/' });
+    if (result._tag === "Left") throw redirect({ to: "/" });
     return result.right;
   },
   head: ({ loaderData }) => ({
     meta: [
       {
-        title: `${loaderData?.topic.topicTitle ?? 'Topic'} · prompts`,
+        title: `${loaderData?.topic.topicTitle ?? "Topic"} · prompts`,
       },
-      { name: 'description', content: loaderData?.topic.courseLine ?? '' },
+      { name: "description", content: loaderData?.topic.courseLine ?? "" },
     ],
   }),
   component: TopicPage,
@@ -47,11 +39,7 @@ function TopicPage() {
 
   useEffect(() => {
     const map = readPromptProgress()[slug] ?? {};
-    setOpened(
-      Object.fromEntries(
-        topic.prompts.map((p) => [p.id, Boolean(map[p.id])]),
-      ),
-    );
+    setOpened(Object.fromEntries(topic.prompts.map((p) => [p.id, Boolean(map[p.id])])));
   }, [slug, topic.prompts]);
 
   function onPromptClick(promptId: string) {
@@ -70,8 +58,7 @@ function TopicPage() {
         <div
           className="pointer-events-none absolute top-1/4 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full opacity-[0.03]"
           style={{
-            background:
-              'radial-gradient(circle, #22d3ee 0%, transparent 70%)',
+            background: "radial-gradient(circle, #22d3ee 0%, transparent 70%)",
           }}
         />
 
@@ -79,7 +66,7 @@ function TopicPage() {
           <Link
             to="/"
             className="group animate-fade-in-up mb-12 inline-flex items-center gap-2 text-sm opacity-0"
-            style={{ animationDelay: '0s' }}
+            style={{ animationDelay: "0s" }}
           >
             <span className="text-muted transition-colors duration-200 group-hover:text-text">
               ← all topics
@@ -88,14 +75,10 @@ function TopicPage() {
 
           <header
             className="animate-fade-in-up mb-14 opacity-0"
-            style={{ animationDelay: '0.03s' }}
+            style={{ animationDelay: "0.03s" }}
           >
-            <h1 className="text-text text-xl tracking-tight">
-              {topic.topicTitle}
-            </h1>
-            <p className="text-muted mt-2 text-sm leading-relaxed">
-              {topic.courseLine}
-            </p>
+            <h1 className="text-text text-xl tracking-tight">{topic.topicTitle}</h1>
+            <p className="text-muted mt-2 text-sm leading-relaxed">{topic.courseLine}</p>
             <p className="text-muted mt-2 text-[11px] tracking-wide">
               {topic.promptCount} prompts · opened rows show in accent color
             </p>
@@ -103,13 +86,9 @@ function TopicPage() {
 
           <div
             className="animate-fade-in-up mb-6 flex items-center justify-between gap-4 opacity-0"
-            style={{ animationDelay: '0.055s' }}
+            style={{ animationDelay: "0.055s" }}
           >
-            <SuggestFAB
-              mode="prompt"
-              topicSlug={slug}
-              topicTitle={topic.topicTitle}
-            />
+            <SuggestFAB mode="prompt" topicSlug={slug} topicTitle={topic.topicTitle} />
             <button
               type="button"
               className="text-muted cursor-pointer text-[11px] tracking-wide underline decoration-transparent underline-offset-2 transition-colors hover:text-accent hover:decoration-accent/60"
@@ -133,7 +112,7 @@ function TopicPage() {
                 }}
               >
                 <span
-                  className={`prompt-title min-w-0 flex-1 text-left text-sm transition-colors duration-200 leading-relaxed ${opened[p.id] ? 'text-accent' : 'text-subtle group-hover:text-text'}`}
+                  className={`prompt-title min-w-0 flex-1 text-left text-sm transition-colors duration-200 leading-relaxed ${opened[p.id] ? "text-accent" : "text-subtle group-hover:text-text"}`}
                 >
                   {p.title}
                 </span>

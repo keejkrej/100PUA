@@ -1,16 +1,16 @@
-import DOMPurify from 'dompurify';
-import katex from 'katex';
-import renderMathInElement from 'katex/contrib/auto-render';
-import { marked } from 'marked';
-import { Result, useAtomSet, useAtomValue } from '@effect-atom/atom-react';
-import { useEffect, useRef, useState } from 'react';
+import DOMPurify from "dompurify";
+import katex from "katex";
+import renderMathInElement from "katex/contrib/auto-render";
+import { marked } from "marked";
+import { Result, useAtomSet, useAtomValue } from "@effect-atom/atom-react";
+import { useEffect, useRef, useState } from "react";
 
-import { Toggle, ToggleGroup } from '~/components/ui/toggle-group';
-import { explainPromptMutation } from '~/lib/api-client';
+import { Toggle, ToggleGroup } from "~/components/ui/toggle-group";
+import { explainPromptMutation } from "~/lib/api-client";
 
 marked.use({ gfm: true, breaks: true });
 
-type View = 'rendered' | 'raw';
+type View = "rendered" | "raw";
 
 function renderDisplayMathDollars(html: string): string {
   return html.replace(
@@ -19,12 +19,12 @@ function renderDisplayMathDollars(html: string): string {
       if (latexBlock === undefined) return fragment;
 
       const latex = latexBlock
-        .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/<\/?[^>]+>/g, '')
-        .replace(/&nbsp;/g, ' ')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&amp;/g, '&')
+        .replace(/<br\s*\/?>/gi, "\n")
+        .replace(/<\/?[^>]+>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&amp;/g, "&")
         .trim();
       if (!latex) return fragment;
 
@@ -32,7 +32,7 @@ function renderDisplayMathDollars(html: string): string {
         return katex.renderToString(latex, {
           displayMode: true,
           throwOnError: false,
-          strict: 'ignore',
+          strict: "ignore",
         });
       } catch {
         return fragment;
@@ -46,28 +46,28 @@ function normalizeMarkdownMath(markdown: string): string {
 
   md = md.replace(/\\\[([\s\S]*?)\\\]/g, (_, inner) => {
     const t = inner.trim();
-    return t ? `\n\n$$\n${t}\n$$\n\n` : '';
+    return t ? `\n\n$$\n${t}\n$$\n\n` : "";
   });
 
   md = md.replace(/\\\(([\s\S]*?)\\\)/g, (_, inner) => {
     const t = inner.trim();
-    return t ? `$${t}$` : '';
+    return t ? `$${t}$` : "";
   });
 
   return md;
 }
 
 function errorMessage(cause: unknown): string {
-  if (cause && typeof cause === 'object') {
+  if (cause && typeof cause === "object") {
     const c = cause as { error?: string; message?: string };
-    if (c.error === 'rate_limit') {
-      return 'Too many attempts — try again later.';
+    if (c.error === "rate_limit") {
+      return "Too many attempts — try again later.";
     }
-    if (typeof c.message === 'string' && c.message.length > 0) {
+    if (typeof c.message === "string" && c.message.length > 0) {
       return c.message;
     }
   }
-  return 'Service error.';
+  return "Service error.";
 }
 
 type Props = {
@@ -79,7 +79,7 @@ type Props = {
 export function ExplainPrompt({ slug, promptId, explainEnabled }: Props) {
   const runExplain = useAtomSet(explainPromptMutation);
   const explainResult = useAtomValue(explainPromptMutation);
-  const [view, setView] = useState<View>('rendered');
+  const [view, setView] = useState<View>("rendered");
   const renderedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -87,18 +87,17 @@ export function ExplainPrompt({ slug, promptId, explainEnabled }: Props) {
     runExplain({ payload: { slug, promptId } });
   }, [slug, promptId, explainEnabled, runExplain]);
 
-  const status =
-    Result.builder(explainResult)
-      .onInitialOrWaiting(() => ({
-        text: 'Generating answer…',
-        className: 'text-muted',
-      }))
-      .onSuccess(() => ({ text: 'Answer', className: 'text-accent/90' }))
-      .onError(() => ({
-        text: 'Could not load answer',
-        className: 'text-accent',
-      }))
-      .render() ?? { text: 'Generating answer…', className: 'text-muted' };
+  const status = Result.builder(explainResult)
+    .onInitialOrWaiting(() => ({
+      text: "Generating answer…",
+      className: "text-muted",
+    }))
+    .onSuccess(() => ({ text: "Answer", className: "text-accent/90" }))
+    .onError(() => ({
+      text: "Could not load answer",
+      className: "text-accent",
+    }))
+    .render() ?? { text: "Generating answer…", className: "text-muted" };
 
   const markdown = Result.match(explainResult, {
     onInitial: () => null,
@@ -109,7 +108,7 @@ export function ExplainPrompt({ slug, promptId, explainEnabled }: Props) {
   const error = Result.matchWithError(explainResult, {
     onInitial: () => null,
     onError: (cause) => errorMessage(cause),
-    onDefect: () => 'Service error.',
+    onDefect: () => "Service error.",
     onSuccess: () => null,
   });
 
@@ -123,13 +122,13 @@ export function ExplainPrompt({ slug, promptId, explainEnabled }: Props) {
     try {
       renderMathInElement(renderedRef.current, {
         delimiters: [
-          { left: '$', right: '$', display: false },
-          { left: '\\(', right: '\\)', display: false },
-          { left: '\\[', right: '\\]', display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true },
         ],
-        ignoredClasses: ['katex', 'katex-display', 'katex-html'],
+        ignoredClasses: ["katex", "katex-display", "katex-html"],
         throwOnError: false,
-        strict: 'ignore',
+        strict: "ignore",
       });
     } catch {
       //
@@ -139,8 +138,8 @@ export function ExplainPrompt({ slug, promptId, explainEnabled }: Props) {
   if (!explainEnabled) {
     return (
       <p className="text-muted text-sm leading-relaxed">
-        Set <code className="text-accent/90">CURSOR_API_KEY</code> on the server
-        so this page can call <code className="text-accent/90">/api/explain-prompt</code>.
+        Set <code className="text-accent/90">CURSOR_API_KEY</code> on the server so this page can
+        call <code className="text-accent/90">/api/explain-prompt</code>.
       </p>
     );
   }
@@ -149,9 +148,7 @@ export function ExplainPrompt({ slug, promptId, explainEnabled }: Props) {
 
   return (
     <>
-      <p className={`mb-5 text-[11px] tracking-wide ${status.className}`}>
-        {status.text}
-      </p>
+      <p className={`mb-5 text-[11px] tracking-wide ${status.className}`}>{status.text}</p>
       {showToolbar ? (
         <div className="mb-4 flex w-full min-w-0 flex-wrap items-center justify-end gap-x-4 gap-y-2">
           <ToggleGroup
@@ -160,7 +157,7 @@ export function ExplainPrompt({ slug, promptId, explainEnabled }: Props) {
             value={[view]}
             onValueChange={(values) => {
               const next = values[0];
-              if (next === 'rendered' || next === 'raw') setView(next);
+              if (next === "rendered" || next === "raw") setView(next);
             }}
           >
             <Toggle value="rendered">Rendered</Toggle>
@@ -170,21 +167,19 @@ export function ExplainPrompt({ slug, promptId, explainEnabled }: Props) {
       ) : null}
       <div className="min-h-[6rem]">
         {error ? (
-          <p className="block text-sm leading-relaxed text-muted whitespace-pre-wrap">
-            {error}
-          </p>
+          <p className="block text-sm leading-relaxed text-muted whitespace-pre-wrap">{error}</p>
         ) : (
           <>
             <div
               ref={renderedRef}
               className="explain-md block"
-              hidden={view !== 'rendered' || !markdown}
+              hidden={view !== "rendered" || !markdown}
             />
             <pre
               className="font-mono text-subtle max-h-[min(70vh,48rem)] overflow-auto whitespace-pre-wrap text-[0.8125rem] leading-relaxed"
-              hidden={view !== 'raw' || !markdown}
+              hidden={view !== "raw" || !markdown}
             >
-              {markdown ?? ''}
+              {markdown ?? ""}
             </pre>
           </>
         )}

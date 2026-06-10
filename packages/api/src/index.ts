@@ -1,7 +1,7 @@
-import { HttpApiBuilder, HttpServer } from '@effect/platform';
-import { Layer } from 'effect';
+import { HttpApiBuilder, HttpServer } from "@effect/platform";
+import { Layer } from "effect";
 
-import { ApiLive } from './handlers';
+import { ApiLive } from "./handlers";
 
 let handler: ((request: Request) => Promise<Response>) | null = null;
 let disposeHandler: (() => Promise<void>) | null = null;
@@ -22,17 +22,17 @@ export async function runHttpApiRequest(request: Request): Promise<Response> {
   const response = await getWebHandler()(request);
 
   if (
-    request.method === 'POST' &&
-    new URL(request.url).pathname === '/api/explain-prompt' &&
+    request.method === "POST" &&
+    new URL(request.url).pathname === "/api/explain-prompt" &&
     response.ok
   ) {
     try {
       const clone = response.clone();
       const body = (await clone.json()) as { cached?: boolean };
       const cacheHeader =
-        body.cached === true ? 'hit' : body.cached === false ? 'miss' : 'disabled';
+        body.cached === true ? "hit" : body.cached === false ? "miss" : "disabled";
       const headers = new Headers(response.headers);
-      headers.set('X-Explain-Cache', cacheHeader);
+      headers.set("X-Explain-Cache", cacheHeader);
       return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,
@@ -54,5 +54,5 @@ export async function disposeHttpApiHandler(): Promise<void> {
   }
 }
 
-export { Api } from './api';
-export { ApiLive } from './handlers';
+export { Api } from "./api";
+export { ApiLive } from "./handlers";

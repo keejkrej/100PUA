@@ -1,4 +1,4 @@
-import { Schema } from 'effect';
+import { Schema } from "effect";
 
 const slugPattern = /^[-\w]+$/;
 const promptIdPattern = /^[-_\w]+$/;
@@ -7,15 +7,15 @@ export const ExplainPromptRequest = Schema.Struct({
   slug: Schema.String.pipe(
     Schema.minLength(1),
     Schema.maxLength(200),
-    Schema.filter((s) => !s.includes('..') && slugPattern.test(s), {
-      message: () => 'invalid slug',
+    Schema.filter((s) => !s.includes("..") && slugPattern.test(s), {
+      message: () => "invalid slug",
     }),
   ),
   promptId: Schema.String.pipe(
     Schema.minLength(1),
     Schema.maxLength(200),
-    Schema.filter((s) => !s.includes('..') && promptIdPattern.test(s), {
-      message: () => 'invalid promptId',
+    Schema.filter((s) => !s.includes("..") && promptIdPattern.test(s), {
+      message: () => "invalid promptId",
     }),
   ),
 });
@@ -28,39 +28,32 @@ export const ExplainPromptSuccess = Schema.Struct({
 export type ExplainPromptSuccess = Schema.Schema.Type<typeof ExplainPromptSuccess>;
 
 export const SuggestionTopicRequest = Schema.Struct({
-  mode: Schema.Literal('topic'),
+  mode: Schema.Literal("topic"),
   title: Schema.String.pipe(Schema.minLength(1), Schema.maxLength(120)),
   notes: Schema.optionalWith(Schema.String.pipe(Schema.maxLength(4000)), {
-    default: () => '',
+    default: () => "",
   }),
 });
-export type SuggestionTopicRequest = Schema.Schema.Type<
-  typeof SuggestionTopicRequest
->;
+export type SuggestionTopicRequest = Schema.Schema.Type<typeof SuggestionTopicRequest>;
 
 export const SuggestionPromptRequest = Schema.Struct({
-  mode: Schema.Literal('prompt'),
+  mode: Schema.Literal("prompt"),
   topicTitle: Schema.String.pipe(Schema.minLength(1), Schema.maxLength(500)),
   topicSlug: Schema.String.pipe(
     Schema.minLength(1),
     Schema.maxLength(200),
-    Schema.filter((s) => !s.includes('..'), {
-      message: () => 'invalid topicSlug',
+    Schema.filter((s) => !s.includes(".."), {
+      message: () => "invalid topicSlug",
     }),
   ),
   pretitle: Schema.optionalWith(Schema.String.pipe(Schema.maxLength(200)), {
-    default: () => '',
+    default: () => "",
   }),
   promptBody: Schema.String.pipe(Schema.minLength(1), Schema.maxLength(4000)),
 });
-export type SuggestionPromptRequest = Schema.Schema.Type<
-  typeof SuggestionPromptRequest
->;
+export type SuggestionPromptRequest = Schema.Schema.Type<typeof SuggestionPromptRequest>;
 
-export const SuggestionRequest = Schema.Union(
-  SuggestionTopicRequest,
-  SuggestionPromptRequest,
-);
+export const SuggestionRequest = Schema.Union(SuggestionTopicRequest, SuggestionPromptRequest);
 export type SuggestionRequest = Schema.Schema.Type<typeof SuggestionRequest>;
 
 export const SuggestionSuccess = Schema.Struct({

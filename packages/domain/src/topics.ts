@@ -1,6 +1,6 @@
-import { Effect } from 'effect';
+import { Effect } from "effect";
 
-import { TopicNotFound } from './errors';
+import { TopicNotFound } from "./errors";
 
 export type TopicManifestRow = {
   slug: string;
