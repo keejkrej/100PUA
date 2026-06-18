@@ -19,7 +19,7 @@ services:
         value: "1.3.4"
       - key: GITHUB_REPO
         value: keejkrej/100PUA
-      - key: VITE_GITHUB_REPO
+      - key: NEXT_PUBLIC_GITHUB_REPO
         value: keejkrej/100PUA
       - key: GITHUB_TOKEN
         sync: false

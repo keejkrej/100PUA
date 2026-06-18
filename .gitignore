@@ -1,7 +1,9 @@
 # build output
 dist/
+.next/
 .output/
 .nitro/
+tsconfig.tsbuildinfo
 
 # dependencies
 node_modules/

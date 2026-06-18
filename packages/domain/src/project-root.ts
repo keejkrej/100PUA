@@ -5,7 +5,7 @@ import { Context, Effect, Layer } from "effect";
 
 const __dirnamePath = path.dirname(fileURLToPath(import.meta.url));
 
-/** Repo root when running from source or Nitro `.output`. */
+/** Repo root when running from source, Nitro `.output`, or Next.js with external packages. */
 export function resolveProjectRoot(fromDir: string): string {
   const base = path.basename(fromDir);
   if (base === "dist" || base === "server") {
