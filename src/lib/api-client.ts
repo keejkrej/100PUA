@@ -5,7 +5,7 @@ import { Api } from "@100pua/api/api";
 
 function apiBaseUrl(): string {
   if (typeof window !== "undefined") return window.location.origin;
-  return process.env.VITE_SITE_URL ?? "http://localhost:3000";
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 }
 
 export class AppApiClient extends AtomHttpApi.Tag<AppApiClient>()("AppApiClient", {

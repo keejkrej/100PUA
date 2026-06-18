@@ -1,3 +1,5 @@
+"use client";
+
 import DOMPurify from "dompurify";
 import katex from "katex";
 import renderMathInElement from "katex/contrib/auto-render";

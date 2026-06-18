@@ -1,40 +1,19 @@
-import { Link, createFileRoute, redirect } from "@tanstack/react-router";
-import { Effect } from "effect";
+"use client";
+
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { resolveTopic, type TopicDoc, type TopicManifestRow } from "@100pua/domain/topics";
+import type { TopicDoc } from "@100pua/domain/topics";
 
 import { SuggestFAB } from "~/components/SuggestFAB";
-import manifest from "~/data/topics.manifest.json";
 import { clearPromptProgress, readPromptProgress, recordPromptOpened } from "~/lib/prompt-progress";
-import { topicBySlug } from "~/lib/topic-registry";
 
-export const Route = createFileRoute("/topic/$slug")({
-  loader: ({ params }) => {
-    const result = Effect.runSync(
-      resolveTopic(
-        params.slug,
-        manifest as TopicManifestRow[],
-        topicBySlug as Record<string, TopicDoc>,
-      ).pipe(Effect.either),
-    );
-    if (result._tag === "Left") throw redirect({ to: "/" });
-    return result.right;
-  },
-  head: ({ loaderData }) => ({
-    meta: [
-      {
-        title: `${loaderData?.topic.topicTitle ?? "Topic"} · prompts`,
-      },
-      { name: "description", content: loaderData?.topic.courseLine ?? "" },
-    ],
-  }),
-  component: TopicPage,
-});
+type Props = {
+  slug: string;
+  topic: TopicDoc;
+};
 
-function TopicPage() {
-  const { topic } = Route.useLoaderData();
-  const { slug } = Route.useParams();
+export function TopicPageClient({ slug, topic }: Props) {
   const [opened, setOpened] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -64,7 +43,7 @@ function TopicPage() {
 
         <div className="relative z-10 w-full max-w-3xl">
           <Link
-            to="/"
+            href="/"
             className="group animate-fade-in-up mb-12 inline-flex items-center gap-2 text-sm opacity-0"
             style={{ animationDelay: "0s" }}
           >
@@ -103,8 +82,7 @@ function TopicPage() {
             {topic.prompts.map((p, i) => (
               <Link
                 key={p.id}
-                to="/topic/$slug/prompt/$promptId"
-                params={{ slug, promptId: p.id }}
+                href={`/topic/${slug}/prompt/${p.id}`}
                 onClick={() => onPromptClick(p.id)}
                 className="group animate-fade-in-up relative flex items-start gap-4 py-3 opacity-0"
                 style={{

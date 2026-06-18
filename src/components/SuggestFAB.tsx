@@ -1,3 +1,5 @@
+"use client";
+
 import { useAtomSet } from "@effect-atom/atom-react";
 import { useState } from "react";
 
@@ -23,7 +25,7 @@ type Props = {
 };
 
 const GITHUB_REPO =
-  (import.meta.env.VITE_GITHUB_REPO as string | undefined)?.trim() || "keejkrej/100PUA";
+  (process.env.NEXT_PUBLIC_GITHUB_REPO as string | undefined)?.trim() || "keejkrej/100PUA";
 
 const URL_MAX = 7800;
 

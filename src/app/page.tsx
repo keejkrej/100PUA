@@ -1,16 +1,9 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import Link from "next/link";
 
 import { SuggestFAB } from "~/components/SuggestFAB";
 import topics from "~/data/topics.manifest.json";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [{ title: "100 prompts to understand anything" }],
-  }),
-  component: HomePage,
-});
-
-function HomePage() {
+export default function HomePage() {
   return (
     <main className="flex flex-col text-text">
       <div className="relative flex min-h-screen flex-col items-center px-6 py-16">
@@ -40,8 +33,7 @@ function HomePage() {
             {topics.map((t, idx) => (
               <Link
                 key={t.slug}
-                to="/topic/$slug"
-                params={{ slug: t.slug }}
+                href={`/topic/${t.slug}`}
                 className="group animate-fade-in-up relative flex items-center justify-between py-3 opacity-0"
                 style={{ animationDelay: `${0.05 + idx * 0.05}s` }}
               >

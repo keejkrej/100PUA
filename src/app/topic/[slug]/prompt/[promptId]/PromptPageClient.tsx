@@ -1,49 +1,32 @@
-import { Link, createFileRoute, redirect } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { Effect } from "effect";
+"use client";
+
+import Link from "next/link";
 import { useEffect } from "react";
 
-import { resolvePrompt, type TopicDoc, type TopicManifestRow } from "@100pua/domain/topics";
+import type { TopicDoc } from "@100pua/domain/topics";
 
 import { ExplainPrompt } from "~/components/ExplainPrompt";
-import manifest from "~/data/topics.manifest.json";
-import { buildChatQuery } from "~/lib/chat-query";
 import { recordPromptOpened } from "~/lib/prompt-progress";
-import { topicBySlug } from "~/lib/topic-registry";
 
-const getExplainEnabled = createServerFn({ method: "GET" }).handler(() =>
-  Boolean((process.env.CURSOR_API_KEY ?? "").trim()),
-);
+type PromptRow = TopicDoc["prompts"][number];
 
-export const Route = createFileRoute("/topic/$slug/prompt/$promptId")({
-  loader: async ({ params }) => {
-    const explainEnabled = await getExplainEnabled();
-    const result = Effect.runSync(
-      resolvePrompt(
-        params.slug,
-        params.promptId,
-        manifest as TopicManifestRow[],
-        topicBySlug as Record<string, TopicDoc>,
-        buildChatQuery,
-        explainEnabled,
-      ).pipe(Effect.either),
-    );
-    if (result._tag === "Left") throw redirect({ to: "/" });
-    return result.right;
-  },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: loaderData?.promptRow.title ?? "Prompt" },
-      { name: "description", content: loaderData?.topic.topicTitle ?? "" },
-    ],
-  }),
-  component: PromptPage,
-});
+type Props = {
+  slug: string;
+  promptId: string;
+  topic: TopicDoc;
+  promptRow: PromptRow;
+  chatgptUrl: string;
+  explainEnabled: boolean;
+};
 
-function PromptPage() {
-  const { topic, promptRow, chatgptUrl, explainEnabled } = Route.useLoaderData();
-  const { slug, promptId } = Route.useParams();
-
+export function PromptPageClient({
+  slug,
+  promptId,
+  topic,
+  promptRow,
+  chatgptUrl,
+  explainEnabled,
+}: Props) {
   useEffect(() => {
     recordPromptOpened(slug, promptId);
   }, [slug, promptId]);
@@ -54,14 +37,13 @@ function PromptPage() {
         <div className="relative z-10 w-full max-w-3xl">
           <div className="mb-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
             <Link
-              to="/topic/$slug"
-              params={{ slug }}
+              href={`/topic/${slug}`}
               className="group text-muted inline-flex transition-colors duration-200 hover:text-text"
             >
               ← back to prompts
             </Link>
             <Link
-              to="/"
+              href="/"
               className="group text-muted inline-flex transition-colors duration-200 hover:text-text"
             >
               ← all topics
